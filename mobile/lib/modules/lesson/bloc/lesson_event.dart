@@ -1,0 +1,26 @@
+part of 'lesson_bloc.dart';
+
+sealed class LessonEvent extends Equatable {}
+
+class LessonStartEvent extends LessonEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class CheckAnswerEvent extends LessonEvent {
+  final dynamic userAnswer;
+
+  CheckAnswerEvent({required this.userAnswer});
+  @override
+  List<Object?> get props => [userAnswer];
+}
+
+class ContinueEvent extends LessonEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class LessonExitEvent extends LessonEvent {
+  @override
+  List<Object?> get props => [];
+}
