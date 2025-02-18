@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge_data.dart';
+import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
 
-class PhotoChoicesChallengeWidget extends BaseChallengeWidget {
+class PhotoChoicesChallengeWidget extends BaseChallengeWidget<ChallengeOption> {
   const PhotoChoicesChallengeWidget(
-      {super.key, required super.challenge, required super.onAnswerTapped, required super.onContinueTapped});
+      {super.key,
+      required super.challenge,
+      required super.onAnswerTapped,
+      required super.onContinueTapped});
 
   @override
   Widget build(BuildContext context) {

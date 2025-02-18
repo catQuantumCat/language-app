@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge_data.dart';
+import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
 
-class MultipleChoicesChallengeWidget extends BaseChallengeWidget {
+class MultipleChoicesChallengeWidget extends BaseChallengeWidget<ChallengeOption> {
   const MultipleChoicesChallengeWidget(
       {super.key,
       required super.challenge,

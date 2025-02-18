@@ -7,8 +7,8 @@ class LessonStartEvent extends LessonEvent {
   List<Object?> get props => [];
 }
 
-class CheckAnswerEvent extends LessonEvent {
-  final dynamic userAnswer;
+class CheckAnswerEvent<T> extends LessonEvent {
+  final T userAnswer;
 
   CheckAnswerEvent({required this.userAnswer});
   @override

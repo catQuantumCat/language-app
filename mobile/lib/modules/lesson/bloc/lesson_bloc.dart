@@ -47,15 +47,17 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
 
     log(state.answerStatus.toString(), name: "onContinueTapped");
 
-    if (state.answerStatus == AnswerStatus.none) return;
-
-    if (state.answerStatus == AnswerStatus.correct) {
-      challengeQueue.removeFirst();
-    } else {
-      numOfHeart--;
-      challengeQueue.addLast(challengeQueue.removeFirst());
+    switch (state.answerStatus) {
+      case AnswerStatus.correct:
+        challengeQueue.removeFirst();
+      case AnswerStatus.wrong:
+        numOfHeart--;
+        challengeQueue.addLast(challengeQueue.removeFirst());
+      case AnswerStatus.none:
+        return;
     }
 
+    //End condition
     if (numOfHeart == 0 || challengeQueue.isEmpty) {
       emit(LessonState.finished(isOutOfHeart: numOfHeart == 0));
     } else {

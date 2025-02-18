@@ -1,38 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge.dart';
+import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/widget/challenge/multiple_choices_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widget/challenge/photo_choices_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widget/challenge/translate_challenge_widget.dart';
 
 class ChallengeWidgetFactory {
-  static BaseChallengeWidget produce(
-      {required Challenge challenge,
-      required void Function(dynamic userAnswer) onAnswerTapped,
-      required void Function() onContinueTapped}) {
+  static BaseChallengeWidget<T> produce<T>({
+    required Challenge challenge,
+    required void Function(T userAnswer) onAnswerTapped,
+    required void Function() onContinueTapped,
+  }) {
     switch (challenge.type) {
       case ChallengeType.multipleChoice:
         return MultipleChoicesChallengeWidget(
           challenge: challenge,
-          onAnswerTapped: onAnswerTapped,
+          onAnswerTapped: onAnswerTapped as void Function(ChallengeOption),
           onContinueTapped: onContinueTapped,
-        );
+        ) as BaseChallengeWidget<T>;
 
       case ChallengeType.multipleChoiceWithImages:
         return PhotoChoicesChallengeWidget(
           challenge: challenge,
-          onAnswerTapped: onAnswerTapped,
+          onAnswerTapped: onAnswerTapped as void Function(ChallengeOption),
           onContinueTapped: onContinueTapped,
-        );
+        ) as BaseChallengeWidget<T>;
+
       case ChallengeType.translateWritten:
         return TranslateChallengeWidget(
-            challenge: challenge, onAnswerTapped: onAnswerTapped, onContinueTapped: onContinueTapped,);
+          challenge: challenge,
+          onAnswerTapped: onAnswerTapped as void Function(String),
+          onContinueTapped: onContinueTapped,
+        ) as BaseChallengeWidget<T>;
+
       default:
         throw UnimplementedError();
     }
   }
 }
 
-abstract class BaseChallengeWidget extends StatelessWidget {
+abstract class BaseChallengeWidget<T> extends StatelessWidget {
   const BaseChallengeWidget(
       {super.key,
       required this.challenge,
@@ -40,7 +47,7 @@ abstract class BaseChallengeWidget extends StatelessWidget {
       required this.onContinueTapped});
 
   final Challenge challenge;
-  final void Function(dynamic userAnswer) onAnswerTapped;
+  final void Function(T userAnswer) onAnswerTapped;
   final void Function() onContinueTapped;
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
 
-class TranslateChallengeWidget extends BaseChallengeWidget {
+class TranslateChallengeWidget extends BaseChallengeWidget<String> {
   TranslateChallengeWidget(
       {super.key,
       required super.challenge,

@@ -51,8 +51,8 @@ class LessonPage extends StatelessWidget {
 class LessonView extends StatelessWidget {
   const LessonView({super.key});
 
-  void _onAnswerTapped(BuildContext context, dynamic userAnswer) {
-    context.read<LessonBloc>().add(CheckAnswerEvent(userAnswer: userAnswer));
+  void _onAnswerTapped<T>(BuildContext context, T userAnswer) {
+    context.read<LessonBloc>().add(CheckAnswerEvent<T>(userAnswer: userAnswer));
   }
 
   void _onExitTapped(BuildContext context) {
