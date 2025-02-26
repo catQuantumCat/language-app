@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:language_app/data/models/lesson.dart';
@@ -41,6 +43,24 @@ class LessonPage extends StatelessWidget {
           if (state.status == LessonStatus.finished) {
             showExitDialog(context, state.message!);
           }
+          if (state.answerStatus != AnswerStatus.none) {
+            showDialog(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                title: Text(state.answerStatus == AnswerStatus.correct
+                    ? "Correct"
+                    : "Not correct"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: Text("Continue"),
+                  )
+                ],
+              ),
+            );
+          }
         },
         child: LessonView(),
       ),
@@ -51,7 +71,12 @@ class LessonPage extends StatelessWidget {
 class LessonView extends StatelessWidget {
   const LessonView({super.key});
 
-  void _onAnswerTapped<T>(BuildContext context, T userAnswer) {
+  void _onAnswerTapped<T>(BuildContext context, T? userAnswer) {
+    log("onAnswerTapped");
+
+    if (userAnswer == null) {
+      return;
+    }
     context.read<LessonBloc>().add(CheckAnswerEvent<T>(userAnswer: userAnswer));
   }
 
@@ -60,6 +85,7 @@ class LessonView extends StatelessWidget {
   }
 
   void _onContinueTapped(BuildContext context) {
+    log("onContinueTapped");
     context.read<LessonBloc>().add(ContinueEvent());
   }
 
@@ -73,7 +99,6 @@ class LessonView extends StatelessWidget {
             switch (state.status) {
               case LessonStatus.loading:
                 return CircularProgressIndicator();
-
               case LessonStatus.inProgress:
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,8 +127,10 @@ class LessonView extends StatelessWidget {
                       child: ChallengeWidgetFactory.produce(
                           challenge: state.challengeQueue.first,
                           onAnswerTapped: (isCorrect) =>
-                              _onAnswerTapped(context, isCorrect),
-                          onContinueTapped: () => _onContinueTapped(context)),
+                              state.answerStatus == AnswerStatus.none
+                                  ? _onAnswerTapped(context, isCorrect)
+                                  : _onContinueTapped(context),
+                          answerStatus: state.answerStatus),
                     )
                   ],
                 );

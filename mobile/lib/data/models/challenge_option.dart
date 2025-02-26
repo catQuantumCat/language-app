@@ -6,10 +6,11 @@ class ChallengeOption {
   String text;
   String? audioUrl;
   String? imageUrl;
-  ChallengeOption({
-    required this.id,
-    required this.challengeId,
-    required this.correct,
-    required this.text,
-  });
+  ChallengeOption(
+      {required this.id,
+      required this.challengeId,
+      required this.correct,
+      required this.text,
+      this.imageUrl,
+      this.audioUrl});
 }

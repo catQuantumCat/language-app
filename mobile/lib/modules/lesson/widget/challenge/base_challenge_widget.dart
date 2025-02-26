@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge.dart';
 import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/lesson/widget/challenge/multiple_choices_challenge_widget.dart';
-import 'package:language_app/modules/lesson/widget/challenge/photo_choices_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widget/challenge/translate_challenge_widget.dart';
 
 class ChallengeWidgetFactory {
-  static BaseChallengeWidget<T> produce<T>({
-    required Challenge challenge,
-    required void Function(T userAnswer) onAnswerTapped,
-    required void Function() onContinueTapped,
-  }) {
+  static BaseChallengeWidget<T> produce<T>(
+      {required Challenge challenge,
+      required void Function(T? userAnswer) onAnswerTapped,
+      required AnswerStatus answerStatus}) {
     switch (challenge.type) {
       case ChallengeType.multipleChoice:
         return MultipleChoicesChallengeWidget(
           challenge: challenge,
-          onAnswerTapped: onAnswerTapped as void Function(ChallengeOption),
-          onContinueTapped: onContinueTapped,
-        ) as BaseChallengeWidget<T>;
-
-      case ChallengeType.multipleChoiceWithImages:
-        return PhotoChoicesChallengeWidget(
-          challenge: challenge,
-          onAnswerTapped: onAnswerTapped as void Function(ChallengeOption),
-          onContinueTapped: onContinueTapped,
+          onAnswerTapped: onAnswerTapped as void Function(ChallengeOption?),
+          answerStatus: answerStatus,
         ) as BaseChallengeWidget<T>;
 
       case ChallengeType.translateWritten:
         return TranslateChallengeWidget(
           challenge: challenge,
-          onAnswerTapped: onAnswerTapped as void Function(String),
-          onContinueTapped: onContinueTapped,
+          onAnswerTapped: onAnswerTapped as void Function(String?),
+          answerStatus: answerStatus,
         ) as BaseChallengeWidget<T>;
 
       default:
@@ -39,20 +31,52 @@ class ChallengeWidgetFactory {
   }
 }
 
+// ignore: must_be_immutable
 abstract class BaseChallengeWidget<T> extends StatelessWidget {
-  const BaseChallengeWidget(
+  BaseChallengeWidget(
       {super.key,
       required this.challenge,
       required this.onAnswerTapped,
-      required this.onContinueTapped});
+      required this.answerStatus});
 
   final Challenge challenge;
-  final void Function(T userAnswer) onAnswerTapped;
-  final void Function() onContinueTapped;
+  final void Function(T? userAnswer) onAnswerTapped;
+
+  final AnswerStatus answerStatus;
+  T? currentAnswer;
+
+  String _getButtonLabel() {
+    switch (answerStatus) {
+      case AnswerStatus.correct:
+        return "Continue";
+
+      case AnswerStatus.wrong:
+        return "Got it";
+
+      case AnswerStatus.none:
+        return "Check";
+    }
+  }
 
   @override
-  Widget build(BuildContext context);
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        questionStack(),
+        Expanded(
+          child: AbsorbPointer(
+            absorbing: answerStatus != AnswerStatus.none,
+            child: bodyWidgetBuilder(),
+          ),
+        ),
+        TextButton(
+            onPressed: () => onAnswerTapped(currentAnswer),
+            child: Text(_getButtonLabel()))
+      ],
+    );
+  }
 
+  Widget bodyWidgetBuilder();
   Widget questionStack() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -68,9 +92,5 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Widget continueButton() {
-    return TextButton(onPressed: () => onContinueTapped(), child: Text("Continue"));
   }
 }
