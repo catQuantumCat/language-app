@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
-import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
+import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 
 // ignore: must_be_immutable
 class TranslateChallengeWidget extends BaseChallengeWidget<String> {

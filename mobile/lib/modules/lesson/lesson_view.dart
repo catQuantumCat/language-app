@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
 import 'package:language_app/data/models/lesson.dart';
+import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 
-import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
+import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 
 class LessonPage extends StatelessWidget {
   const LessonPage({super.key, required this.lesson});
@@ -24,7 +26,7 @@ class LessonPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(dialogContext) ;
+              Navigator.pop(dialogContext);
               _returnToMenuTapped(context);
             },
             child: Text("Return to menu"),
@@ -37,7 +39,9 @@ class LessonPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LessonBloc(),
+      create: (context) => LessonBloc(
+          lessonRepository:
+              LessonRepoImp(remoteDatasource: LessonRemoteDatasource())),
       child: BlocListener<LessonBloc, LessonState>(
         listener: (context, state) {
           if (state.status == LessonStatus.finished) {

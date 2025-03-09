@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge_data.dart';
 import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
-import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
+import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 import 'package:language_app/utils/button_color.dart';
 
 // ignore: must_be_immutable
@@ -45,16 +45,27 @@ class ChoiceList extends StatefulWidget {
 }
 
 class _ChoiceListState extends State<ChoiceList> {
-  ChallengeOption? currentlySelectedOption;
-
   int? currentSelected = -1;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ChoiceList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.answerStatus != AnswerStatus.none) {
+      currentSelected = -1;
+    }
+  }
 
   void _onSelectionTapped(ChallengeOption? value, int selectedIndex) {
     if (value == null) return;
     setState(() {
-      currentlySelectedOption = value;
       currentSelected = selectedIndex;
     });
+
     widget.onSelected(value);
   }
 
@@ -102,33 +113,17 @@ class _ChoiceListState extends State<ChoiceList> {
             ChallengeOption option = entry.value;
             return ElevatedButton(
               style: ButtonStyle().copyWith(
-                  backgroundColor: WidgetStatePropertyAll<Color>(
-                      ButtonColor.getColor(
-                          widget.answerStatus, index == currentSelected))),
+                backgroundColor: WidgetStatePropertyAll<Color>(
+                  ButtonColor.getColor(
+                      widget.answerStatus, index == currentSelected),
+                ),
+              ),
               onPressed: () => _onSelectionTapped(option, index),
               child: Text('${index + 1}. ${option.text}'),
             );
           },
         ).toList());
   }
-  // Widget textChoices() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.stretch,
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: List.generate(
-  //       widget.choicesData.options.length,
-  //       (index) => ListTile(
-  //           title: Text(widget.choicesData.options[index].text),
-  //           leading: Radio<ChallengeOption>(
-  //             groupValue: currentlySelectedOption,
-  //             value: widget.choicesData.options[index],
-  //             onChanged: (value) {
-  //               _onSelectionTapped(value);
-  //             },
-  //           )),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {

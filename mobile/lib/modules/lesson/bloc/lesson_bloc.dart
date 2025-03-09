@@ -3,14 +3,19 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:language_app/data/dummy/dummy_data.dart';
 import 'package:language_app/data/models/challenge.dart';
+
+import 'package:language_app/domain/repo/lesson_repo.dart';
 
 part 'lesson_event.dart';
 part 'lesson_state.dart';
 
 class LessonBloc extends Bloc<LessonEvent, LessonState> {
-  LessonBloc() : super(LessonState.loading()) {
+  final LessonRepo _lessonRepository;
+
+  LessonBloc({required LessonRepo lessonRepository})
+      : _lessonRepository = lessonRepository,
+        super(LessonState.loading()) {
     on<LessonStartEvent>(_onLessonStart);
     on<CheckAnswerEvent>(_onCheckAnswer);
     on<ContinueEvent>(_onContinueTapped);
@@ -18,9 +23,10 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     add(LessonStartEvent());
   }
 
-  void _onLessonStart(LessonStartEvent event, Emitter<LessonState> emit) {
+  void _onLessonStart(LessonStartEvent event, Emitter<LessonState> emit) async {
     emit(LessonState.loading());
-    emit(LessonState.inProgress(numOfHeart: 3, challengeList: dummyChallenges));
+    final challengeList = await _lessonRepository.getChallengeList();
+    emit(LessonState.inProgress(numOfHeart: 3, challengeList: challengeList));
   }
 
   void _onCheckAnswer(CheckAnswerEvent event, Emitter<LessonState> emit) {

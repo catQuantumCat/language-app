@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge.dart';
 import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/modules/challenge/widgets/audio_widget.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
-import 'package:language_app/modules/lesson/widget/challenge/multiple_choices_challenge_widget.dart';
-import 'package:language_app/modules/lesson/widget/challenge/pair_matching_challenge_widget.dart';
-import 'package:language_app/modules/lesson/widget/challenge/sentence_order_challenge_widget.dart';
-import 'package:language_app/modules/lesson/widget/challenge/translate_challenge_widget.dart';
+import 'package:language_app/modules/challenge/multiple_choices_challenge_widget.dart';
+import 'package:language_app/modules/challenge/pair_matching_challenge_widget.dart';
+import 'package:language_app/modules/challenge/sentence_order_challenge_widget.dart';
+import 'package:language_app/modules/challenge/translate_challenge_widget.dart';
 
 class ChallengeWidgetFactory {
   static BaseChallengeWidget produce<T>(
       {required Challenge challenge,
       required void Function(T? userAnswer) onAnswerTapped,
       required AnswerStatus answerStatus}) {
-    switch (challenge.type) {
-      case ChallengeType.multipleChoice:
+    switch (challenge.exerciseType) {
+      case ExerciseType.multipleChoice:
         return MultipleChoicesChallengeWidget(
           challenge: challenge,
           onAnswerTapped: onAnswerTapped as void Function(ChallengeOption?),
           answerStatus: answerStatus,
         );
 
-      case ChallengeType.translateWritten:
+      case ExerciseType.translateWritten:
         return TranslateChallengeWidget(
           challenge: challenge,
           onAnswerTapped: onAnswerTapped as void Function(String?),
           answerStatus: answerStatus,
         );
 
-      case ChallengeType.sentenceOrder:
+      case ExerciseType.sentenceOrder:
         return SentenceOrderChallengeWidget(
             challenge: challenge,
             onAnswerTapped:
-                onAnswerTapped as void Function(List<ChallengeOption>?),
+                onAnswerTapped as void Function(List<SentenceOrderOption>?),
             answerStatus: answerStatus);
 
-      case ChallengeType.pairMatching:
+      case ExerciseType.pairMatching:
         return PairMatchingChallengeWidget(
             challenge: challenge,
             onAnswerTapped: onAnswerTapped as void Function(void),
@@ -112,6 +113,7 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
           challenge.question,
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        if (challenge.audioUrl != null) AudioWidget(using: challenge.audioUrl!)
       ],
     );
   }

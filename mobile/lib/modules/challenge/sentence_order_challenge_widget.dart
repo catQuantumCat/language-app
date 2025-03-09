@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge_data.dart';
 import 'package:language_app/data/models/challenge_option.dart';
-import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
+import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 
 // ignore: must_be_immutable
 class SentenceOrderChallengeWidget
-    extends BaseChallengeWidget<List<ChallengeOption>> {
+    extends BaseChallengeWidget<List<SentenceOrderOption>> {
   SentenceOrderChallengeWidget(
       {super.key,
       required super.challenge,
       required super.onAnswerTapped,
       required super.answerStatus});
 
-  void _updateValues(List<ChallengeOption> values) {
+  void _updateValues(List<SentenceOrderOption> values) {
     currentAnswer = values;
   }
 
@@ -24,37 +24,27 @@ class SentenceOrderChallengeWidget
       options: data.options,
       updateValues: (values) => _updateValues(values),
     );
-    // return Wrap(
-    //   alignment: WrapAlignment.center,
-    //   children: List.generate(
-    //     data.options.length,
-    //     (index) => ElevatedButton(
-    //       onPressed: () {},
-    //       child: Text(data.options[index].text),
-    //     ),
-    //   ),
-    // );
   }
 }
 
 class DraggableChoices extends StatefulWidget {
   DraggableChoices(
       {super.key,
-      required List<ChallengeOption> options,
+      required List<SentenceOrderOption> options,
       required this.updateValues})
       : optionMapping = {for (var op in options) op: false};
 
-  final Function(List<ChallengeOption>) updateValues;
-  final Map<ChallengeOption, bool> optionMapping;
+  final Function(List<SentenceOrderOption>) updateValues;
+  final Map<SentenceOrderOption, bool> optionMapping;
 
   @override
   State<DraggableChoices> createState() => _DraggableChoicesState();
 }
 
 class _DraggableChoicesState extends State<DraggableChoices> {
-  List<ChallengeOption> selectedOptions = [];
+  List<SentenceOrderOption> selectedOptions = [];
 
-  void _removeFromTarget(ChallengeOption option) {
+  void _removeFromTarget(SentenceOrderOption option) {
     if (widget.optionMapping[option] == false) return;
 
     setState(() {
@@ -65,7 +55,7 @@ class _DraggableChoicesState extends State<DraggableChoices> {
     widget.updateValues(selectedOptions);
   }
 
-  void _addToTarget(ChallengeOption option) {
+  void _addToTarget(SentenceOrderOption option) {
     if (widget.optionMapping[option] == true) return;
 
     widget.optionMapping[option] = true;
@@ -85,7 +75,7 @@ class _DraggableChoicesState extends State<DraggableChoices> {
     return Column(
       children: [
         Expanded(
-          child: DragTarget<ChallengeOption>(
+          child: DragTarget<SentenceOrderOption>(
             builder: (BuildContext context, List<dynamic> accepted,
                 List<dynamic> rejected) {
               return selectedOptions.isEmpty
@@ -122,7 +112,8 @@ class _DraggableChoicesState extends State<DraggableChoices> {
             onLeave: (option) => {
               if (option != null) {_removeFromTarget(option)}
             },
-            onAcceptWithDetails: (DragTargetDetails<ChallengeOption> details) {
+            onAcceptWithDetails:
+                (DragTargetDetails<SentenceOrderOption> details) {
               _addToTarget(details.data);
             },
           ),
