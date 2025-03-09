@@ -4,28 +4,86 @@ import 'package:language_app/data/models/challenge.dart';
 import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/data/models/challenge_data.dart';
 
-List<ChallengeOption> dummyChallengeOptions = [
-  ChallengeOption(id: 1, challengeId: 1, correct: true, text: 'Option 1'),
-  ChallengeOption(id: 2, challengeId: 1, correct: false, text: 'Option 2'),
-  ChallengeOption(id: 3, challengeId: 1, correct: true, text: 'Option 3'),
-  ChallengeOption(id: 4, challengeId: 1, correct: false, text: 'Option 4'),
-  ChallengeOption(
+List<MultipleChoiceOption> dummyChallengeOptions = [
+  MultipleChoiceOption(id: 1, challengeId: 1, correct: true, text: 'Option 1'),
+  MultipleChoiceOption(id: 2, challengeId: 1, correct: false, text: 'Option 2'),
+  MultipleChoiceOption(id: 3, challengeId: 1, correct: true, text: 'Option 3'),
+  MultipleChoiceOption(id: 4, challengeId: 1, correct: false, text: 'Option 4'),
+  MultipleChoiceOption(
       id: 90,
       challengeId: 2,
       correct: true,
       text: 'Option 3',
       imageUrl: 'assets/duck.jpg'),
-  ChallengeOption(id: 100, challengeId: 2, correct: false, text: 'Option 4', imageUrl: 'assets/scence.JPG'),
+  MultipleChoiceOption(
+      id: 100,
+      challengeId: 2,
+      correct: false,
+      text: 'Option 4',
+      imageUrl: 'assets/scence.JPG'),
+];
+
+List<ChallengeOption> dummyOrderOptions = [
+  ChallengeOption(id: 0, challengeId: 0, text: 'One'),
+  ChallengeOption(id: 1, challengeId: 0, text: 'Two'),
+  ChallengeOption(id: 2, challengeId: 0, text: 'Three'),
+  ChallengeOption(id: 3, challengeId: 0, text: 'Option with'),
+  ChallengeOption(id: 4, challengeId: 0, text: 'Another option'),
+  ChallengeOption(id: 5, challengeId: 0, text: 'Yet '),
+  ChallengeOption(id: 6, challengeId: 0, text: 'A very long'),
+];
+
+List<PairMatchingOption> dummyPairMatchingOptions = [
+  PairMatchingOption(
+      id: 1,
+      challengeId: 3,
+      text: 'Pair 1',
+      pairId: 1,
+      column: PairMachingEnum.left),
+  PairMatchingOption(
+      id: 2,
+      challengeId: 3,
+      text: 'Pair 2',
+      pairId: 1,
+      column: PairMachingEnum.right),
+  PairMatchingOption(
+      id: 3,
+      challengeId: 3,
+      text: 'Pair 3',
+      pairId: 2,
+      column: PairMachingEnum.left),
+  PairMatchingOption(
+      id: 4,
+      challengeId: 3,
+      text: 'Pair 4',
+      pairId: 2,
+      column: PairMachingEnum.right),
+  PairMatchingOption(
+      id: 5,
+      challengeId: 3,
+      text: 'Pair 5',
+      pairId: 3,
+      column: PairMachingEnum.left),
+  PairMatchingOption(
+      id: 6,
+      challengeId: 3,
+      text: 'Pair 6',
+      pairId: 3,
+      column: PairMachingEnum.right),
 ];
 
 List<Challenge> dummyChallenges = [
   Challenge(
-      id: 1,
+      id: -1,
       lessonId: 1,
-      order: 1,
-      question: 'Translate the word "Hello"',
-      data: TranslateChallengeData(answers: ['hello']),
-      type: ChallengeType.translateWritten),
+      order: -1,
+      question: 'Pair matching',
+      data: PairMatchingChallengeData(
+        options: dummyPairMatchingOptions
+            .where((option) => option.challengeId == 3)
+            .toList(),
+      ),
+      type: ChallengeType.pairMatching),
   Challenge(
       id: 2,
       lessonId: 1,
@@ -37,6 +95,21 @@ List<Challenge> dummyChallenges = [
             .toList(),
       ),
       type: ChallengeType.multipleChoice),
+  Challenge(
+      id: 0,
+      lessonId: 1,
+      order: 0,
+      question: "Sentence order, length of 3",
+      data: SentenceOrderChallengeData(
+          options: dummyOrderOptions, optionLength: 3),
+      type: ChallengeType.sentenceOrder),
+  Challenge(
+      id: 1,
+      lessonId: 1,
+      order: 1,
+      question: 'Translate the word "Hello"',
+      data: TranslateChallengeData(answers: ['hello']),
+      type: ChallengeType.translateWritten),
   Challenge(
       id: 3,
       lessonId: 1,

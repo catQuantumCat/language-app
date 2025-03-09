@@ -14,6 +14,7 @@ class Challenge {
   int order;
   String question;
   ChallengeData data;
+  String? instruction;
 
   Challenge(
       {required this.id,

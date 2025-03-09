@@ -3,10 +3,12 @@ import 'package:language_app/data/models/challenge.dart';
 import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/lesson/widget/challenge/multiple_choices_challenge_widget.dart';
+import 'package:language_app/modules/lesson/widget/challenge/pair_matching_challenge_widget.dart';
+import 'package:language_app/modules/lesson/widget/challenge/sentence_order_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widget/challenge/translate_challenge_widget.dart';
 
 class ChallengeWidgetFactory {
-  static BaseChallengeWidget<T> produce<T>(
+  static BaseChallengeWidget produce<T>(
       {required Challenge challenge,
       required void Function(T? userAnswer) onAnswerTapped,
       required AnswerStatus answerStatus}) {
@@ -16,17 +18,27 @@ class ChallengeWidgetFactory {
           challenge: challenge,
           onAnswerTapped: onAnswerTapped as void Function(ChallengeOption?),
           answerStatus: answerStatus,
-        ) as BaseChallengeWidget<T>;
+        );
 
       case ChallengeType.translateWritten:
         return TranslateChallengeWidget(
           challenge: challenge,
           onAnswerTapped: onAnswerTapped as void Function(String?),
           answerStatus: answerStatus,
-        ) as BaseChallengeWidget<T>;
+        );
 
-      default:
-        throw UnimplementedError();
+      case ChallengeType.sentenceOrder:
+        return SentenceOrderChallengeWidget(
+            challenge: challenge,
+            onAnswerTapped:
+                onAnswerTapped as void Function(List<ChallengeOption>?),
+            answerStatus: answerStatus);
+
+      case ChallengeType.pairMatching:
+        return PairMatchingChallengeWidget(
+            challenge: challenge,
+            onAnswerTapped: onAnswerTapped as void Function(void),
+            answerStatus: answerStatus);
     }
   }
 }
@@ -63,15 +75,25 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
     return Column(
       children: [
         questionStack(),
+        SizedBox(height: 16),
         Expanded(
           child: AbsorbPointer(
             absorbing: answerStatus != AnswerStatus.none,
             child: bodyWidgetBuilder(),
           ),
         ),
-        TextButton(
-            onPressed: () => onAnswerTapped(currentAnswer),
-            child: Text(_getButtonLabel()))
+        SizedBox(
+          height: 16,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton(
+                  onPressed: () => onAnswerTapped(currentAnswer),
+                  child: Text(_getButtonLabel())),
+            ),
+          ],
+        )
       ],
     );
   }

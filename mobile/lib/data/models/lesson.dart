@@ -8,12 +8,10 @@ class Lesson {
 
   List<Challenge>? challenges;
 
-  Lesson({
-    required this.id,
-    required this.unitId,
-    required this.title,
-    required this.order,
-
-    this.challenges
-  });
+  Lesson(
+      {required this.id,
+      required this.unitId,
+      required this.title,
+      required this.order,
+      this.challenges});
 }

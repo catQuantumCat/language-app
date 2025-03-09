@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge_data.dart';
 import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/lesson/widget/challenge/base_challenge_widget.dart';
+import 'package:language_app/utils/button_color.dart';
 
 // ignore: must_be_immutable
 class MultipleChoicesChallengeWidget
@@ -19,15 +21,21 @@ class MultipleChoicesChallengeWidget
   @override
   Widget bodyWidgetBuilder() {
     return ChoiceList(
-          choicesData: super.challenge.data as MultipleChoiceChallengeData,
-          onSelected: (choice) => _onSelectionTapped(choice),
-        );
+      choicesData: super.challenge.data as MultipleChoiceChallengeData,
+      onSelected: (choice) => _onSelectionTapped(choice),
+      answerStatus: answerStatus,
+    );
   }
 }
 
 class ChoiceList extends StatefulWidget {
   const ChoiceList(
-      {super.key, required this.choicesData, required this.onSelected});
+      {super.key,
+      required this.choicesData,
+      required this.onSelected,
+      required this.answerStatus});
+
+  final AnswerStatus answerStatus;
 
   final MultipleChoiceChallengeData choicesData;
   final void Function(ChallengeOption) onSelected;
@@ -39,10 +47,13 @@ class ChoiceList extends StatefulWidget {
 class _ChoiceListState extends State<ChoiceList> {
   ChallengeOption? currentlySelectedOption;
 
-  void _onSelectionTapped(ChallengeOption? value) {
+  int? currentSelected = -1;
+
+  void _onSelectionTapped(ChallengeOption? value, int selectedIndex) {
     if (value == null) return;
     setState(() {
       currentlySelectedOption = value;
+      currentSelected = selectedIndex;
     });
     widget.onSelected(value);
   }
@@ -59,7 +70,7 @@ class _ChoiceListState extends State<ChoiceList> {
             .map(
               (option) => InkWell(
                 onTap: () {
-                  _onSelectionTapped(option);
+                  // _onSelectionTapped(option);
                 },
                 child: Container(
                     color: Colors.amber,
@@ -83,22 +94,41 @@ class _ChoiceListState extends State<ChoiceList> {
 
   Widget textChoices() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        widget.choicesData.options.length,
-        (index) => ListTile(
-            title: Text(widget.choicesData.options[index].text),
-            leading: Radio<ChallengeOption>(
-              groupValue: currentlySelectedOption,
-              value: widget.choicesData.options[index],
-              onChanged: (value) {
-                _onSelectionTapped(value);
-              },
-            )),
-      ),
-    );
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: widget.choicesData.options.asMap().entries.map(
+          (entry) {
+            int index = entry.key;
+            ChallengeOption option = entry.value;
+            return ElevatedButton(
+              style: ButtonStyle().copyWith(
+                  backgroundColor: WidgetStatePropertyAll<Color>(
+                      ButtonColor.getColor(
+                          widget.answerStatus, index == currentSelected))),
+              onPressed: () => _onSelectionTapped(option, index),
+              child: Text('${index + 1}. ${option.text}'),
+            );
+          },
+        ).toList());
   }
+  // Widget textChoices() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.stretch,
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: List.generate(
+  //       widget.choicesData.options.length,
+  //       (index) => ListTile(
+  //           title: Text(widget.choicesData.options[index].text),
+  //           leading: Radio<ChallengeOption>(
+  //             groupValue: currentlySelectedOption,
+  //             value: widget.choicesData.options[index],
+  //             onChanged: (value) {
+  //               _onSelectionTapped(value);
+  //             },
+  //           )),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

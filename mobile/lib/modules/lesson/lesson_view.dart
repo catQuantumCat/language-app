@@ -24,7 +24,7 @@ class LessonPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(dialogContext);
+              Navigator.pop(dialogContext) ;
               _returnToMenuTapped(context);
             },
             child: Text("Return to menu"),
