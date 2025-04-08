@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/data/models/challenge_data.dart';
 import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
+import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 
 // ignore: must_be_immutable
 class PairMatchingChallengeWidget extends BaseChallengeWidget<bool> {
@@ -18,17 +20,22 @@ class PairMatchingChallengeWidget extends BaseChallengeWidget<bool> {
     return PairChoices(
       onAnswerTapped: onAnswerTapped,
       challengeData: ((challenge.data) as PairMatchingChallengeData),
+      answerStatus: answerStatus,
     );
   }
 }
 
 class PairChoices extends StatefulWidget {
   const PairChoices(
-      {super.key, required this.onAnswerTapped, required this.challengeData});
+      {super.key,
+      required this.onAnswerTapped,
+      required this.challengeData,
+      required this.answerStatus});
 
   final void Function(bool) onAnswerTapped;
-
   final PairMatchingChallengeData challengeData;
+
+  final AnswerStatus answerStatus;
 
   @override
   State<PairChoices> createState() => _PairChoicesState();
@@ -43,6 +50,7 @@ class _PairChoicesState extends State<PairChoices> {
   PairMatchingOption? selectedLeft;
   PairMatchingOption? selectedRight;
 
+  bool hasAnswerIncorrectly = false;
 
   @override
   void initState() {
@@ -74,12 +82,15 @@ class _PairChoicesState extends State<PairChoices> {
 
     if (selectedLeft == null || selectedRight == null) return;
 
-    if (_checkLocalPair()) {
+    if (_checkLocalPair() == true) {
       setState(() {
         selectedOptions.addAll({selectedLeft!, selectedRight!});
       });
 
       _hasFinished();
+    } else if (hasAnswerIncorrectly == false) {
+      widget.onAnswerTapped(false);
+      hasAnswerIncorrectly = true;
     }
 
     setState(() {
@@ -112,7 +123,8 @@ class _PairChoicesState extends State<PairChoices> {
                     style: ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll<Color>(
                             _getColor(of: option))),
-                    onPressed: selectedOptions.contains(option) == true
+                    onPressed: (selectedOptions.contains(option) == true ||
+                            widget.answerStatus == AnswerStatus.wrong)
                         ? null
                         : () => _onPairTapped(option),
                     child: Text(option.text)),
@@ -128,7 +140,7 @@ class _PairChoicesState extends State<PairChoices> {
 
     if ((selectedLeft != null && of.id == selectedLeft!.id) ||
         (selectedRight != null && of.id == selectedRight!.id)) {
-      return Colors.cyanAccent;
+      return context.colorTheme.onSelection;
     }
 
     return Colors.white;

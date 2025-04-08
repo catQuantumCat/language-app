@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,52 +29,58 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
   }
 
   void _onCheckAnswer(CheckAnswerEvent event, Emitter<LessonState> emit) {
-    final challengeQueue = state.challengeQueue;
+    final Queue<Challenge> challengeQueue = state.challengeQueue;
+    int numOfHeart = state.numOfHeart;
+    int? userProgressIndex = state.userProgressIndex;
 
-    log(challengeQueue.first.data.toString());
+    if (userProgressIndex == null) {
+      emit(LessonState.finished(
+        hasWon: false,
+      ));
+      return;
+    }
 
     final bool isCorrect =
         challengeQueue.first.data.checkAnswer(event.userAnswer);
 
-    log("$isCorrect");
+    if (isCorrect == true) {
+      userProgressIndex++;
+    } else if (isCorrect == false) {
+      numOfHeart--;
+    }
 
-    emit(
-      state.copyWith(
+    emit(state.copyWith(
         answerStatus:
             isCorrect == true ? AnswerStatus.correct : AnswerStatus.wrong,
-      ),
-    );
+        numOfHeart: numOfHeart != state.numOfHeart ? numOfHeart : null,
+        userProgressIndex: userProgressIndex != state.userProgressIndex
+            ? userProgressIndex
+            : null));
   }
 
   void _onContinueTapped(ContinueEvent event, Emitter<LessonState> emit) {
     var numOfHeart = state.numOfHeart;
-    var challengeQueue = state.challengeQueue;
-
-    log(state.answerStatus.toString(), name: "onContinueTapped");
+    final Queue<Challenge> challengeQueue = state.challengeQueue;
 
     switch (state.answerStatus) {
       case AnswerStatus.correct:
         challengeQueue.removeFirst();
+
       case AnswerStatus.wrong:
-        numOfHeart--;
         challengeQueue.addLast(challengeQueue.removeFirst());
+
       case AnswerStatus.none:
-        return;
     }
 
     //End condition
-    if (numOfHeart == 0 || challengeQueue.isEmpty) {
-      emit(LessonState.finished(isOutOfHeart: numOfHeart == 0));
+    if (numOfHeart == 0 || state.userProgressIndex == state.lessonLength) {
+      emit(LessonState.finished(hasWon: numOfHeart == 0));
     } else {
-      log(state.answerStatus.toString(), name: "onContinueTapped after");
-      emit(state.copyWith(
-          numOfHeart: numOfHeart,
-          challengeQueue: challengeQueue,
-          answerStatus: AnswerStatus.none));
+      emit(state.copyWith(answerStatus: AnswerStatus.none));
     }
   }
 
   void _onExitTapped(LessonExitEvent event, Emitter<LessonState> emit) {
-    emit(LessonState.finished(isOutOfHeart: true));
+    emit(LessonState.finished(hasWon: true));
   }
 }

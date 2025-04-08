@@ -1,14 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'lesson_bloc.dart';
 
 enum LessonStatus { loading, inProgress, finished }
 
-enum AnswerStatus {correct, wrong, none}
+enum AnswerStatus { correct, wrong, none }
 
 class LessonState extends Equatable {
   final LessonStatus status;
   final int numOfHeart;
   final Queue<Challenge> challengeQueue;
-  final int lessonLength;
+  final int? lessonLength;
+  final int? userProgressIndex;
   final AnswerStatus answerStatus;
   final bool isOutOfHeart;
   final String? message;
@@ -17,9 +19,10 @@ class LessonState extends Equatable {
     required this.status,
     this.numOfHeart = 0,
     Queue<Challenge>? challengeQueue,
-    this.lessonLength = 0,
+    this.lessonLength,
     this.answerStatus = AnswerStatus.none,
     this.isOutOfHeart = false,
+    this.userProgressIndex,
     this.message,
   }) : challengeQueue = challengeQueue ?? Queue<Challenge>();
 
@@ -32,17 +35,17 @@ class LessonState extends Equatable {
   }) : this._(
           status: LessonStatus.inProgress,
           numOfHeart: numOfHeart,
+          userProgressIndex: 0,
           challengeQueue: Queue.from(challengeList),
           lessonLength: challengeList.length,
           answerStatus: answerStatus,
         );
 
-  LessonState.finished({bool isOutOfHeart = false})
+  LessonState.finished({bool hasWon = false})
       : this._(
           status: LessonStatus.finished,
-          isOutOfHeart: isOutOfHeart,
-          message:
-              isOutOfHeart ? "No heart left" : "You've completed this lesson",
+          isOutOfHeart: !hasWon,
+          message: hasWon ? "You've completed this lesson" : "Failed",
         );
 
   @override
@@ -61,6 +64,7 @@ class LessonState extends Equatable {
     int? numOfHeart,
     Queue<Challenge>? challengeQueue,
     int? lessonLength,
+    int? userProgressIndex,
     AnswerStatus? answerStatus,
     bool? isOutOfHeart,
     String? message,
@@ -70,6 +74,7 @@ class LessonState extends Equatable {
       numOfHeart: numOfHeart ?? this.numOfHeart,
       challengeQueue: challengeQueue ?? this.challengeQueue,
       lessonLength: lessonLength ?? this.lessonLength,
+      userProgressIndex: userProgressIndex ?? this.userProgressIndex,
       answerStatus: answerStatus ?? this.answerStatus,
       isOutOfHeart: isOutOfHeart ?? this.isOutOfHeart,
       message: message ?? this.message,

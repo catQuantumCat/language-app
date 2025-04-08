@@ -64,7 +64,7 @@ class Challenge {
     }
 
     return Challenge(
-      id: map['_id'] as String,
+      id: map['id'] as String,
       //  map['lessonId'] != null ? map['lessonId'] as String : null,
       exerciseType: type,
       data: challengeDataFromJson(map['data'] as Map<String, dynamic>,

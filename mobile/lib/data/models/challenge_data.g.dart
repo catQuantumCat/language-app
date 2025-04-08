@@ -12,6 +12,7 @@ TranslateChallengeData _$TranslateChallengeDataFromJson(
       acceptedAnswer: (json['acceptedAnswer'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      translateWord: json['translateWord'] as String,
     );
 
 MultipleChoiceChallengeData _$MultipleChoiceChallengeDataFromJson(

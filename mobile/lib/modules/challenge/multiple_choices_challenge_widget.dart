@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/data/models/challenge_data.dart';
 import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
+import 'package:language_app/theme/color_theme.dart';
 import 'package:language_app/utils/button_color.dart';
 
 // ignore: must_be_immutable
@@ -15,7 +17,7 @@ class MultipleChoicesChallengeWidget
       required super.answerStatus});
 
   void _onSelectionTapped(ChallengeOption option) {
-    super.currentAnswer = option;
+    super.currentAnswer.value = option;
   }
 
   @override
@@ -112,12 +114,15 @@ class _ChoiceListState extends State<ChoiceList> {
             int index = entry.key;
             ChallengeOption option = entry.value;
             return ElevatedButton(
-              style: ButtonStyle().copyWith(
-                backgroundColor: WidgetStatePropertyAll<Color>(
-                  ButtonColor.getColor(
-                      widget.answerStatus, index == currentSelected),
-                ),
-              ),
+              style: context.customButtomTheme.getButtonStyleFromStatus(
+                  widget.answerStatus,
+                  isSelected: index == currentSelected),
+              // style: ButtonStyle().copyWith(
+              //   backgroundColor: WidgetStatePropertyAll<Color>(
+              //     _getColorButtonColor(
+              //         widget.answerStatus, index == currentSelected),
+              //   ),
+              // ),
               onPressed: () => _onSelectionTapped(option, index),
               child: Text('${index + 1}. ${option.text}'),
             );
@@ -130,5 +135,21 @@ class _ChoiceListState extends State<ChoiceList> {
     return widget.choicesData.options[0].imageUrl == null
         ? textChoices()
         : photoChoices();
+  }
+
+  Color _getColorButtonColor(AnswerStatus answerStatus, bool isSelected) {
+    if (isSelected) {
+      switch (answerStatus) {
+        case AnswerStatus.correct:
+          return context.colorTheme.onCorrect;
+
+        case AnswerStatus.wrong:
+          return context.colorTheme.onWrong;
+
+        case AnswerStatus.none:
+          return context.colorTheme.onSelection;
+      }
+    }
+    return Colors.white;
   }
 }

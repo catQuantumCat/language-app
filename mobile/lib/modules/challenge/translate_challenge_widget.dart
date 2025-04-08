@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
@@ -16,7 +18,8 @@ class TranslateChallengeWidget extends BaseChallengeWidget<String> {
       height: 90,
       child: TextField(
         onChanged: (val) {
-          super.currentAnswer = val;
+          log(val);
+          super.currentAnswer.value = val;
         },
         enabled: answerStatus == AnswerStatus.none,
       ),

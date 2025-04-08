@@ -3,7 +3,7 @@ const dummyOptionJson = '''
 "audioUrl": null,
 "imageUrl": null,
 "column": null,
-"_id": "67c020135efc275fccb04057",
+"id": "67c020135efc275fccb04057",
 "exerciseId": "67c01b025efc275fccb04048",
 "correct": true,
 "text": "Ha Noi"
@@ -13,7 +13,7 @@ const dummyOptionJson = '''
 const dummyJsonData = '''
 [
   {
-    "_id": "67c06529a18b6f59b741ae51",
+    "id": "67c06529a18b6f59b741ae51",
     "exerciseType": "multipleChoice",
     "question": "Listen and choose correct answer",
     "order": 6,
@@ -25,7 +25,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c06899980fa7b3f0e6a305",
+          "id": "67c06899980fa7b3f0e6a305",
           "exerciseId": "67c06529a18b6f59b741ae51",
           "correct": true,
           "text": "Music"
@@ -34,7 +34,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c06899980fa7b3f0e6a306",
+          "id": "67c06899980fa7b3f0e6a306",
           "exerciseId": "67c06529a18b6f59b741ae51",
           "correct": false,
           "text": "Poem"
@@ -43,7 +43,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c06899980fa7b3f0e6a307",
+          "id": "67c06899980fa7b3f0e6a307",
           "exerciseId": "67c06529a18b6f59b741ae51",
           "correct": false,
           "text": "Rap"
@@ -52,7 +52,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c06899980fa7b3f0e6a308",
+          "id": "67c06899980fa7b3f0e6a308",
           "exerciseId": "67c06529a18b6f59b741ae51",
           "correct": false,
           "text": "Love"
@@ -61,7 +61,7 @@ const dummyJsonData = '''
     }
   },
   {
-    "_id": "67c01b025efc275fccb04048",
+    "id": "67c01b025efc275fccb04048",
     "exerciseType": "multipleChoice",
     "question": "What is the capital of Viet Nam?",
     "order": 1,
@@ -71,7 +71,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c020135efc275fccb04057",
+          "id": "67c020135efc275fccb04057",
           "exerciseId": "67c01b025efc275fccb04048",
           "correct": true,
           "text": "Ha Noi"
@@ -80,7 +80,7 @@ const dummyJsonData = '''
     }
   },
   {
-    "_id": "67c04ac8a18b6f59b741ae2e",
+    "id": "67c04ac8a18b6f59b741ae2e",
     "exerciseType": "pairMatching",
     "question": "Nối các cặp từ sau cho đúng nghĩa",
     "order": 2,
@@ -89,7 +89,7 @@ const dummyJsonData = '''
         {
           "audioUrl": null,
           "imageUrl": null,
-          "_id": "67c04f36a18b6f59b741ae38",
+          "id": "67c04f36a18b6f59b741ae38",
           "exerciseId": "67c04ac8a18b6f59b741ae2e",
           "text": "Dog",
           "pairId": 1,
@@ -98,7 +98,7 @@ const dummyJsonData = '''
         {
           "audioUrl": null,
           "imageUrl": null,
-          "_id": "67c04f36a18b6f59b741ae39",
+          "id": "67c04f36a18b6f59b741ae39",
           "exerciseId": "67c04ac8a18b6f59b741ae2e",
           "text": "Cat",
           "pairId": 2,
@@ -107,7 +107,7 @@ const dummyJsonData = '''
         {
           "audioUrl": null,
           "imageUrl": null,
-          "_id": "67c04f36a18b6f59b741ae3a",
+          "id": "67c04f36a18b6f59b741ae3a",
           "exerciseId": "67c04ac8a18b6f59b741ae2e",
           "text": "Cow",
           "pairId": 3,
@@ -116,7 +116,7 @@ const dummyJsonData = '''
         {
           "audioUrl": null,
           "imageUrl": null,
-          "_id": "67c04f36a18b6f59b741ae3b",
+          "id": "67c04f36a18b6f59b741ae3b",
           "exerciseId": "67c04ac8a18b6f59b741ae2e",
           "text": "Mèo",
           "pairId": 2,
@@ -125,7 +125,7 @@ const dummyJsonData = '''
         {
           "audioUrl": null,
           "imageUrl": null,
-          "_id": "67c04f36a18b6f59b741ae3c",
+          "id": "67c04f36a18b6f59b741ae3c",
           "exerciseId": "67c04ac8a18b6f59b741ae2e",
           "text": "Chó",
           "pairId": 1,
@@ -134,7 +134,7 @@ const dummyJsonData = '''
         {
           "audioUrl": null,
           "imageUrl": null,
-          "_id": "67c04f36a18b6f59b741ae3d",
+          "id": "67c04f36a18b6f59b741ae3d",
           "exerciseId": "67c04ac8a18b6f59b741ae2e",
           "text": "Bò",
           "pairId": 3,
@@ -144,7 +144,7 @@ const dummyJsonData = '''
     }
   },
   {
-    "_id": "67c05083a18b6f59b741ae3f",
+    "id": "67c05083a18b6f59b741ae3f",
     "exerciseType": "sentenceOrder",
     "question": "Sắp xếp các từ sau theo đúng trật tự",
     "order": 3,
@@ -155,7 +155,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c05154a18b6f59b741ae41",
+          "id": "67c05154a18b6f59b741ae41",
           "exerciseId": "67c05083a18b6f59b741ae3f",
           "text": "What",
           "order": 1
@@ -164,7 +164,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c05154a18b6f59b741ae42",
+          "id": "67c05154a18b6f59b741ae42",
           "exerciseId": "67c05083a18b6f59b741ae3f",
           "text": "name?",
           "order": 4
@@ -173,7 +173,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c05154a18b6f59b741ae43",
+          "id": "67c05154a18b6f59b741ae43",
           "exerciseId": "67c05083a18b6f59b741ae3f",
           "text": "is",
           "order": 2
@@ -182,7 +182,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c05154a18b6f59b741ae44",
+          "id": "67c05154a18b6f59b741ae44",
           "exerciseId": "67c05083a18b6f59b741ae3f",
           "text": "your",
           "order": 3
@@ -191,7 +191,7 @@ const dummyJsonData = '''
     }
   },
   {
-    "_id": "67c05341a18b6f59b741ae47",
+    "id": "67c05341a18b6f59b741ae47",
     "exerciseType": "translateWritten",
     "question": "Dịch câu trên ra tiếng Việt",
     "order": 4,
@@ -200,7 +200,7 @@ const dummyJsonData = '''
     }
   },
   {
-    "_id": "67c06529a18b6f59b741ae50",
+    "id": "67c06529a18b6f59b741ae50",
     "exerciseType": "multipleChoice",
     "question": "Who is this?",
     "order": 5,
@@ -211,7 +211,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c06638a18b6f59b741ae53",
+          "id": "67c06638a18b6f59b741ae53",
           "exerciseId": "67c06529a18b6f59b741ae50",
           "correct": true,
           "text": "Huy"
@@ -220,7 +220,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c067c3980fa7b3f0e6a301",
+          "id": "67c067c3980fa7b3f0e6a301",
           "exerciseId": "67c06529a18b6f59b741ae50",
           "correct": true,
           "text": "Huy"
@@ -229,7 +229,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c067c3980fa7b3f0e6a302",
+          "id": "67c067c3980fa7b3f0e6a302",
           "exerciseId": "67c06529a18b6f59b741ae50",
           "correct": false,
           "text": "Tung"
@@ -238,7 +238,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c067c3980fa7b3f0e6a303",
+          "id": "67c067c3980fa7b3f0e6a303",
           "exerciseId": "67c06529a18b6f59b741ae50",
           "correct": false,
           "text": "Quan"
@@ -247,7 +247,7 @@ const dummyJsonData = '''
           "audioUrl": null,
           "imageUrl": null,
           "column": null,
-          "_id": "67c067c3980fa7b3f0e6a304",
+          "id": "67c067c3980fa7b3f0e6a304",
           "exerciseId": "67c06529a18b6f59b741ae50",
           "correct": false,
           "text": "Khoa"

@@ -8,6 +8,8 @@ final class LessonRemoteDatasource {
   Future<List<Challenge>> getChallengeList() async {
     final response = await dio.get(Endpoints.getExercises);
 
+    print(response.data);
+
     final List<Challenge> toReturn = [];
 
     for (final d in response.data) {

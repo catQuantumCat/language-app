@@ -9,9 +9,11 @@ abstract class ChallengeData<T> {
 
 @JsonSerializable(createToJson: false)
 class TranslateChallengeData extends ChallengeData<String> {
-  TranslateChallengeData({required this.acceptedAnswer});
+  TranslateChallengeData(
+      {required this.acceptedAnswer, required this.translateWord});
 
   List<String> acceptedAnswer;
+  String translateWord;
   @override
   bool checkAnswer(userAnswer) {
     return acceptedAnswer.contains(userAnswer.toLowerCase());
@@ -42,8 +44,10 @@ class SentenceOrderChallengeData
   List<SentenceOrderOption> options;
   int optionLength;
 
-  SentenceOrderChallengeData(
-      {required this.options, required this.optionLength});
+  SentenceOrderChallengeData({
+    required this.options,
+    required this.optionLength,
+  });
 
   @override
   bool checkAnswer(List<SentenceOrderOption> userAnswer) {

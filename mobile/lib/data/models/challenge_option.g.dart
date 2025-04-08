@@ -8,7 +8,7 @@ part of 'challenge_option.dart';
 
 ChallengeOption _$ChallengeOptionFromJson(Map<String, dynamic> json) =>
     ChallengeOption(
-      id: json['_id'] as String,
+      id: json['id'] as String,
       exerciseId: json['exerciseId'] as String,
       text: json['text'] as String,
       imageUrl: json['imageUrl'] as String?,
@@ -18,7 +18,7 @@ ChallengeOption _$ChallengeOptionFromJson(Map<String, dynamic> json) =>
 MultipleChoiceOption _$MultipleChoiceOptionFromJson(
         Map<String, dynamic> json) =>
     MultipleChoiceOption(
-      id: json['_id'] as String,
+      id: json['id'] as String,
       exerciseId: json['exerciseId'] as String,
       correct: json['correct'] as bool,
       text: json['text'] as String,
@@ -28,7 +28,7 @@ MultipleChoiceOption _$MultipleChoiceOptionFromJson(
 
 PairMatchingOption _$PairMatchingOptionFromJson(Map<String, dynamic> json) =>
     PairMatchingOption(
-      id: json['_id'] as String,
+      id: json['id'] as String,
       exerciseId: json['exerciseId'] as String,
       text: json['text'] as String,
       pairId: (json['pairId'] as num).toInt(),
@@ -44,7 +44,7 @@ const _$PairMachingEnumEnumMap = {
 
 SentenceOrderOption _$SentenceOrderOptionFromJson(Map<String, dynamic> json) =>
     SentenceOrderOption(
-      id: json['_id'] as String,
+      id: json['id'] as String,
       exerciseId: json['exerciseId'] as String,
       text: json['text'] as String,
       order: (json['order'] as num).toInt(),

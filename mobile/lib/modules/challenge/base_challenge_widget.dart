@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/challenge.dart';
 import 'package:language_app/data/models/challenge_option.dart';
@@ -54,9 +57,10 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
 
   final Challenge challenge;
   final void Function(T? userAnswer) onAnswerTapped;
-
+  // String? question;
+  // final String questionDescription;
   final AnswerStatus answerStatus;
-  T? currentAnswer;
+  ValueNotifier<T?> currentAnswer = ValueNotifier<T?>(null);
 
   String _getButtonLabel() {
     switch (answerStatus) {
@@ -78,10 +82,7 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
         questionStack(),
         SizedBox(height: 16),
         Expanded(
-          child: AbsorbPointer(
-            absorbing: answerStatus != AnswerStatus.none,
-            child: bodyWidgetBuilder(),
-          ),
+          child: absorbBody(),
         ),
         SizedBox(
           height: 16,
@@ -89,9 +90,7 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: FilledButton(
-                  onPressed: () => onAnswerTapped(currentAnswer),
-                  child: Text(_getButtonLabel())),
+              child: sumbitButton(),
             ),
           ],
         )
@@ -100,15 +99,14 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
   }
 
   Widget bodyWidgetBuilder();
+  Widget absorbBody() => AbsorbPointer(
+        absorbing: answerStatus != AnswerStatus.none,
+        child: bodyWidgetBuilder(),
+      );
   Widget questionStack() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          "Lipsum",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
-        ),
-        SizedBox(height: 2),
         Text(
           challenge.question,
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -116,5 +114,28 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
         if (challenge.audioUrl != null) AudioWidget(using: challenge.audioUrl!)
       ],
     );
+  }
+
+  @nonVirtual
+  Widget sumbitButton() {
+    return ValueListenableBuilder<T?>(
+        valueListenable: currentAnswer,
+        builder: (context, value, _) {
+          log(value.toString());
+          if (answerStatus != AnswerStatus.none) {
+            return FilledButton(
+                onPressed: () => onAnswerTapped(value),
+                child: Text(_getButtonLabel()));
+          }
+
+          final bool hasAnswered = !(value == null ||
+              (value is String && value.isEmpty) ||
+              (value is Iterable && value.isEmpty));
+
+          return FilledButton(
+              onPressed:
+                  hasAnswered == true ? () => onAnswerTapped(value) : null,
+              child: Text(_getButtonLabel()));
+        });
   }
 }

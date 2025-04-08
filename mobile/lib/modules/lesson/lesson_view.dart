@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
 import 'package:language_app/data/models/lesson.dart';
 import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
@@ -104,46 +105,67 @@ class LessonView extends StatelessWidget {
               case LessonStatus.loading:
                 return CircularProgressIndicator();
               case LessonStatus.inProgress:
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => _onExitTapped(context),
-                              icon: const Icon(Icons.clear),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                                "Q: ${state.challengeQueue.first.order}/${state.challengeQueue.length}"),
-                          ],
-                        ),
-                        Text("${state.numOfHeart} hearts left"),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Expanded(
-                      child: ChallengeWidgetFactory.produce(
-                          challenge: state.challengeQueue.first,
-                          onAnswerTapped: (isCorrect) =>
-                              state.answerStatus == AnswerStatus.none
-                                  ? _onAnswerTapped(context, isCorrect)
-                                  : _onContinueTapped(context),
-                          answerStatus: state.answerStatus),
-                    )
-                  ],
-                );
+                return _questionStackBuilder(context, state);
               case LessonStatus.finished:
                 return Placeholder();
             }
           },
         ),
       ),
+    );
+  }
+
+  Column _questionStackBuilder(BuildContext context, LessonState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: 8),
+        _challengeControllerRowBuilder(context, state),
+        SizedBox(height: 16),
+        Expanded(
+          child: ChallengeWidgetFactory.produce(
+              challenge: state.challengeQueue.first,
+              onAnswerTapped: (isCorrect) =>
+                  state.answerStatus == AnswerStatus.none
+                      ? _onAnswerTapped(context, isCorrect)
+                      : _onContinueTapped(context),
+              answerStatus: state.answerStatus),
+        )
+      ],
+    );
+  }
+
+  Widget _challengeControllerRowBuilder(
+      BuildContext context, LessonState state) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        InkWell(child: Icon(Icons.clear), onTap: () => _onExitTapped(context)),
+        const SizedBox(
+          width: 4,
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+            child: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOutSine,
+              tween: Tween<double>(
+                begin: 0,
+                end: (state.userProgressIndex ?? 0) / (state.lessonLength ?? 1),
+              ),
+              builder: (context, value, _) => LinearProgressIndicator(
+                borderRadius: BorderRadius.circular(8),
+                backgroundColor: context.colorTheme.border,
+                color: context.colorTheme.primary,
+                value: value,
+                minHeight: 15,
+              ),
+            ),
+          ),
+        ),
+        Text("${state.numOfHeart} hearts"),
+      ],
     );
   }
 }

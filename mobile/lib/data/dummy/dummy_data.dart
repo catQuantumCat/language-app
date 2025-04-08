@@ -1,11 +1,7 @@
-import 'dart:convert';
-
-import 'package:language_app/data/dummy/dummy_json.dart';
 import 'package:language_app/data/models/unit.dart';
 import 'package:language_app/data/models/lesson.dart';
 import 'package:language_app/data/models/challenge.dart';
 import 'package:language_app/data/models/challenge_option.dart';
-import 'package:language_app/data/models/challenge_data.dart';
 
 List<MultipleChoiceOption> dummyChallengeOptions = [
   MultipleChoiceOption(
@@ -82,9 +78,9 @@ List<PairMatchingOption> dummyPairMatchingOptions = [
 
 List<Challenge> get dummyChallenges {
   final List<Challenge> challenges = [];
-  jsonDecode(dummyJsonData).forEach((d) {
-    challenges.add(Challenge.fromJson(d));
-  });
+  // jsonDecode(dummyJsonData).forEach((d) {
+  //   challenges.add(Challenge.fromJson(d));
+  // });
   return challenges;
 }
 

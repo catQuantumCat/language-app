@@ -1,13 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'challenge_option.g.dart';
 
 @JsonSerializable(createToJson: false)
 class ChallengeOption {
-  @JsonKey(name: "_id")
   final String id;
   final String exerciseId;
   final String text;
@@ -60,6 +57,7 @@ enum PairMachingEnum {
 
 @JsonSerializable(createToJson: false)
 class PairMatchingOption extends ChallengeOption {
+  @JsonKey()
   final int pairId;
   final PairMachingEnum column;
   PairMatchingOption(
