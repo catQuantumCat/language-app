@@ -3,16 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 
 import 'package:language_app/theme/color_theme.dart';
+import 'package:theme_tailor_annotation/theme_tailor_annotation.dart';
 
+@TailorMixin()
 class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
   //Base button
   final ButtonStyle filledButton;
+  //System button
+  final ButtonStyle primaryButton;
+  final ButtonStyle errorFilledButton;
 
+  //Answer button
   final ButtonStyle correctButton;
   final ButtonStyle wrongButton;
   final ButtonStyle selectedButton;
   CustomButtonTheme({
     required this.filledButton,
+    required this.primaryButton,
+    required this.errorFilledButton,
     required this.correctButton,
     required this.wrongButton,
     required this.selectedButton,
@@ -31,14 +39,30 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
           Radius.circular(12),
         )));
 
-    final correctButton = baseButtonStyle.copyWith(
+    final primaryButton = baseButtonStyle.copyWith(
+      backgroundColor: WidgetStatePropertyAll(colorTheme.primary),
+      foregroundColor: WidgetStatePropertyAll(colorTheme.onPrimary),
+      side: WidgetStatePropertyAll(
+        BorderSide(color: colorTheme.correct),
+      ),
+    );
+
+    final errorFilled = baseButtonStyle.copyWith(
+      backgroundColor: WidgetStatePropertyAll(colorTheme.wrong),
+      foregroundColor: WidgetStatePropertyAll(colorTheme.onWrong),
+      side: WidgetStatePropertyAll(
+        BorderSide(color: colorTheme.wrong),
+      ),
+    );
+
+    final correctOutlined = baseButtonStyle.copyWith(
       backgroundColor: WidgetStatePropertyAll(colorTheme.onCorrect),
       foregroundColor: WidgetStatePropertyAll(colorTheme.correct),
       side: WidgetStatePropertyAll(
         BorderSide(color: colorTheme.correct),
       ),
     );
-    final wrongButton = baseButtonStyle.copyWith(
+    final wrongOutlined = baseButtonStyle.copyWith(
       backgroundColor: WidgetStatePropertyAll(colorTheme.onWrong),
       foregroundColor: WidgetStatePropertyAll(colorTheme.wrong),
       side: WidgetStatePropertyAll(
@@ -46,16 +70,18 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
       ),
     );
 
-    final selectedButton = baseButtonStyle.copyWith(
+    final selectedOutlined = baseButtonStyle.copyWith(
         backgroundColor: WidgetStatePropertyAll(colorTheme.onSelection),
         foregroundColor: WidgetStatePropertyAll(colorTheme.selection),
         side: WidgetStatePropertyAll(BorderSide(color: colorTheme.selection)));
 
     return CustomButtonTheme(
       filledButton: baseButtonStyle,
-      correctButton: correctButton,
-      wrongButton: wrongButton,
-      selectedButton: selectedButton,
+      primaryButton: primaryButton,
+      errorFilledButton: errorFilled,
+      correctButton: correctOutlined,
+      wrongButton: wrongOutlined,
+      selectedButton: selectedOutlined,
     );
   }
 
@@ -77,11 +103,15 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
   @override
   ThemeExtension<CustomButtonTheme> copyWith(
       {ButtonStyle? filledButton,
+      ButtonStyle? primaryButton,
+      ButtonStyle? errorFilledButton,
       ButtonStyle? correctButton,
       ButtonStyle? wrongButton,
       ButtonStyle? selectedButton}) {
     return CustomButtonTheme(
         filledButton: filledButton ?? this.filledButton,
+        primaryButton: primaryButton ?? this.primaryButton,
+        errorFilledButton: errorFilledButton ?? this.errorFilledButton,
         correctButton: correctButton ?? this.correctButton,
         wrongButton: wrongButton ?? this.wrongButton,
         selectedButton: selectedButton ?? this.selectedButton);
@@ -94,6 +124,9 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
 
     return CustomButtonTheme(
       filledButton: ButtonStyle.lerp(filledButton, other.filledButton, t)!,
+      primaryButton: ButtonStyle.lerp(primaryButton, other.primaryButton, t)!,
+      errorFilledButton:
+          ButtonStyle.lerp(errorFilledButton, other.errorFilledButton, t)!,
       correctButton: ButtonStyle.lerp(correctButton, other.correctButton, t)!,
       wrongButton: ButtonStyle.lerp(wrongButton, other.wrongButton, t)!,
       selectedButton:

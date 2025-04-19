@@ -22,8 +22,12 @@ class MyApp extends StatelessWidget {
               colorTheme: ColorTheme.light,
               buttonTheme: CustomButtonTheme.palette(ColorTheme.light))
           .themeData,
-      home: HomePage(
-        unit: dummyUnits[0],
+      home: Scaffold(
+        appBar: AppBar(),
+
+        body: HomePage(
+          unit: dummyUnits[0],
+        ),
       ),
     );
   }

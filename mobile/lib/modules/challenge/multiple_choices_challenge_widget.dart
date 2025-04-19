@@ -4,8 +4,6 @@ import 'package:language_app/data/models/challenge_data.dart';
 import 'package:language_app/data/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
-import 'package:language_app/theme/color_theme.dart';
-import 'package:language_app/utils/button_color.dart';
 
 // ignore: must_be_immutable
 class MultipleChoicesChallengeWidget

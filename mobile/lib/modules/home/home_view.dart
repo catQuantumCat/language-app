@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/data/models/lesson.dart';
 import 'package:language_app/data/models/unit.dart';
+import 'package:language_app/modules/home/widgets/header_widget.dart';
+
+import 'package:language_app/modules/home/widgets/unit_list.dart';
 import 'package:language_app/modules/lesson/lesson_view.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.unit});
@@ -16,10 +20,48 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key, required this.unit});
 
   final Unit unit;
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final List<List<int>> numbers = [
+    List<int>.generate(12, (index) => index),
+    List<int>.generate(18, (index) => index),
+    List<int>.generate(20, (index) => index),
+  ];
+
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
+  final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(0);
+
+  @override
+  void initState() {
+    super.initState();
+    itemPositionsListener.itemPositions.addListener(_onPositionChange);
+  }
+
+  void _onPositionChange() {
+    final positions = itemPositionsListener.itemPositions.value;
+    if (positions.isNotEmpty) {
+      final firstVisibleIndex = positions.first.index;
+      if (firstVisibleIndex != _currentIndexNotifier.value) {
+        _currentIndexNotifier.value = firstVisibleIndex;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    _currentIndexNotifier.dispose();
+    super.dispose();
+  }
 
   void navigateToLesson(BuildContext context, {Lesson? lesson}) {
     if (lesson == null) {
@@ -36,37 +78,13 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Language app"),
-        backgroundColor: Color(0xFF59CC01),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text("Unit ${unit.id}", style: TextStyle(fontSize: 20)),
-                Text(unit.title,
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => ListTile(
-                onTap: () =>
-                    navigateToLesson(context, lesson: unit.lessons?[index]),
-                title: Text("Lesson $index: ${unit.lessons?[index].title}"),
-              ),
-              itemCount: unit.lessons?.length ?? 0,
-            ),
-          )
-        ],
-      ),
+    return Column(
+      children: [
+        HeaderWidget(currentIndexNotifier: _currentIndexNotifier),
+        Expanded(
+            child: UnitList(
+                units: numbers, itemPositionsListener: itemPositionsListener))
+      ],
     );
   }
 }

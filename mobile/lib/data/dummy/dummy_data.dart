@@ -152,7 +152,6 @@ List<Unit> dummyUnits = [
   Unit(
     id: 1,
     title: 'Basic Knowledge',
-    description: 'This unit covers basic knowledge topics.',
     order: 1,
     lessons: dummyLessons.where((lesson) => lesson.unitId == 1).toList(),
   ),

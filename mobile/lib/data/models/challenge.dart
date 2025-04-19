@@ -1,6 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:developer';
-
 import 'package:language_app/data/models/challenge_data.dart';
 
 enum ExerciseType {
@@ -20,25 +17,26 @@ enum ExerciseType {
 
 class Challenge {
   String id;
-  String? lessonId = "1";
+  String lessonId;
   ExerciseType exerciseType;
   int order;
-  String question;
+  String? question;
   ChallengeData data;
 
   String? imageUrl;
   String? audioUrl;
-  String? instruction;
+  String instruction;
 
   Challenge(
       {required this.id,
       required this.order,
-      required this.question,
+      required this.lessonId,
+      this.question,
       required this.data,
       required this.exerciseType,
       this.imageUrl,
       this.audioUrl,
-      this.instruction});
+      required this.instruction});
 
   static ChallengeData challengeDataFromJson(Map<String, dynamic> rawDataValue,
       {required ExerciseType? exerciseType}) {
@@ -65,16 +63,15 @@ class Challenge {
 
     return Challenge(
       id: map['id'] as String,
-      //  map['lessonId'] != null ? map['lessonId'] as String : null,
+      lessonId: map['lessonId'] as String,
       exerciseType: type,
       data: challengeDataFromJson(map['data'] as Map<String, dynamic>,
           exerciseType: type),
       order: map['order'] as int,
-      question: map['question'] as String,
+      instruction: map['instruction'] as String,
       imageUrl: map['imageUrl'] as String?,
       audioUrl: map['audioUrl'] as String?,
-      instruction:
-          map['instruction'] != null ? map['instruction'] as String : null,
+      question: map['question'] != null ? map['question'] as String : null,
     );
   }
 

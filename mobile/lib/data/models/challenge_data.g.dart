@@ -29,7 +29,7 @@ SentenceOrderChallengeData _$SentenceOrderChallengeDataFromJson(
       options: (json['options'] as List<dynamic>)
           .map((e) => SentenceOrderOption.fromJson(e as Map<String, dynamic>))
           .toList(),
-      optionLength: (json['optionLength'] as num).toInt(),
+      sentenceLength: (json['sentenceLength'] as num).toInt(),
     );
 
 PairMatchingChallengeData _$PairMatchingChallengeDataFromJson(

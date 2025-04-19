@@ -42,18 +42,18 @@ class MultipleChoiceChallengeData extends ChallengeData<MultipleChoiceOption> {
 class SentenceOrderChallengeData
     extends ChallengeData<List<SentenceOrderOption>> {
   List<SentenceOrderOption> options;
-  int optionLength;
+  int sentenceLength;
 
   SentenceOrderChallengeData({
     required this.options,
-    required this.optionLength,
+    required this.sentenceLength,
   });
 
   @override
   bool checkAnswer(List<SentenceOrderOption> userAnswer) {
-    if (userAnswer.length != optionLength) return false;
+    if (userAnswer.length != sentenceLength) return false;
 
-    for (int i = 0; i < optionLength; i++) {
+    for (int i = 0; i < sentenceLength; i++) {
       if (userAnswer[i].order != i + 1) return false;
     }
     return true;

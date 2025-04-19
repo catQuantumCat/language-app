@@ -1,7 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:theme_tailor_annotation/theme_tailor_annotation.dart';
+
+part 'color_theme.tailor.dart';
 
 final class RawColors {
+  static const darkGreen = Color(0xFF58A700);
+
   static const green = Color(0xFF58CC05);
   static const blue = Color(0xFF1DB0F6);
   static const yellow = Color(0xFFFFC800);
@@ -17,33 +22,60 @@ final class RawColors {
   static const black = Color(0xFF000000);
 }
 
-class ColorTheme extends ThemeExtension<ColorTheme> {
+@TailorMixin()
+class ColorTheme extends ThemeExtension<ColorTheme>
+    with _$ColorThemeTailorMixin {
+  //Text
+  final Color textPrimary;
+
+  @override
   final Color primary;
+  @override
   final Color onPrimary;
+  @override
   final Color selection;
+  @override
   final Color onSelection;
+  @override
   final Color correct;
+  @override
   final Color onCorrect;
+  @override
   final Color error;
+  @override
   final Color onError;
+  @override
   final Color wrong;
+  @override
   final Color onWrong;
+  @override
   final Color warning;
+  @override
   final Color onWarning;
 
+  @override
   final Color button;
+  @override
   final Color onButton;
 
+  @override
   final Color background;
+  @override
   final Color border;
 
+  @override
   final Color progressBarBackground;
+  @override
   final Color selectedAnswerBackground;
+  @override
   final Color heartColor;
 
+  @override
   final Color lessonCardBackground;
+  @override
   final Color streakFireColor;
   ColorTheme({
+    required this.textPrimary,
     required this.primary,
     required this.onPrimary,
     required this.selection,
@@ -67,95 +99,11 @@ class ColorTheme extends ThemeExtension<ColorTheme> {
     required this.streakFireColor,
   });
 
-  @override
-  ColorTheme copyWith({
-    Color? primary,
-    Color? onPrimary,
-    Color? selection,
-    Color? onSelection,
-    Color? correct,
-    Color? onCorrect,
-    Color? error,
-    Color? onError,
-    Color? wrong,
-    Color? onWrong,
-    Color? warning,
-    Color? onWarning,
-    Color? button,
-    Color? onButton,
-    Color? background,
-    Color? border,
-    Color? progressBarBackground,
-    Color? selectedAnswerBackground,
-    Color? heartColor,
-    Color? characterColor,
-    Color? lessonCardBackground,
-    Color? streakFireColor,
-  }) {
-    return ColorTheme(
-      primary: primary ?? this.primary,
-      onPrimary: onPrimary ?? this.onPrimary,
-      selection: selection ?? this.selection,
-      onSelection: onSelection ?? this.onSelection,
-      correct: correct ?? this.correct,
-      onCorrect: onCorrect ?? this.onCorrect,
-      error: error ?? this.error,
-      onError: onError ?? this.onError,
-      wrong: wrong ?? this.wrong,
-      onWrong: onWrong ?? this.onWrong,
-      warning: warning ?? this.warning,
-      button: button ?? this.button,
-      onButton: onButton ?? this.onButton,
-      onWarning: onWarning ?? this.onWarning,
-      background: background ?? this.background,
-      border: border ?? this.border,
-      progressBarBackground:
-          progressBarBackground ?? this.progressBarBackground,
-      selectedAnswerBackground:
-          selectedAnswerBackground ?? this.selectedAnswerBackground,
-      heartColor: heartColor ?? this.heartColor,
-      lessonCardBackground: lessonCardBackground ?? this.lessonCardBackground,
-      streakFireColor: streakFireColor ?? this.streakFireColor,
-    );
-  }
-
-  @override
-  ColorTheme lerp(ThemeExtension<ColorTheme>? other, double t) {
-    if (other is! ColorTheme) {
-      return this;
-    }
-    return ColorTheme(
-      primary: Color.lerp(primary, other.primary, t)!,
-      onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
-      selection: Color.lerp(selection, other.selection, t)!,
-      onSelection: Color.lerp(onSelection, other.onSelection, t)!,
-      correct: Color.lerp(correct, other.correct, t)!,
-      onCorrect: Color.lerp(onCorrect, other.onCorrect, t)!,
-      error: Color.lerp(error, other.error, t)!,
-      onError: Color.lerp(onError, other.onError, t)!,
-      wrong: Color.lerp(wrong, other.wrong, t)!,
-      onWrong: Color.lerp(onWrong, other.onWrong, t)!,
-      warning: Color.lerp(warning, other.warning, t)!,
-      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
-      button: Color.lerp(button, other.button, t)!,
-      onButton: Color.lerp(onButton, other.onButton, t)!,
-      background: Color.lerp(background, other.background, t)!,
-      border: Color.lerp(border, other.border, t)!,
-      progressBarBackground:
-          Color.lerp(progressBarBackground, other.progressBarBackground, t)!,
-      selectedAnswerBackground: Color.lerp(
-          selectedAnswerBackground, other.selectedAnswerBackground, t)!,
-      heartColor: Color.lerp(heartColor, other.heartColor, t)!,
-      lessonCardBackground:
-          Color.lerp(lessonCardBackground, other.lessonCardBackground, t)!,
-      streakFireColor: Color.lerp(streakFireColor, other.streakFireColor, t)!,
-    );
-  }
-
   // Light theme version
   static final light = ColorTheme(
+    textPrimary: RawColors.darkGreen,
     primary: RawColors.green,
-    onPrimary: RawColors.onGreen,
+    onPrimary: RawColors.white,
     selection: RawColors.blue,
     onSelection: RawColors.onBlue,
     correct: RawColors.green,
