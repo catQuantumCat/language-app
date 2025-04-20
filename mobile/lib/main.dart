@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:language_app/data/dummy/dummy_data.dart';
 import 'package:language_app/modules/home/home_view.dart';
+import 'package:language_app/modules/navigation/navigation_view.dart';
 import 'package:language_app/theme/app_theme.dart';
 import 'package:language_app/theme/button_theme.dart';
 import 'package:language_app/theme/color_theme.dart';
@@ -22,13 +23,7 @@ class MyApp extends StatelessWidget {
               colorTheme: ColorTheme.light,
               buttonTheme: CustomButtonTheme.palette(ColorTheme.light))
           .themeData,
-      home: Scaffold(
-        appBar: AppBar(),
-
-        body: HomePage(
-          unit: dummyUnits[0],
-        ),
-      ),
+      home: NavigationPage(),
     );
   }
 }
