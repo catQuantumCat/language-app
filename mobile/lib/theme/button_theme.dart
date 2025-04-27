@@ -31,49 +31,69 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
   //Get
   factory CustomButtonTheme.palette(ColorTheme colorTheme) {
     final baseButtonStyle = FilledButton.styleFrom(
-        backgroundColor: colorTheme.button,
-        foregroundColor: colorTheme.onButton,
-        side: BorderSide(color: colorTheme.border, width: 1),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusDirectional.all(
+      backgroundColor: colorTheme.button,
+      foregroundColor: colorTheme.onButton,
+      elevation: 0,
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      textStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      side: BorderSide(color: colorTheme.border, width: 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusDirectional.all(
           Radius.circular(12),
-        )));
+        ),
+      ),
+    ).copyWith(
+      elevation: WidgetStateProperty.resolveWith<double>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.pressed)) {
+            return 0;
+          }
+          return 4;
+        },
+      ),
+      // ignore: deprecated_member_use
+      shadowColor: WidgetStateProperty.all(colorTheme.border.withOpacity(0.5)),
+    );
 
     final primaryButton = baseButtonStyle.copyWith(
-      backgroundColor: WidgetStatePropertyAll(colorTheme.primary),
-      foregroundColor: WidgetStatePropertyAll(colorTheme.onPrimary),
-      side: WidgetStatePropertyAll(
-        BorderSide(color: colorTheme.correct),
+      backgroundColor: WidgetStateProperty.all(colorTheme.primary),
+      foregroundColor: WidgetStateProperty.all(colorTheme.onPrimary),
+      side: WidgetStateProperty.all(
+        BorderSide(color: colorTheme.primary),
       ),
     );
 
     final errorFilled = baseButtonStyle.copyWith(
-      backgroundColor: WidgetStatePropertyAll(colorTheme.wrong),
-      foregroundColor: WidgetStatePropertyAll(colorTheme.onWrong),
-      side: WidgetStatePropertyAll(
+      backgroundColor: WidgetStateProperty.all(colorTheme.wrong),
+      foregroundColor: WidgetStateProperty.all(colorTheme.onWrong),
+      side: WidgetStateProperty.all(
         BorderSide(color: colorTheme.wrong),
       ),
     );
 
     final correctOutlined = baseButtonStyle.copyWith(
-      backgroundColor: WidgetStatePropertyAll(colorTheme.onCorrect),
-      foregroundColor: WidgetStatePropertyAll(colorTheme.correct),
-      side: WidgetStatePropertyAll(
+      backgroundColor: WidgetStateProperty.all(colorTheme.onCorrect),
+      foregroundColor: WidgetStateProperty.all(colorTheme.correct),
+      side: WidgetStateProperty.all(
         BorderSide(color: colorTheme.correct),
       ),
     );
+
     final wrongOutlined = baseButtonStyle.copyWith(
-      backgroundColor: WidgetStatePropertyAll(colorTheme.onWrong),
-      foregroundColor: WidgetStatePropertyAll(colorTheme.wrong),
-      side: WidgetStatePropertyAll(
+      backgroundColor: WidgetStateProperty.all(colorTheme.onWrong),
+      foregroundColor: WidgetStateProperty.all(colorTheme.wrong),
+      side: WidgetStateProperty.all(
         BorderSide(color: colorTheme.wrong),
       ),
     );
 
     final selectedOutlined = baseButtonStyle.copyWith(
-        backgroundColor: WidgetStatePropertyAll(colorTheme.onSelection),
-        foregroundColor: WidgetStatePropertyAll(colorTheme.selection),
-        side: WidgetStatePropertyAll(BorderSide(color: colorTheme.selection)));
+      backgroundColor: WidgetStatePropertyAll(colorTheme.onSelection),
+      foregroundColor: WidgetStatePropertyAll(colorTheme.selection),
+      side: WidgetStatePropertyAll(        BorderSide(color: colorTheme.selection))    );
 
     return CustomButtonTheme(
       filledButton: baseButtonStyle,

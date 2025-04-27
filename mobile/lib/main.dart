@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:language_app/configs/router/go_router.dart';
 import 'package:language_app/data/dummy/dummy_data.dart';
 import 'package:language_app/modules/home/home_view.dart';
 import 'package:language_app/modules/navigation/navigation_view.dart';
@@ -13,17 +14,21 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: AppTheme(
               colorTheme: ColorTheme.light,
               buttonTheme: CustomButtonTheme.palette(ColorTheme.light))
           .themeData,
-      home: NavigationPage(),
+      routerConfig: goRouter,
     );
   }
 }
+
+

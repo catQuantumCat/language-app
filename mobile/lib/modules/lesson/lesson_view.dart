@@ -3,10 +3,11 @@ import 'dart:developer';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
-import 'package:language_app/data/models/lesson.dart';
+
 import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
 import 'package:language_app/gen/assets.gen.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
@@ -14,11 +15,13 @@ import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 
 class LessonPage extends StatelessWidget {
-  const LessonPage({super.key, required this.lesson});
+  const LessonPage({super.key, required this.lessonId});
 
-  final Lesson lesson;
+  final int lessonId;
 
   void _returnToMenuTapped(BuildContext context) {
+    GoRouter.of(context).go("/home");
+
     Navigator.pop(context);
   }
 
@@ -48,26 +51,9 @@ class LessonPage extends StatelessWidget {
               LessonRepoImp(remoteDatasource: LessonRemoteDatasource())),
       child: BlocListener<LessonBloc, LessonState>(
         listener: (context, state) {
-          if (state.status == LessonStatus.finished) {
-            showExitDialog(context, state.message!);
-          }
-          // if (state.answerStatus != AnswerStatus.none) {
-          //   showDialog(
-          //     context: context,
-          //     builder: (dialogContext) => AlertDialog(
-          //       title: Text(state.answerStatus == AnswerStatus.correct
-          //           ? "Correct"
-          //           : "Not correct"),
-          //       actions: [
-          //         TextButton(
-          //           onPressed: () {
-          //             Navigator.pop(dialogContext);
-          //           },
-          //           child: Text("Continue"),
-          //         )
-          //       ],
-          //     ),
-          //   );
+          //TODO handle later
+          // if (state.status == LessonStatus.finished) {
+          //   showExitDialog(context, state.message!);
           // }
         },
         child: LessonView(),
@@ -107,16 +93,20 @@ class LessonView extends StatelessWidget {
           builder: (context, state) {
             switch (state.status) {
               case LessonStatus.loading:
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               case LessonStatus.inProgress:
                 return _questionStackBuilder(context, state);
               case LessonStatus.finished:
-                return Placeholder();
+                return _buildCompletionScreen(context, state);
             }
           },
         ),
       ),
     );
+  }
+
+  void _returnToHome(BuildContext context) {
+    GoRouter.of(context).go("/home");
   }
 
   Column _questionStackBuilder(BuildContext context, LessonState state) {
@@ -213,6 +203,149 @@ class LessonView extends StatelessWidget {
           Text("${state.numOfHeart}")
         ],
       ),
+    );
+  }
+
+  Widget _buildCompletionScreen(BuildContext context, LessonState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Trophy image or celebration image
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: context.colorTheme.primary.withOpacity(0.2),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.emoji_events,
+                size: 100,
+                color: context.colorTheme.primary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Congratulation text
+          Text(
+            state.status == LessonStatus.finished
+                ? 'Better luck next time!'
+                : 'Congratulations!',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            state.message ?? 'You\'ve completed the lesson',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 32),
+
+          // Metrics section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: context.colorTheme.background,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: context.colorTheme.border),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                _buildMetricRow(
+                  context,
+                  icon: Icons.timer,
+                  title: 'Time',
+                  value: '2m 30s',
+                ),
+                const Divider(height: 24),
+                _buildMetricRow(
+                  context,
+                  icon: Icons.star,
+                  title: 'XP Earned',
+                  value: '+20 XP',
+                ),
+                const Divider(height: 24),
+                _buildMetricRow(
+                  context,
+                  icon: Icons.check_circle,
+                  title: 'Accuracy',
+                  value: '80%',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // Continue button
+          ElevatedButton(
+            onPressed: () => _returnToHome(context),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              backgroundColor: context.colorTheme.primary,
+              foregroundColor: context.colorTheme.onPrimary,
+            ),
+            child: Text(
+              'Continue',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: context.colorTheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricRow(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: context.colorTheme.selection.withOpacity(0.2),
+          ),
+          child: Icon(
+            icon,
+            color: context.colorTheme.selection,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ],
     );
   }
 }

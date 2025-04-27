@@ -140,11 +140,36 @@ abstract class BaseChallengeWidget<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          challenge.instruction,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (challenge.question != null) ...[
+              Text(challenge.instruction),
+              Text(
+                challenge.question!,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ] else
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  challenge.instruction,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+          ],
         ),
-        if (challenge.audioUrl != null) AudioWidget(using: challenge.audioUrl!)
+        if (challenge.audioUrl != null) AudioWidget(using: challenge.audioUrl!),
+        if (challenge.imageUrl != null) ...[
+          SizedBox(height: 16),
+          SizedBox(
+            width: 100,
+            height: 100,
+            child: Image.network(
+              challenge.imageUrl ?? "",
+            ),
+          )
+        ]
       ],
     );
   }
