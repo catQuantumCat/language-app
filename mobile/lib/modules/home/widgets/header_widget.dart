@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:language_app/modules/home/bloc/home_bloc.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({
     super.key,
-    required this.currentIndexNotifier,
+    required this.unitIndex,
   });
 
-  final ValueNotifier<int> currentIndexNotifier;
+  final ValueNotifier<int> unitIndex;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ValueListenableBuilder<int>(
-              valueListenable: currentIndexNotifier,
-              builder: (context, currentIndex, _) {
-                return Text("${currentIndex + 1}",
-                    style: TextStyle(fontSize: 20));
-              }),
-          // Text("Unit ${widget.unit.id}", style: TextStyle(fontSize: 20)),
-          // Text(widget.unit.title,
-          //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.amber, borderRadius: BorderRadius.circular(8)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        child: getIndex(context),
       ),
     );
+  }
+
+  Widget getIndex(BuildContext context) {
+    final homeState = context.read<HomeBloc>().state;
+
+    return ValueListenableBuilder<int>(
+        valueListenable: unitIndex,
+        builder: (context, currentIndex, _) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: currentIndex >= homeState.units.length
+                ? [Text("No info about this unit")]
+                : [
+                    Text("Unit ${homeState.units[currentIndex].order}"),
+                    Text(homeState.units[currentIndex].title),
+                  ],
+          );
+        });
   }
 }

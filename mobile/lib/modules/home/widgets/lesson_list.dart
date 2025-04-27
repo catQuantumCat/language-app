@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:language_app/data/dummy/dummy_data.dart';
-import 'package:language_app/modules/lesson/lesson_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:language_app/data/models/lesson.dart';
+import 'package:language_app/data/models/unit.dart';
+import 'package:language_app/theme/color_theme.dart';
 
 class LessonList extends StatelessWidget {
-  const LessonList({super.key, required this.numbers});
+  const LessonList({super.key, required this.lessons});
 
-  final List<int> numbers;
+  final List<Lesson> lessons;
 
-  int get _lengthModifiedByEight => numbers.length - (numbers.length % 4);
+  int get _lengthModifiedByEight => lessons.length - (lessons.length % 4);
 
   @override
   Widget build(BuildContext context) {
@@ -21,28 +23,56 @@ class LessonList extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //Left padding: if offset is negative -> use offset
-            //Otherwise use 1
             Spacer(flex: offset < 0 ? -(offset) : 1),
-            FilledButton(
-              onPressed: () => _onLessonPressed(context),
-              child: Text("${numbers[index]}"),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: context.colorTheme.border.withAlpha(127),
+                    offset: Offset(0, 4),
+                    blurRadius: 0,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: context.colorTheme.primary,
+                  foregroundColor: context.colorTheme.onPrimary,
+                  minimumSize: Size(64, 64),
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.zero,
+                  elevation: 0,
+                ),
+                onPressed: () => _onLessonPressed(context),
+                child: Text(
+                  "${lessons[index].order}",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            //Right padding: if offset is positive -> use offset
-            //Otherwise use 1
             Spacer(flex: offset < 0 ? 1 : offset)
           ],
         );
       },
-      itemCount: numbers.length,
+      itemCount: lessons.length,
     );
   }
 
   void _onLessonPressed(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (routeContext) => LessonPage(lesson: dummyLessons.first)));
+    //TODO: remove dummy
+
+    GoRouter.of(context).go("/lesson/1");
+
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (routeContext) => LessonPage(lesson: dummyLessons.first)));
   }
 
   ///Return either +-3, +-2, 1\

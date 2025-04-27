@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:language_app/data/models/lesson.dart';
 import 'package:language_app/data/models/unit.dart';
+import 'package:language_app/gen/assets.gen.dart';
+import 'package:language_app/modules/home/bloc/home_bloc.dart';
 import 'package:language_app/modules/home/widgets/header_widget.dart';
+import 'package:language_app/modules/home/widgets/info_row.dart';
 
 import 'package:language_app/modules/home/widgets/unit_list.dart';
 import 'package:language_app/modules/lesson/lesson_view.dart';
@@ -14,8 +20,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeView(
-      unit: unit,
+    return BlocProvider(
+      create: (context) => HomeBloc(),
+      child: HomeView(
+        unit: unit,
+      ),
     );
   }
 }
@@ -30,6 +39,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  //Dummy list for units
   final List<List<int>> numbers = [
     List<int>.generate(12, (index) => index),
     List<int>.generate(18, (index) => index),
@@ -68,23 +78,44 @@ class _HomeViewState extends State<HomeView> {
       return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LessonPage(lesson: lesson),
-      ),
-    );
+    //TODO: remove later
+    GoRouter.of(context).go("/lesson/1");
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     //TODO: remove later
+    //     builder: (context) => LessonPage(lessonId: 1),
+    //   ),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        HeaderWidget(currentIndexNotifier: _currentIndexNotifier),
-        Expanded(
-            child: UnitList(
-                units: numbers, itemPositionsListener: itemPositionsListener))
-      ],
+    return SafeArea(
+      minimum: EdgeInsets.symmetric(horizontal: 20),
+
+      //TODO: fetch logic
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          return Column(
+            children: [
+              SizedBox(height: 8),
+              InfoRow(
+                  countryFlag: Assets.france.svg(),
+                  hasTodayStreak: true,
+                  heartCount: 3,
+                  streakCount: 2),
+              SizedBox(height: 8),
+              HeaderWidget(unitIndex: _currentIndexNotifier),
+              Expanded(
+                  child: UnitList(
+                      units: state.units,
+                      itemPositionsListener: itemPositionsListener))
+            ],
+          );
+        },
+      ),
     );
   }
 }
