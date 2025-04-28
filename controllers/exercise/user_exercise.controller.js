@@ -7,7 +7,7 @@ const ExerciseOption = require('../../models/exercise/exercise_option.model');
 const Lesson = require('../../models/lesson/lesson.model');
 const Unit = require('../../models/unit/unit.model');
 const User = require('../../models/user/user.model');
-
+const leaderboardController = require('../leaderboard/leaderboard.controller');
 // API lưu kết quả một bài tập
 module.exports.submitExerciseResult = async (req, res) => {
   try {
@@ -228,6 +228,11 @@ module.exports.saveLessonResults = async (req, res) => {
           await userMistake.save();
         }
       }
+    }
+
+    // Cập nhật bảng xếp hạng
+    if (experienceGained > 0) {
+      await leaderboardController.updateLeaderboard(userId, unit.languageId, experienceGained);
     }
 
     // Kiểm tra xem có bài học tiếp theo không

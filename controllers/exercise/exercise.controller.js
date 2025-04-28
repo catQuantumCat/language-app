@@ -3,6 +3,29 @@ const Exercise = require('../../models/exercise/exercise.model');
 const ExerciseOption = require('../../models/exercise/exercise_option.model');
 
 // Lấy danh sách bài tập theo lessonId kèm đáp án đúng
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Exercise:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         lessonId:
+ *           type: string
+ *         exerciseType:
+ *           type: string
+ *         instruction:
+ *           type: string
+ */
+
+/**
+ * Lấy danh sách bài tập theo lesson
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 module.exports.getExercisesByLesson = async (req, res) => {
   try {
     const { lessonId } = req.params;

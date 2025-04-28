@@ -1,7 +1,7 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const unitController = require('../../controllers/unit/unit.controller');
 
-router.get('/language/:languageId', unitController.getUnitsByLanguage);
+router.get('/', unitController.getUnitsByLanguage);
 
 module.exports = router;

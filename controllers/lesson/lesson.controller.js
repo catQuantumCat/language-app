@@ -8,7 +8,7 @@ module.exports.getLessonsByUnit = async (req, res) => {
     const { unitId } = req.params;
     const { userId } = req.query;
     
-    const lessons = await Lesson.find({ unitId, isActive: true }).sort({ order: 1 });
+    const lessons = await Lesson.find({ unitId }).sort({ order: 1 });
     
     // Lấy tiến độ của người dùng cho các lesson này
     let userProgress = [];

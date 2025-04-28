@@ -6,6 +6,21 @@ const userExerciseController = require('../../controllers/exercise/user_exercise
 
 
 // Route mới
+/**
+ * @swagger
+ * /lesson/{lessonId}/exercises:
+ *   get:
+ *     summary: Lấy danh sách bài tập theo lesson
+ *     parameters:
+ *       - in: path
+ *         name: lessonId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Danh sách bài tập
+ */
 router.get('/', exerciseController.getExercisesByLesson);
 router.post('/submit', userExerciseController.submitExerciseResult);
 router.post('/lesson/save-results', userExerciseController.saveLessonResults);
