@@ -1,0 +1,29 @@
+// for convert stream to listenable
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+
+///From
+///https://medium.com/@mahdi.yami3235/gorouters-authentication-with-bloc-state-management-24646953e459
+class StreamToListenable extends ChangeNotifier {
+  late final List<StreamSubscription> subscriptions;
+
+  StreamToListenable(List<Stream> streams) {
+    subscriptions = [];
+    for (var e in streams) {
+      var s = e.asBroadcastStream().listen(_tt);
+      subscriptions.add(s);
+    }
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    for (var e in subscriptions) {
+      e.cancel();
+    }
+    super.dispose();
+  }
+
+  void _tt(event) => notifyListeners();
+}

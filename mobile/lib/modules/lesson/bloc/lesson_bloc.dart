@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:language_app/data/models/challenge.dart';
+import 'package:language_app/domain/models/challenge.dart';
 
 import 'package:language_app/domain/repo/lesson_repo.dart';
 

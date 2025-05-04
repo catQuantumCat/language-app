@@ -1,14 +1,15 @@
-import 'dart:developer';
-
+import 'package:dio/dio.dart';
 import 'package:language_app/common/constants/endpoints.dart';
-import 'package:language_app/data/models/challenge.dart';
-import 'package:language_app/main.dart';
+import 'package:language_app/domain/models/challenge.dart';
+import 'package:retrofit/retrofit.dart';
 
+@RestApi()
 final class LessonRemoteDatasource {
-  Future<List<Challenge>> getChallengeList() async {
-    final response = await dio.get(Endpoints.getExercises);
+  final Dio _dio;
 
-    print(response.data);
+  LessonRemoteDatasource({required Dio dio}) : _dio = dio;
+  Future<List<Challenge>> getExerciseList() async {
+    final response = await _dio.get(Endpoints.getExercises);
 
     final List<Challenge> toReturn = [];
 

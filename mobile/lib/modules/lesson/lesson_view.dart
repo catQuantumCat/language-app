@@ -1,15 +1,18 @@
 import 'dart:developer';
 
 import 'package:animations/animations.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:language_app/common/extensions/context_extension.dart';
+
 import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
 
 import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
 import 'package:language_app/gen/assets.gen.dart';
+import 'package:language_app/main.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
@@ -45,10 +48,15 @@ class LessonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: DI here
     return BlocProvider(
       create: (context) => LessonBloc(
-          lessonRepository:
-              LessonRepoImp(remoteDatasource: LessonRemoteDatasource())),
+        lessonRepository: LessonRepoImp(
+          remoteDatasource: LessonRemoteDatasource(
+            dio: getIt<Dio>(),
+          ),
+        ),
+      ),
       child: BlocListener<LessonBloc, LessonState>(
         listener: (context, state) {
           //TODO handle later

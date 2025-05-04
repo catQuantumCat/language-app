@@ -1,15 +1,14 @@
 abstract class Endpoints {
-  static String baseApi = "http://english-app-backend2.vercel.app/api";
+  static String baseApi = "https://english-app-backend2.onrender.com/api/";
   static String getExercises =
       "$baseApi/lesson/680230982f05fe8c6a1166ed/exercises";
 
-  // static String baseApi = "http://localhost:8000";
-  // static String getExercises = "$baseApi/dummyJson2.json";
+  static String loginShort = "auth/login";
 
-  //https://english-app-backend2.onrender.com/api/lesson/680230982f05fe8c6a1166ed/exercises
-
-  // static String baseApi = "https://english-app-backend-seven.vercel.app";
-  // static String getExercises = "$baseApi/exercises";
-
-  ///https://english-app-backend-seven.vercel.app
+  static String login = "$baseApi/auth/login";
+  static String register = "$baseApi/auth/register";
 }
+
+const String loginEndpoint = "/auth/login";
+const String registerEndpoint = "/auth/register";
+const String getExercises = "lesson/680230982f05fe8c6a1166ed/exercises";

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/domain/models/challenge_option.dart';
 
 part "challenge_data.g.dart";
 
