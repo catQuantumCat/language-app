@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
-import 'package:language_app/domain/repo/user_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/auth/login/login_bloc.dart';
 

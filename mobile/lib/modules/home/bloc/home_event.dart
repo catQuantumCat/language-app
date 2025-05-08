@@ -14,3 +14,5 @@ class CompleteLesson extends HomeEvent {
   final int lessonIndex;
   CompleteLesson({required this.lessonIndex});
 }
+
+class LoadMetadataEvent extends HomeEvent {}

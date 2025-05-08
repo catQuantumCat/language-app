@@ -1,28 +1,16 @@
 part of 'auth_bloc.dart';
 
-enum AuthStatus {
-  loading,
-  authenticated,
-  unauthenticated,
-}
-
 class AuthState extends Equatable {
-  final AuthStatus status;
-  final User? user;
+  final AppStateEnum status;
 
-  const AuthState({required this.status, required this.user});
+  const AuthState({required this.status});
 
-  const AuthState.authenticated({required this.user})
-      : status = AuthStatus.authenticated;
+  const AuthState.authenticated() : status = AppStateEnum.authenticated;
 
-  const AuthState.unauthenticated()
-      : user = null,
-        status = AuthStatus.unauthenticated;
+  const AuthState.unauthenticated() : status = AppStateEnum.unauthenticated;
 
-  const AuthState.loading()
-      : status = AuthStatus.loading,
-        user = null;
+  const AuthState.loading() : status = AppStateEnum.initial;
 
   @override
-  List<Object?> get props => [status, user];
+  List<Object?> get props => [status];
 }

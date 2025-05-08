@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:language_app/data/models/register_model.dart';
-import 'package:language_app/domain/models/user.dart';
-import 'package:language_app/domain/repo/user_repo.dart';
+
+import 'package:language_app/domain/repos/user_repo.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';

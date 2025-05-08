@@ -134,20 +134,4 @@ class _ChoiceListState extends State<ChoiceList> {
         ? textChoices()
         : photoChoices();
   }
-
-  Color _getColorButtonColor(AnswerStatus answerStatus, bool isSelected) {
-    if (isSelected) {
-      switch (answerStatus) {
-        case AnswerStatus.correct:
-          return context.colorTheme.onCorrect;
-
-        case AnswerStatus.wrong:
-          return context.colorTheme.onWrong;
-
-        case AnswerStatus.none:
-          return context.colorTheme.onSelection;
-      }
-    }
-    return Colors.white;
-  }
 }

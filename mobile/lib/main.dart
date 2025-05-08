@@ -6,11 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:language_app/common/constants/storage_keys.dart';
+import 'package:language_app/common/enums/auth_state_enum.dart';
 import 'package:language_app/configs/di/dependency_injection.dart';
 import 'package:language_app/configs/inteceptors/dio_inteceptor.dart';
-import 'package:language_app/configs/router/go_router.dart';
+import 'package:language_app/configs/router/app_router.dart';
 import 'package:language_app/data/dummy/dummy_data.dart';
-import 'package:language_app/domain/repo/user_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:language_app/modules/home/home_view.dart';
 import 'package:language_app/modules/navigation/navigation_view.dart';
@@ -41,8 +42,12 @@ class MyApp extends StatelessWidget {
       create: (context) => AuthBloc(userRepo: getIt.get<UserRepo>()),
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          if (state.status == AuthStatus.loading) {
-            return CircularProgressIndicator();
+          if (state.status == AppStateEnum.initial) {
+            MaterialApp(
+              home: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
@@ -50,7 +55,7 @@ class MyApp extends StatelessWidget {
                     colorTheme: ColorTheme.light,
                     buttonTheme: CustomButtonTheme.palette(ColorTheme.light))
                 .themeData,
-            routerConfig: AppRouter.getRouter(context.read<AuthBloc>()),
+            routerConfig: AppRouter(authBloc: context.read<AuthBloc>()).router,
           );
         },
       ),

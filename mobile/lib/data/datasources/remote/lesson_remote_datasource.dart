@@ -3,20 +3,13 @@ import 'package:language_app/common/constants/endpoints.dart';
 import 'package:language_app/domain/models/challenge.dart';
 import 'package:retrofit/retrofit.dart';
 
+part 'lesson_remote_datasource.g.dart';
+
 @RestApi()
-final class LessonRemoteDatasource {
-  final Dio _dio;
+abstract class LessonRemoteDatasource {
+  factory LessonRemoteDatasource(Dio dio, {String? baseUrl}) =
+      _LessonRemoteDatasource;
 
-  LessonRemoteDatasource({required Dio dio}) : _dio = dio;
-  Future<List<Challenge>> getExerciseList() async {
-    final response = await _dio.get(Endpoints.getExercises);
-
-    final List<Challenge> toReturn = [];
-
-    for (final d in response.data) {
-      toReturn.add(Challenge.fromJson(d));
-    }
-
-    return toReturn;
-  }
+  @GET(getExercises)
+  Future<List<Challenge>> getExerciseList();
 }

@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:language_app/common/enums/auth_state_enum.dart';
 
-import 'package:language_app/domain/models/user.dart';
-import 'package:language_app/domain/repo/user_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -22,28 +22,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onInit(InitEvent event, Emitter<AuthState> emit) async {
-    try {
-      final User? user = await _userRepo.getUserInfo();
-      final String? token = await _userRepo.getToken();
-
-      // Only authenticate if both user and token exist
-      if (user != null && token != null) {
-        emit(AuthState.authenticated(user: user));
-      }
-    } catch (e) {
-      // User info not found or other error, remain unauthenticated
-      log('No stored user credentials found: ${e.toString()}',
-          name: 'AuthBloc');
-      emit(AuthState.unauthenticated());
-    }
-
-    await emit.forEach(await _userRepo.getUserInfoStream(),
+    await emit.forEach(_userRepo.watchAppState(),
         onData: (data) {
-          log(data?.email.toString() ?? "null", name: "on token data");
-          if (data == null) {
-            return AuthState.unauthenticated();
+          log(data.toString(), name: "App state");
+          switch (data) {
+            case AppStateEnum.initial:
+              return AuthState.loading();
+            case AppStateEnum.authenticated:
+              return AuthState.authenticated();
+            case AppStateEnum.unauthenticated:
+              return AuthState.unauthenticated();
           }
-          return AuthState.authenticated(user: data);
         },
         onError: (error, stackTrace) => AuthState.unauthenticated());
   }
@@ -52,17 +41,4 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _userRepo.logout();
     emit(AuthState.unauthenticated());
   }
-
-  //TODO: remove before commit
-
-  // void _changeAuthState(
-  //   User? user,
-  //   Emitter<AuthState> emit,
-  // ) {
-  //   if (user == null) {
-  //     emit(const AuthState.unauthenticated());
-  //   } else {
-  //     emit(AuthState.authenticated(user: user));
-  //   }
-  // }
 }

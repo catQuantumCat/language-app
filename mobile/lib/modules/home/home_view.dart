@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/domain/models/lesson.dart';
 import 'package:language_app/data/models/unit.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/gen/assets.gen.dart';
-import 'package:language_app/modules/auth/bloc/auth_bloc.dart';
+import 'package:language_app/main.dart';
 import 'package:language_app/modules/home/bloc/home_bloc.dart';
 import 'package:language_app/modules/home/widgets/header_widget.dart';
 import 'package:language_app/modules/home/widgets/info_row.dart';
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeBloc(),
+      create: (context) => HomeBloc(userRepo: getIt<UserRepo>()),
       child: HomeView(
         unit: unit,
       ),
@@ -82,7 +83,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = context.read<AuthBloc>().state.user;
     return SafeArea(
       minimum: EdgeInsets.symmetric(horizontal: 20),
 
@@ -95,8 +95,8 @@ class _HomeViewState extends State<HomeView> {
               InfoRow(
                   countryFlag: Assets.france.svg(),
                   hasTodayStreak: true,
-                  heartCount: 3,
-                  streakCount: 2),
+                  heartCount: state.heartCount,
+                  streakCount: state.streakCount),
               SizedBox(height: 8),
               HeaderWidget(unitIndex: _currentIndexNotifier),
               Expanded(

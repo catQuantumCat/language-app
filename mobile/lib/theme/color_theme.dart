@@ -26,6 +26,7 @@ final class RawColors {
 class ColorTheme extends ThemeExtension<ColorTheme>
     with _$ColorThemeTailorMixin {
   //Text
+  @override
   final Color textPrimary;
 
   @override

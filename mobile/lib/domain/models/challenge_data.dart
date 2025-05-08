@@ -16,7 +16,7 @@ class TranslateChallengeData extends ChallengeData<String> {
   String translateWord;
   @override
   bool checkAnswer(userAnswer) {
-    return acceptedAnswer.contains(userAnswer.toLowerCase());
+    return acceptedAnswer.contains(userAnswer);
   }
 
   factory TranslateChallengeData.fromJson(Map<String, dynamic> json) =>

@@ -3,12 +3,16 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:language_app/common/constants/storage_keys.dart';
 import 'package:language_app/configs/service_providers/dio_provider.dart';
+import 'package:language_app/data/datasources/local/user_local_datasource.dart';
+import 'package:language_app/data/datasources/remote/language_remote_datasource.dart';
 import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
 import 'package:language_app/data/datasources/remote/user_remote_datasource.dart';
+import 'package:language_app/data/repo_imp/language_repo_imp.dart';
 import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
 import 'package:language_app/data/repo_imp/user_repo_imp.dart';
-import 'package:language_app/domain/repo/lesson_repo.dart';
-import 'package:language_app/domain/repo/user_repo.dart';
+import 'package:language_app/domain/repos/language_repo.dart';
+import 'package:language_app/domain/repos/lesson_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 
 abstract class DependencyInjection {
   static Future<void> setup(GetIt getIt) async {
@@ -28,11 +32,28 @@ abstract class DependencyInjection {
       () => UserRemoteDatasource(getIt<Dio>()),
     );
 
+    getIt.registerLazySingleton<UserLocalDatasource>(
+      () => UserLocalDatasource(userBox: getIt<Box<dynamic>>()),
+    );
+
     // Register UserRepo
     getIt.registerLazySingleton<UserRepo>(
       () => UserRepoImpl(
-        userBox: getIt<Box<dynamic>>(),
+        localDatasource: getIt<UserLocalDatasource>(),
         remoteDatasource: getIt<UserRemoteDatasource>(),
+      ),
+    );
+
+    // Register LanguageRemoteDatasource
+    getIt.registerLazySingleton<LanguageRemoteDatasource>(
+      () => LanguageRemoteDatasource(getIt<Dio>()),
+    );
+
+    // Register LanguageRepo
+    getIt.registerLazySingleton<LanguageRepo>(
+      () => LanguageRepoImpl(
+        remoteDatasource: getIt<LanguageRemoteDatasource>(),
+        userRepo: getIt<UserRepo>(),
       ),
     );
 
@@ -40,7 +61,7 @@ abstract class DependencyInjection {
 
     // Register LessonRemoteDatasource
     getIt.registerLazySingleton<LessonRemoteDatasource>(
-      () => LessonRemoteDatasource(dio: getIt<Dio>()),
+      () => LessonRemoteDatasource(getIt<Dio>()),
     );
 
     // Register LessonRepo

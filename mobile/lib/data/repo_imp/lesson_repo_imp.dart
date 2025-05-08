@@ -1,6 +1,6 @@
 import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
 import 'package:language_app/domain/models/challenge.dart';
-import 'package:language_app/domain/repo/lesson_repo.dart';
+import 'package:language_app/domain/repos/lesson_repo.dart';
 
 class LessonRepoImp implements LessonRepo {
   final LessonRemoteDatasource _remoteDatasource;

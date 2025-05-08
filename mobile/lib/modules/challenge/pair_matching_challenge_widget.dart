@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/domain/models/challenge_data.dart';

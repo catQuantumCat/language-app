@@ -17,22 +17,17 @@ class ApiInteceptor extends Interceptor {
       options.headers.addAll({HttpHeaders.authorizationHeader: key});
     }
 
-    log(options.headers.toString(), name: "onRequest");
-    log(options.uri.toString(), name: "onRequest path");
+    
+    
 
     super.onRequest(options, handler);
   }
 
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    log(response.data.toString(), name: "onResponse");
-    super.onResponse(response, handler);
-  }
+  
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     //If error is 401 -> unauthenticate
-
     if (err.response?.statusCode == 401) {
       log('Unauthorized error: ${err.response?.statusMessage}');
       _userBox.deleteAll([StorageKeys.userKey, StorageKeys.tokenKey]);

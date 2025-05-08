@@ -45,7 +45,7 @@ class LessonState extends Equatable {
       : this._(
           status: LessonStatus.finished,
           isOutOfHeart: !hasWon,
-          message: hasWon ? "You've completed this lesson" : "Failed",
+          message: !hasWon ? "You've completed this lesson" : "Failed",
         );
 
   @override
