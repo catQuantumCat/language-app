@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:language_app/modules/auth/bloc/auth_bloc.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -14,8 +16,18 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Profile"),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FilledButton(
+              onPressed: () => _onLogoutTapped(context), child: Text("Logout"))
+        ],
+      ),
     );
+  }
+
+  void _onLogoutTapped(BuildContext context) {
+    context.read<AuthBloc>().add(LogOutEvent());
   }
 }

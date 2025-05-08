@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:language_app/data/models/lesson.dart';
-import 'package:language_app/data/models/unit.dart';
+import 'package:language_app/domain/models/lesson.dart';
 import 'package:language_app/theme/color_theme.dart';
 
 class LessonList extends StatelessWidget {

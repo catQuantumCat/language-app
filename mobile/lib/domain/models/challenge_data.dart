@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/domain/models/challenge_option.dart';
 
 part "challenge_data.g.dart";
 
@@ -16,7 +16,7 @@ class TranslateChallengeData extends ChallengeData<String> {
   String translateWord;
   @override
   bool checkAnswer(userAnswer) {
-    return acceptedAnswer.contains(userAnswer.toLowerCase());
+    return acceptedAnswer.contains(userAnswer);
   }
 
   factory TranslateChallengeData.fromJson(Map<String, dynamic> json) =>

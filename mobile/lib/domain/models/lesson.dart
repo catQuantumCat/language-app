@@ -1,4 +1,4 @@
-import 'package:language_app/data/models/challenge.dart';
+import 'package:language_app/domain/models/challenge.dart';
 
 class Lesson {
   int id;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
-import 'package:language_app/data/models/challenge_data.dart';
-import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/domain/models/challenge_data.dart';
+import 'package:language_app/domain/models/challenge_option.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 
 // ignore: must_be_immutable

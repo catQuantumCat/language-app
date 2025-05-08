@@ -1,7 +1,7 @@
 import 'package:language_app/data/models/unit.dart';
-import 'package:language_app/data/models/lesson.dart';
-import 'package:language_app/data/models/challenge.dart';
-import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/domain/models/lesson.dart';
+import 'package:language_app/domain/models/challenge.dart';
+import 'package:language_app/domain/models/challenge_option.dart';
 
 List<MultipleChoiceOption> dummyChallengeOptions = [
   MultipleChoiceOption(

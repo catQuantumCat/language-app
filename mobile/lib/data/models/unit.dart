@@ -1,4 +1,4 @@
-import 'package:language_app/data/models/lesson.dart';
+import 'package:language_app/domain/models/lesson.dart';
 
 class Unit {
   int id;

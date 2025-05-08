@@ -1,15 +1,16 @@
 import 'dart:developer';
 
 import 'package:animations/animations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:language_app/common/extensions/context_extension.dart';
-import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
 
-import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
+import 'package:language_app/domain/repos/lesson_repo.dart';
 import 'package:language_app/gen/assets.gen.dart';
+import 'package:language_app/main.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
@@ -45,10 +46,11 @@ class LessonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: DI here
     return BlocProvider(
       create: (context) => LessonBloc(
-          lessonRepository:
-              LessonRepoImp(remoteDatasource: LessonRemoteDatasource())),
+        lessonRepository: getIt<LessonRepo>(),
+      ),
       child: BlocListener<LessonBloc, LessonState>(
         listener: (context, state) {
           //TODO handle later
@@ -217,9 +219,8 @@ class LessonView extends StatelessWidget {
             width: 150,
             height: 150,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: context.colorTheme.primary.withOpacity(0.2),
-            ),
+                shape: BoxShape.circle,
+                color: context.colorTheme.primary.withAlpha(127)),
             child: Center(
               child: Icon(
                 Icons.emoji_events,
@@ -232,9 +233,7 @@ class LessonView extends StatelessWidget {
 
           // Congratulation text
           Text(
-            state.status == LessonStatus.finished
-                ? 'Better luck next time!'
-                : 'Congratulations!',
+            "Lesson completed",
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

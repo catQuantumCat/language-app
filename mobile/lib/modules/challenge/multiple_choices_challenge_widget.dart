@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
-import 'package:language_app/data/models/challenge_data.dart';
-import 'package:language_app/data/models/challenge_option.dart';
+import 'package:language_app/domain/models/challenge_data.dart';
+import 'package:language_app/domain/models/challenge_option.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 
@@ -133,21 +133,5 @@ class _ChoiceListState extends State<ChoiceList> {
     return widget.choicesData.options[0].imageUrl == null
         ? textChoices()
         : photoChoices();
-  }
-
-  Color _getColorButtonColor(AnswerStatus answerStatus, bool isSelected) {
-    if (isSelected) {
-      switch (answerStatus) {
-        case AnswerStatus.correct:
-          return context.colorTheme.onCorrect;
-
-        case AnswerStatus.wrong:
-          return context.colorTheme.onWrong;
-
-        case AnswerStatus.none:
-          return context.colorTheme.onSelection;
-      }
-    }
-    return Colors.white;
   }
 }

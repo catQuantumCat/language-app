@@ -1,21 +1,54 @@
-import 'package:bloc/bloc.dart';
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:language_app/common/constants/view_state_enum.dart';
 import 'package:language_app/data/models/unit.dart';
 import 'package:language_app/data/dummy/dummy_data.dart';
+import 'package:language_app/domain/models/language.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:meta/meta.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc()
-      : super(HomeState(viewState: ViewStateEnum.initial, currentLesson: 0)) {
+  final UserRepo _userRepo;
+  HomeBloc({required UserRepo userRepo})
+      : _userRepo = userRepo,
+        super(HomeState(viewState: ViewStateEnum.initial, currentLesson: 0)) {
     on<LoadUnits>(_onLoadUnits);
     on<SelectLesson>(_onSelectLesson);
     on<CompleteLesson>(_onCompleteLesson);
+    on<LoadMetadataEvent>(_onLoadMetadata);
 
     add(LoadUnits());
+    add(LoadMetadataEvent());
+  }
+
+  Future<void> _onLoadMetadata(
+      LoadMetadataEvent event, Emitter<HomeState> emit) async {
+    log('_onLoadMetadata called');
+    emit(state.copyWith(viewState: ViewStateEnum.loading));
+    final userInfoStream = _userRepo.watchUserInfo();
+
+    await emit.forEach(
+      userInfoStream,
+      onData: (data) {
+        if (data != null) {
+          return state.copyWith(
+              streakCount: data.streak,
+              heartCount: data.hearts,
+              language:
+                  data.languages.isNotEmpty ? data.languages.first : null);
+        }
+
+        return state;
+      },
+      onError: (error, stackTrace) {
+        return HomeState.failed();
+      },
+    );
   }
 
   void _onLoadUnits(LoadUnits event, Emitter<HomeState> emit) async {
@@ -28,7 +61,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         units: units,
       ));
     } catch (e) {
-      emit(HomeState.failed(state.units));
+      emit(HomeState.failed());
     }
   }
 
@@ -37,8 +70,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onCompleteLesson(CompleteLesson event, Emitter<HomeState> emit) {
-    // In a real app, you would update the lesson completion status
-    // For now, we'll just select the next lesson
     final nextLesson = event.lessonIndex + 1;
     emit(state.copyWith(currentLesson: nextLesson));
   }

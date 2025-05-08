@@ -1,4 +1,4 @@
-import 'package:language_app/data/models/challenge_data.dart';
+import 'package:language_app/domain/models/challenge_data.dart';
 
 enum ExerciseType {
   multipleChoice("multipleChoice"),
