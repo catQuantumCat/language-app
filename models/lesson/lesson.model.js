@@ -10,34 +10,18 @@ const lessonSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    default: ''
-  },
+  
   order: {
     type: Number,
     required: true
   },
-  iconUrl: {
-    type: String,
-    default: null
-  },
+  
   experienceReward: {
     type: Number,
     default: 10
   },
-  requiredHearts: {
-    type: Number,
-    default: 1
-  },
-  timeLimit: {
-    type: Number,  // thời gian giới hạn tính bằng giây
-    default: null
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  }
+  
+  
 }, {
   timestamps: true
 });

@@ -6,48 +6,21 @@ const userMistakeSchema = new mongoose.Schema({
     ref: 'users',
     required: true
   },
-  exerciseId: {
-    type: String,
-    ref: 'exercises',
-    required: true
-  },
-  selectedOptionId: {
-    type: String,
-    ref: 'exercise_options',
-    required: true
-  },
-  correctOptionId: {
-    type: String,
-    ref: 'exercise_options',
-    required: true
-  },
   lessonId: {
     type: String,
     ref: 'lessons',
     required: true
   },
-  unitId: {
+  exerciseId: {
     type: String,
-    ref: 'units',
+    ref: 'exercises',
     required: true
-  },
-  languageId: {
-    type: String,
-    ref: 'languages',
-    required: true
-  },
-  reviewedCount: {
-    type: Number,
-    default: 0
-  },
-  lastReviewed: {
-    type: Date,
-    default: null
-  },
-  mastered: {
-    type: Boolean,
-    default: false
   }
+  
+  
+ 
+ 
+  
 }, {
   timestamps: true
 });

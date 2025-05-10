@@ -6,35 +6,23 @@ const User = require('../../models/user/user.model');
 module.exports.getUnitsByLanguage = async (req, res) => {
   try {
     const { languageId } = req.params;
-    const { userId } = req.query;
+    
 
     console.log('languageId:', languageId);
-    console.log('userId:', userId);
+    
 
     const units = await Unit.find({ languageId }).sort({ order: 1 });
     console.log('units:', units);
 
-    let userExperience = 0;
-    if (userId) {
-      const user = await User.findById(userId);
-      console.log('user:', user);
-      if (user && Array.isArray(user.languages)) {
-        const languageProgress = user.languages.find(
-          lang => lang.languageId.toString() === languageId
-        );
-        console.log('languageProgress:', languageProgress);
-        if (languageProgress) {
-          userExperience = languageProgress.experience;
-        }
-      }
-    }
+   
+    
 
     const response = units.map(unit => {
       const unitObj = unit.toObject();
       unitObj.id = unitObj._id.toString();
       delete unitObj._id;
 
-      unitObj.isUnlocked = userExperience >= unitObj.requiredExperience;
+      
 
       return unitObj;
     });

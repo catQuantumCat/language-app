@@ -11,23 +11,17 @@ const userLessonProgressSchema = new mongoose.Schema({
     ref: 'lessons',
     required: true
   },
-  completed: {
-    type: Boolean,
-    default: false
-  },
-  score: {
-    type: Number,
-    default: 0
-  },
-  totalExercises: {
-    type: Number,
-    default: 0
-  },
-  correctAnswers: {
-    type: Number,
-    default: 0
-  },
-  heartsUsed: {
+  
+  exercises:[{
+    exerciseId: {
+      type: String,
+      ref: 'exercises',
+      
+    }
+  }],
+  
+  
+  hearts: {
     type: Number,
     default: 0
   },
@@ -39,20 +33,16 @@ const userLessonProgressSchema = new mongoose.Schema({
     type: Number,  // thời gian làm bài tính bằng giây
     default: 0
   },
-  completedAt: {
-    type: Date,
-    default: null
-  },
-  attempts: {
+  streak: {
     type: Number,
     default: 0
   }
+  
 }, {
   timestamps: true
 });
 
-// Tạo index cho việc tìm kiếm nhanh
-userLessonProgressSchema.index({ userId: 1, lessonId: 1 }, { unique: true });
+
 
 const UserLessonProgress = mongoose.model('user_lesson_progress', userLessonProgressSchema);
 

@@ -9,257 +9,146 @@ const Unit = require('../../models/unit/unit.model');
 const User = require('../../models/user/user.model');
 const leaderboardController = require('../leaderboard/leaderboard.controller');
 // API lưu kết quả một bài tập
-module.exports.submitExerciseResult = async (req, res) => {
-  try {
-    const { userId, exerciseId, selectedOptionId, timeTaken } = req.body;
-    
-    // Kiểm tra dữ liệu đầu vào
-    if (!userId || !exerciseId || !selectedOptionId) {
-      return res.status(400).json({ message: 'Thiếu thông tin cần thiết' });
-    }
 
-    // Kiểm tra exerciseId có tồn tại không
-    const exercise = await Exercise.findById(exerciseId);
-    if (!exercise) {
-      return res.status(404).json({ message: 'Không tìm thấy bài tập' });
-    }
-
-    // Kiểm tra selectedOptionId có tồn tại không
-    const selectedOption = await ExerciseOption.findById(selectedOptionId);
-    if (!selectedOption) {
-      return res.status(404).json({ message: 'Không tìm thấy đáp án đã chọn' });
-    }
-
-    // Kiểm tra đáp án đúng hay sai
-    const isCorrect = selectedOption.correct === true;
-
-    // Lấy đáp án đúng
-    const correctOption = await ExerciseOption.findOne({ 
-      exerciseId: exerciseId, 
-      correct: true 
-    });
-
-    // Lưu kết quả bài tập
-    const userExerciseResult = new UserExerciseResult({
-      userId,
-      exerciseId,
-      selectedOptionId,
-      isCorrect,
-      lessonId: exercise.lessonId,
-      timeTaken: timeTaken || 0
-    });
-
-    await userExerciseResult.save();
-
-    // Nếu sai, lưu vào bảng mistakes để xem lại
-    if (!isCorrect) {
-      // Lấy thông tin unit và language
-      const lesson = await Lesson.findById(exercise.lessonId);
-      if (lesson) {
-        const unit = await Unit.findById(lesson.unitId);
-        if (unit) {
-          const userMistake = new UserMistake({
-            userId,
-            exerciseId,
-            selectedOptionId,
-            correctOptionId: correctOption._id,
-            lessonId: exercise.lessonId,
-            unitId: lesson.unitId,
-            languageId: unit.languageId
-          });
-          await userMistake.save();
-        }
-      }
-    }
-
-    res.status(200).json({
-      isCorrect,
-      correctOptionId: correctOption._id,
-      message: isCorrect ? 'Chính xác!' : 'Không chính xác!'
-    });
-  } catch (error) {
-    console.error('Lỗi khi nộp kết quả bài tập:', error);
-    res.status(500).json({ message: 'Đã xảy ra lỗi khi lưu kết quả' });
-  }
-};
 
 // API lưu kết quả sau khi hoàn thành bài học
 module.exports.saveLessonResults = async (req, res) => {
   try {
-    const { userId, lessonId, results, timeSpent } = req.body;
-    
+    const { 
+      userId, 
+      lessonId, 
+      exercises,
+      hearts, 
+      experienceGained, 
+      timeSpent, 
+      streak
+    } = req.body;
+
     // Kiểm tra dữ liệu đầu vào
-    if (!userId || !lessonId || !results || !Array.isArray(results)) {
-      return res.status(400).json({ message: 'Thiếu thông tin cần thiết' });
-    }
-
-    // Lấy thông tin bài học
-    const lesson = await Lesson.findById(lessonId);
-    if (!lesson) {
-      return res.status(404).json({ message: 'Không tìm thấy bài học' });
-    }
-
-    // Lấy thông tin unit và language
-    const unit = await Unit.findById(lesson.unitId);
-    if (!unit) {
-      return res.status(404).json({ message: 'Không tìm thấy unit' });
-    }
-
-    // Tính toán số câu đúng
-    const totalExercises = results.length;
-    const correctAnswers = results.filter(result => result.isCorrect).length;
-    const score = Math.round((correctAnswers / totalExercises) * 100);
-    
-    // Tính số tim đã sử dụng
-    const heartsUsed = totalExercises - correctAnswers;
-    
-    // Tính kinh nghiệm nhận được
-    const experienceGained = Math.round((correctAnswers / totalExercises) * lesson.experienceReward);
-
-    // Cập nhật tim và kinh nghiệm cho user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
-    }
-    
-    // Trừ tim
-    user.hearts = Math.max(0, user.hearts - heartsUsed);
-    
-    // Cộng kinh nghiệm
-    user.experience += experienceGained;
-    
-    // Cập nhật kinh nghiệm cho ngôn ngữ cụ thể
-    const languageIndex = user.languages.findIndex(
-      lang => lang.languageId.toString() === unit.languageId.toString()
-    );
-    
-    if (languageIndex !== -1) {
-      user.languages[languageIndex].experience += experienceGained;
-    } else {
-      user.languages.push({
-        languageId: unit.languageId,
-        level: 0,
-        experience: experienceGained
+    if (!userId || !lessonId || !exercises || !Array.isArray(exercises)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Thiếu thông tin bắt buộc hoặc định dạng exercises không hợp lệ' 
       });
     }
-    
-    // Cập nhật streak nếu là ngày mới
-    const today = new Date().setHours(0, 0, 0, 0);
-    const lastActiveDay = new Date(user.lastActive).setHours(0, 0, 0, 0);
-    
-    if (today > lastActiveDay) {
-      user.streak += 1;
-    }
-    
-    user.lastActive = new Date();
-    
-    await user.save();
 
-    // Lưu tiến độ bài học
-    const existingProgress = await UserLessonProgress.findOne({ userId, lessonId });
-    
-    if (existingProgress) {
-      existingProgress.completed = true;
-      existingProgress.score = Math.max(existingProgress.score, score);
-      existingProgress.totalExercises = totalExercises;
-      existingProgress.correctAnswers = correctAnswers;
-      existingProgress.heartsUsed += heartsUsed;
-      existingProgress.experienceGained += experienceGained;
-      existingProgress.timeSpent += timeSpent || 0;
-      existingProgress.completedAt = new Date();
-      existingProgress.attempts += 1;
-      
-      await existingProgress.save();
-    } else {
-      const newProgress = new UserLessonProgress({
-        userId,
-        lessonId,
-        completed: true,
-        score,
-        totalExercises,
-        correctAnswers,
-        heartsUsed,
-        experienceGained,
-        timeSpent: timeSpent || 0,
-        completedAt: new Date(),
-        attempts: 1
-      });
-      
-      await newProgress.save();
-    }
-
-    // Lưu kết quả từng bài tập
-    const savePromises = results.map(result => {
-      const userExerciseResult = new UserExerciseResult({
-        userId,
-        exerciseId: result.exerciseId,
-        selectedOptionId: result.selectedOptionId,
-        isCorrect: result.isCorrect,
-        lessonId,
-        timeTaken: result.timeTaken || 0
-      });
-      return userExerciseResult.save();
-    });
-
-    await Promise.all(savePromises);
-
-    // Lưu các câu sai vào bảng mistakes
-    const incorrectResults = results.filter(result => !result.isCorrect);
-    
-    if (incorrectResults.length > 0) {
-      for (const result of incorrectResults) {
-        // Lấy đáp án đúng
-        const correctOption = await ExerciseOption.findOne({
-          exerciseId: result.exerciseId,
-          correct: true
-        });
-        
-        if (correctOption) {
-          const userMistake = new UserMistake({
-            userId,
-            exerciseId: result.exerciseId,
-            selectedOptionId: result.selectedOptionId,
-            correctOptionId: correctOption._id,
-            lessonId,
-            unitId: lesson.unitId,
-            languageId: unit.languageId
+    // Kiểm tra từng phần tử trong mảng exercises
+    if(exercises.length > 0) {
+      for (const exercise of exercises) {
+        if (!exercise.exerciseId) {
+          return res.status(400).json({
+            success: false,
+            message: 'Mỗi bài tập phải có exerciseId'
           });
-          
-          await userMistake.save();
         }
       }
     }
 
-    // Cập nhật bảng xếp hạng
-    if (experienceGained > 0) {
-      await leaderboardController.updateLeaderboard(userId, unit.languageId, experienceGained);
+    // 2. Cập nhật thông tin người dùng (tim, XP, streak)
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy người dùng'
+      });
     }
 
-    // Kiểm tra xem có bài học tiếp theo không
-    const nextLesson = await Lesson.findOne({
-      unitId: lesson.unitId,
-      order: { $gt: lesson.order },
-      isActive: true
-    }).sort({ order: 1 });
+    // Cập nhật tim, XP và streak của người dùng
+    user.hearts = hearts;
+    user.experience = (user.experience || 0) + experienceGained;
+    user.streak = streak;
+    
+    await user.save();
 
-    res.status(200).json({
-      totalExercises,
-      correctAnswers,
-      score,
-      heartsUsed,
-      experienceGained,
-      heartsRemaining: user.hearts,
-      completed: true,
-      nextLessonId: nextLesson ? nextLesson._id : null,
-      message: 'Đã lưu kết quả bài học thành công'
+    // 1. Tìm hoặc tạo mới tiến trình bài học
+    let lessonProgress = await UserLessonProgress.findOne({ userId, lessonId });
+    
+    if (!lessonProgress) {
+      // Nếu không tìm thấy, tạo mới
+      lessonProgress = new UserLessonProgress({
+        userId,
+        lessonId,
+        exercises: [], // Khởi tạo mảng rỗng
+        hearts,
+        experienceGained: (experienceGained || 0),
+        timeSpent,
+        streak
+      });
+    } else {
+      // Nếu tìm thấy, cập nhật các thông tin khác
+      lessonProgress.hearts = hearts;
+      lessonProgress.experienceGained = (experienceGained || 0);
+      lessonProgress.timeSpent = timeSpent;
+      lessonProgress.streak = streak;
+    }
+
+    // Thêm các bài tập mới vào mảng exercises
+    for (const exercise of exercises) {
+      // Kiểm tra xem bài tập đã tồn tại trong mảng chưa
+      const existingIndex = lessonProgress.exercises.findIndex(
+        e => e.exerciseId === exercise.exerciseId
+      );
+
+      if (existingIndex === -1) {
+        // Nếu chưa tồn tại, thêm mới vào mảng
+        lessonProgress.exercises.push({
+          exerciseId: exercise.exerciseId
+        });
+      }
+      // Không cần cập nhật nếu đã tồn tại vì chỉ có exerciseId
+    }
+
+    // Lưu tiến trình bài học
+    await lessonProgress.save();
+
+    // Lưu lỗi sai cho mỗi bài tập
+    const savedMistakes = [];
+    for (const exercise of exercises) {
+      try {
+        const mistake = new UserMistake({
+          userId,
+          lessonId,
+          exerciseId: exercise.exerciseId,
+          timestamp: new Date()
+        });
+        
+        await mistake.save();
+        savedMistakes.push(mistake);
+      } catch (exerciseError) {
+        console.error(`Lỗi khi xử lý bài tập ${exercise.exerciseId}:`, exerciseError);
+        // Tiếp tục với bài tập tiếp theo
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Đã lưu kết quả bài học thành công',
+      data: {
+        lessonProgress,
+        mistakes: savedMistakes,
+        updatedUser: {
+          hearts: user.hearts,
+          experience: user.experience,
+          streak: user.streak
+        }
+      }
     });
+    
   } catch (error) {
     console.error('Lỗi khi lưu kết quả bài học:', error);
-    res.status(500).json({ message: 'Đã xảy ra lỗi khi lưu kết quả' });
+    return res.status(500).json({
+      success: false,
+      message: 'Đã xảy ra lỗi khi lưu kết quả bài học',
+      error: error.message
+    });
   }
 };
 
-// API lấy danh sách câu sai của người dùng
+
+
+
+
 // API lấy danh sách câu sai của người dùng (tiếp)
 module.exports.getUserMistakes = async (req, res) => {
     try {
@@ -339,38 +228,7 @@ module.exports.getUserMistakes = async (req, res) => {
     }
   };
   
-  // API đánh dấu đã xem lại câu sai
-  module.exports.reviewMistake = async (req, res) => {
-    try {
-      const { mistakeId } = req.params;
-      
-      const mistake = await UserMistake.findById(mistakeId);
-      if (!mistake) {
-        return res.status(404).json({ message: 'Không tìm thấy câu sai' });
-      }
-      
-      mistake.reviewedCount += 1;
-      mistake.lastReviewed = new Date();
-      
-      // Nếu đã xem lại >= 3 lần, đánh dấu là đã thành thạo
-      if (mistake.reviewedCount >= 3) {
-        mistake.mastered = true;
-      }
-      
-      await mistake.save();
-      
-      res.status(200).json({
-        id: mistake._id.toString(),
-        reviewedCount: mistake.reviewedCount,
-        lastReviewed: mistake.lastReviewed,
-        mastered: mistake.mastered,
-        message: 'Đã cập nhật thông tin xem lại'
-      });
-    } catch (error) {
-      console.error('Lỗi khi cập nhật thông tin xem lại:', error);
-      res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật dữ liệu' });
-    }
-  };
+  
   
   // API xem chi tiết một câu sai
   module.exports.getMistakeDetail = async (req, res) => {
@@ -434,3 +292,226 @@ module.exports.getUserMistakes = async (req, res) => {
     }
   };
   
+  // Thêm vào file User_exercise.controller.js
+
+// API làm lại danh sách câu hỏi sai
+module.exports.retryMistakes = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { languageId, limit } = req.query;
+    
+    // Kiểm tra quyền truy cập
+    if (req.user.id !== userId) {
+      return res.status(403).json({ message: 'Không có quyền truy cập dữ liệu của người dùng khác' });
+    }
+    
+    // Xây dựng query
+    const query = { userId, mastered: false };
+    if (languageId) query.languageId = languageId;
+    
+    // Lấy danh sách lỗi, sắp xếp theo thời gian tạo gần nhất
+    let mistakesQuery = UserMistake.find(query)
+      .sort({ createdAt: -1 });
+    
+    if (limit) {
+      mistakesQuery = mistakesQuery.limit(parseInt(limit));
+    }
+    
+    const mistakes = await mistakesQuery.exec();
+    
+    // Lấy thông tin chi tiết cho mỗi lỗi để tạo bài tập ôn tập
+    const exercisesFromMistakes = await Promise.all(mistakes.map(async (mistake) => {
+      // Lấy thông tin exercise
+      const exercise = await Exercise.findById(mistake.exerciseId);
+      if (!exercise) return null;
+      
+      // Lấy tất cả các đáp án của bài tập
+      const options = await ExerciseOption.find({ exerciseId: mistake.exerciseId });
+      
+      // Định dạng lại exercise để trả về
+      const exerciseObj = exercise.toObject();
+      exerciseObj.id = exerciseObj._id.toString();
+      delete exerciseObj._id;
+      
+      // Xử lý khác nhau tùy theo loại bài tập
+      if (exerciseObj.exerciseType === 'sentenceOrder') {
+        // Định dạng lại options
+        const formattedOptions = options.map(option => {
+          const optionObject = option.toObject();
+          optionObject.id = optionObject._id.toString();
+          delete optionObject._id;
+          
+          // Lọc các trường null
+          Object.keys(optionObject).forEach(key => {
+            if (optionObject[key] === null) {
+              delete optionObject[key];
+            }
+          });
+          
+          return optionObject;
+        });
+        
+        // Thêm sentenceLength vào data
+        const data = {
+          options: formattedOptions,
+          sentenceLength: formattedOptions.length
+        };
+
+        return {
+          ...exerciseObj,
+          data: data,
+          mistakeId: mistake._id.toString()
+        };
+      } 
+      else if (exerciseObj.exerciseType === 'translateWritten') {
+        if (options.length > 0) {
+          // Lấy thông tin từ option đầu tiên
+          const option = options[0].toObject();
+          
+          // Trả về data không bọc trong mảng options
+          return {
+            ...exerciseObj,
+            data: {
+              acceptedAnswer: option.acceptedAnswer || [],
+              translateWord: option.translateWord || ""
+            },
+            mistakeId: mistake._id.toString()
+          };
+        } else {
+          return {
+            ...exerciseObj,
+            data: {
+              acceptedAnswer: [],
+              translateWord: ""
+            },
+            mistakeId: mistake._id.toString()
+          };
+        }
+      }
+      else {
+        // Định dạng lại options
+        const formattedOptions = options.map(option => {
+          const optionObject = option.toObject();
+          optionObject.id = optionObject._id.toString();
+          delete optionObject._id;
+          
+          // Lọc các trường null
+          Object.keys(optionObject).forEach(key => {
+            if (optionObject[key] === null) {
+              delete optionObject[key];
+            }
+          });
+          
+          return optionObject;
+        });
+
+        return {
+          ...exerciseObj,
+          data: {
+            options: formattedOptions
+          },
+          mistakeId: mistake._id.toString()
+        };
+      }
+    }));
+    
+    // Lọc bỏ các exercise null
+    const validExercises = exercisesFromMistakes.filter(ex => ex !== null);
+    
+    res.status(200).json({
+      totalExercises: validExercises.length,
+      exercises: validExercises
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách câu hỏi sai để làm lại:', error);
+    res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy dữ liệu' });
+  }
+};
+
+// API lưu kết quả sau khi làm lại các câu hỏi sai
+module.exports.saveMistakesResults = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { results, timeSpent } = req.body;
+    
+    // Kiểm tra quyền truy cập
+    if (req.user.id !== userId) {
+      return res.status(403).json({ message: 'Không có quyền truy cập dữ liệu của người dùng khác' });
+    }
+    
+    // Kiểm tra dữ liệu đầu vào
+    if (!results || !Array.isArray(results)) {
+      return res.status(400).json({ message: 'Thiếu thông tin kết quả' });
+    }
+    
+    // Tính toán số câu đúng
+    const totalExercises = results.length;
+    const correctAnswers = results.filter(result => result.isCorrect).length;
+    const score = Math.round((correctAnswers / totalExercises) * 100);
+    
+    // Cập nhật trạng thái cho các câu hỏi sai
+    for (const result of results) {
+      if (result.mistakeId && result.isCorrect) {
+        const mistake = await UserMistake.findById(result.mistakeId);
+        if (mistake) {
+          mistake.reviewedCount += 1;
+          mistake.lastReviewed = new Date();
+          
+          // Nếu đã xem lại và làm đúng >= 2 lần, đánh dấu là đã thành thạo
+          if (mistake.reviewedCount >= 2) {
+            mistake.mastered = true;
+          }
+          
+          await mistake.save();
+        }
+      }
+    }
+    
+    // Cộng kinh nghiệm cho người dùng (cộng ít hơn so với làm bài thường)
+    const experienceGained = Math.round((correctAnswers / totalExercises) * 5); // 5 XP cho mỗi bài ôn tập
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    }
+    
+    // Cộng kinh nghiệm
+    user.experience += experienceGained;
+    
+    // Cập nhật kinh nghiệm cho ngôn ngữ cụ thể (nếu có)
+    if (results.length > 0 && results[0].languageId) {
+      const languageId = results[0].languageId;
+      const languageIndex = user.languages.findIndex(
+        lang => lang.languageId.toString() === languageId
+      );
+      
+      if (languageIndex !== -1) {
+        user.languages[languageIndex].experience += experienceGained;
+      }
+    }
+    
+    // Cập nhật streak nếu là ngày mới
+    const today = new Date().setHours(0, 0, 0, 0);
+    const lastActiveDay = new Date(user.lastActive).setHours(0, 0, 0, 0);
+    
+    if (today > lastActiveDay) {
+      user.streak += 1;
+    }
+    
+    user.lastActive = new Date();
+    
+    await user.save();
+    
+    res.status(200).json({
+      totalExercises,
+      correctAnswers,
+      score,
+      experienceGained,
+      message: 'Đã lưu kết quả ôn tập thành công'
+    });
+  } catch (error) {
+    console.error('Lỗi khi lưu kết quả ôn tập:', error);
+    res.status(500).json({ message: 'Đã xảy ra lỗi khi lưu kết quả' });
+  }
+};
+

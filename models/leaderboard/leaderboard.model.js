@@ -6,19 +6,8 @@ const leaderboardSchema = new mongoose.Schema({
     ref: 'users',
     required: true
   },
-  languageId: {
-    type: String,
-    ref: 'languages',
-    required: true
-  },
-  weekStartDate: {
-    type: Date,
-    required: true
-  },
-  weekEndDate: {
-    type: Date,
-    required: true
-  },
+  
+ 
   experienceGained: {
     type: Number,
     default: 0

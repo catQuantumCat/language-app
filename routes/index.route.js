@@ -8,6 +8,7 @@ const leaderboardRoutes = require('./leaderboard/leaderboard.route');
 const notificationRoutes = require('./notification/notification.route');
 
 module.exports = (app) => {
+ 
   app.use('/api/lesson/:lessonId/exercises', exerciseRoutes);
   app.use('/api/languages', languageRoutes);
   app.use('/api/languages/:languageId/units', unitRoutes);

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+// Sửa lại schema trong User.model.js
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -35,22 +37,20 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  lastActive: {
-    type: Date,
-    default: Date.now
-  },
+  
+  
   languages: [{
     languageId: {
       type: String,
       ref: 'languages'
     },
-    level: {
-      type: Number,
-      default: 0
+    lessonId:{
+      type: String,
+      ref: 'lessons'
     },
-    experience: {
+    order:{
       type: Number,
-      default: 0
+      default: 1
     }
   }]
 }, {

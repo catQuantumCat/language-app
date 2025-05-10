@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const exerciseController = require('../../controllers/exercise/exercise.controller');
-const userExerciseController = require('../../controllers/exercise/user_exercise.controller');
 
+const authMiddleware = require('../../middlewares/auth/auth.middleware');
 
-
-// Route mới
 /**
  * @swagger
  * /lesson/{lessonId}/exercises:
  *   get:
  *     summary: Lấy danh sách bài tập theo lesson
+ *     tags: [Exercises]
  *     parameters:
  *       - in: path
  *         name: lessonId
@@ -20,12 +19,17 @@ const userExerciseController = require('../../controllers/exercise/user_exercise
  *     responses:
  *       200:
  *         description: Danh sách bài tập
+ *       500:
+ *         description: Lỗi server
  */
 router.get('/', exerciseController.getExercisesByLesson);
-router.post('/submit', userExerciseController.submitExerciseResult);
-router.post('/lesson/save-results', userExerciseController.saveLessonResults);
-router.get('/mistakes/:userId', userExerciseController.getUserMistakes);
-router.get('/mistakes/detail/:mistakeId', userExerciseController.getMistakeDetail);
-router.post('/mistakes/review/:mistakeId', userExerciseController.reviewMistake);
+
+
+
+
+
+
+
+
 
 module.exports = router;
