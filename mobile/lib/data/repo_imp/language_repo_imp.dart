@@ -21,10 +21,10 @@ class LanguageRepoImpl implements LanguageRepo {
     // await _remoteDatasource.addUserLanguage({'languageId': languageId});
 
     final User? user = _userRepo.getUserInfo();
-
+    //TODO: get flag url from remote datasource
     if (user != null) {
       final data = user.copyWith(languages: [
-        Language(languageId: languageId, level: 0, experience: 0)
+        Language(languageId: languageId, level: 0, experience: 0, flagUrl: '')
       ]);
       await _userRepo.setUserInfo(data: data);
     }

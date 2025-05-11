@@ -7,11 +7,13 @@ part 'language.g.dart';
 @JsonSerializable()
 class Language {
   final String languageId;
+  final String flagUrl;
   final int level;
   final int experience;
 
-  Language(
+  const Language(
       {required this.languageId,
+      required this.flagUrl,
       required this.level,
       required this.experience});
 

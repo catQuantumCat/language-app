@@ -8,12 +8,14 @@ part of 'language.dart';
 
 Language _$LanguageFromJson(Map<String, dynamic> json) => Language(
       languageId: json['languageId'] as String,
+      flagUrl: json['flagUrl'] as String,
       level: (json['level'] as num).toInt(),
       experience: (json['experience'] as num).toInt(),
     );
 
 Map<String, dynamic> _$LanguageToJson(Language instance) => <String, dynamic>{
       'languageId': instance.languageId,
+      'flagUrl': instance.flagUrl,
       'level': instance.level,
       'experience': instance.experience,
     };

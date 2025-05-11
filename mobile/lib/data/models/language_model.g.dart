@@ -9,13 +9,15 @@ part of 'language_model.dart';
 LanguageModel _$LanguageModelFromJson(Map<String, dynamic> json) =>
     LanguageModel(
       languageId: json['languageId'] as String,
-      level: (json['level'] as num).toInt(),
-      experience: (json['experience'] as num).toInt(),
+      flagUrl: json['flagUrl'] as String,
+      order: (json['order'] as num).toInt(),
+      lessonOrder: (json['lessonOrder'] as num).toInt(),
     );
 
 Map<String, dynamic> _$LanguageModelToJson(LanguageModel instance) =>
     <String, dynamic>{
       'languageId': instance.languageId,
-      'level': instance.level,
-      'experience': instance.experience,
+      'flagUrl': instance.flagUrl,
+      'order': instance.order,
+      'lessonOrder': instance.lessonOrder,
     };
