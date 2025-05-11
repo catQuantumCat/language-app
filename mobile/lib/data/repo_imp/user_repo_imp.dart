@@ -92,13 +92,33 @@ class UserRepoImpl implements UserRepo {
   }
 
   @override
-  User? getUserInfo() {
-    return _localDatasource.getUserInfo();
+  Future<User?> getUserInfo() async {
+    final localUser = _localDatasource.getUserInfo();
+    log(localUser.toString(), name: "Local User");
+    if (localUser != null) {
+      return localUser;
+    }
+
+    try {
+      final remoteUser = await _remoteDatasource.getProfile();
+      await _localDatasource.setUserInfo(data: remoteUser);
+      return remoteUser;
+    } catch (e) {
+      // Handle potential network errors
+      return null;
+    }
   }
 
   @override
   Future<void> setUserInfo({required User data}) async {
     await _localDatasource.setUserInfo(data: data);
+  }
+
+  @override
+  Future<void> triggerUserInfoUpdate() async {
+    final remoteUser = await _remoteDatasource.getProfile();
+    await _localDatasource.setUserInfo(data: remoteUser);
+    _userInfoController.add(remoteUser);
   }
 
   @override

@@ -14,21 +14,23 @@ import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/domain/repos/lesson_repo.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/domain/use_cases/home_screen_fetch_use_case.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class DependencyInjection {
   static Future<void> setup(GetIt getIt) async {
-    // Register Box
     getIt.registerSingletonAsync<Box<dynamic>>(
       () async => await Hive.openBox(StorageKeys.userBox),
     );
 
-    // Register Dio with dependency on Box
+    getIt.registerSingletonAsync<SharedPreferences>(
+      () async => await SharedPreferences.getInstance(),
+    );
+
     getIt.registerSingletonAsync<Dio>(
       () async => DioProvider(await getIt.getAsync<Box<dynamic>>()).dio,
       dependsOn: [Box],
     );
 
-    // Register UserRemoteDatasource
     getIt.registerLazySingleton<UserRemoteDatasource>(
       () => UserRemoteDatasource(getIt<Dio>()),
     );
@@ -37,7 +39,6 @@ abstract class DependencyInjection {
       () => UserLocalDatasource(userBox: getIt<Box<dynamic>>()),
     );
 
-    // Register UserRepo
     getIt.registerLazySingleton<UserRepo>(
       () => UserRepoImpl(
         localDatasource: getIt<UserLocalDatasource>(),
@@ -45,41 +46,34 @@ abstract class DependencyInjection {
       ),
     );
 
-    // Register HomeScreenFetchUseCase
     getIt.registerLazySingleton<HomeScreenFetchUseCase>(
       () => HomeScreenFetchUseCase(
+        prefs: getIt<SharedPreferences>(),
         lessonRepo: getIt<LessonRepo>(),
       ),
     );
 
-    // Register LanguageRemoteDatasource
     getIt.registerLazySingleton<LanguageRemoteDatasource>(
       () => LanguageRemoteDatasource(getIt<Dio>()),
     );
 
-    // Register LanguageRepo
     getIt.registerLazySingleton<LanguageRepo>(
       () => LanguageRepoImpl(
         remoteDatasource: getIt<LanguageRemoteDatasource>(),
         userRepo: getIt<UserRepo>(),
       ),
     );
-
-    // Register AuthBloc
-
-    // Register LessonRemoteDatasource
+    
     getIt.registerLazySingleton<LessonRemoteDatasource>(
       () => LessonRemoteDatasource(getIt<Dio>()),
     );
 
-    // Register LessonRepo
     getIt.registerLazySingleton<LessonRepo>(
       () => LessonRepoImp(
         remoteDatasource: getIt<LessonRemoteDatasource>(),
       ),
     );
 
-    // Wait for async dependencies to be ready
     await getIt.allReady();
   }
 }

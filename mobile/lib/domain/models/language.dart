@@ -19,5 +19,5 @@ class Language {
 
   Map<String, dynamic> toJson() => _$LanguageToJson(this);
 
-  factory Language.fromMap(Map<String, dynamic> map) => _$LanguageFromJson(map);
+  factory Language.fromJson(Map<String, dynamic> map) => _$LanguageFromJson(map);
 }

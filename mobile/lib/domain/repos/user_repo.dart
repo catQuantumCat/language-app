@@ -18,7 +18,7 @@ abstract class UserRepo {
   Future<String?> getToken();
 
   //get user info
-  User? getUserInfo();
+  Future<User?> getUserInfo();
 
   Stream<User?> watchUserInfo();
   Stream<AppStateEnum> watchAppState();
@@ -27,4 +27,6 @@ abstract class UserRepo {
   Future<void> setUserInfo({required User data});
 
   Future<void> editUserInfo({required UserDTO data});
+
+  Future<void> triggerUserInfoUpdate();
 }

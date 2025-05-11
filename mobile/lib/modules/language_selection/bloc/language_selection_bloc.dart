@@ -67,10 +67,13 @@ class LanguageSelectionBloc
       await _languageRepo.addUserLanguage(languageId);
       emit(currentState.copyWith(status: LanguageSelectionStatus.success));
     } catch (e) {
-      emit(currentState.copyWith(
-        status: LanguageSelectionStatus.error,
-        errorMessage: e.toString(),
-      ));
+      rethrow;
+      // emit(currentState.copyWith(
+      //   //TODO
+
+      //   // status: LanguageSelectionStatus.error,
+      //   // errorMessage: e.toString(),
+      // ));
     }
   }
 }

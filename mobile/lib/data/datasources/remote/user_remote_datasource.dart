@@ -4,6 +4,7 @@ import 'package:language_app/data/models/login_model.dart';
 import 'package:language_app/data/models/register_model.dart';
 
 import 'package:dio/dio.dart';
+import 'package:language_app/domain/models/user.dart';
 
 import 'package:retrofit/retrofit.dart';
 
@@ -18,4 +19,7 @@ abstract class UserRemoteDatasource {
 
   @POST(registerEndpoint)
   Future<AuthResponseModel> register(@Body() RegisterModel data);
+
+  @GET(getProfileEndpoint)
+  Future<User> getProfile();
 }

@@ -73,7 +73,7 @@ class CompletionWidget extends StatelessWidget {
               border: Border.all(color: context.colorTheme.border),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(127),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -143,7 +143,7 @@ class CompletionWidget extends StatelessWidget {
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: context.colorTheme.selection.withOpacity(0.2),
+            color: context.colorTheme.selection.withAlpha(127),
           ),
           child: Icon(
             icon,

@@ -3,17 +3,27 @@ import 'dart:collection';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:language_app/domain/models/challenge.dart';
+import 'package:language_app/domain/models/result.dart';
+import 'package:language_app/domain/models/user.dart';
 
 import 'package:language_app/domain/repos/lesson_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 
 part 'lesson_event.dart';
 part 'lesson_state.dart';
 
 class LessonBloc extends Bloc<LessonEvent, LessonState> {
   final LessonRepo _lessonRepository;
+  final UserRepo _userRepository;
 
-  LessonBloc({required LessonRepo lessonRepository})
+  late final String unitId;
+  late final String lessonId;
+  late final User? user;
+
+  LessonBloc(
+      {required LessonRepo lessonRepository, required UserRepo userRepository})
       : _lessonRepository = lessonRepository,
+        _userRepository = userRepository,
         super(LessonState.loading()) {
     on<LessonStartEvent>(_onLessonStart);
     on<CheckAnswerEvent>(_onCheckAnswer);
@@ -23,12 +33,16 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
 
   void _onLessonStart(LessonStartEvent event, Emitter<LessonState> emit) async {
     emit(LessonState.loading());
+    unitId = event.unitId;
+    lessonId = event.lessonId;
+    user = await _userRepository.getUserInfo();
     final challengeList =
         await _lessonRepository.getChallengeList(lessonId: event.lessonId);
     if (challengeList.isEmpty) {
       emit(LessonState.error(message: "No challenges found"));
     } else {
-      emit(LessonState.inProgress(numOfHeart: 3, challengeList: challengeList));
+      emit(LessonState.inProgress(
+          numOfHeart: user?.hearts ?? 1, challengeList: challengeList));
     }
   }
 
@@ -57,6 +71,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       }
     } else if (isCorrect == false) {
       numOfHeart--;
+
       streak = 0; // Reset streak on wrong answer
     }
     if (isFirstAttempt) {
@@ -64,6 +79,10 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     }
 
     emit(state.copyWith(
+        incorrectExerciseIds: [
+          ...state.incorrectExerciseIds,
+          challengeQueue.first.id
+        ],
         answerStatus:
             isCorrect == true ? AnswerStatus.correct : AnswerStatus.wrong,
         numOfHeart: numOfHeart != state.numOfHeart ? numOfHeart : null,
@@ -75,7 +94,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
         correctFirstAttempts: correctFirstAttempts));
   }
 
-  void _onContinueTapped(ContinueEvent event, Emitter<LessonState> emit) {
+  void _onContinueTapped(ContinueEvent event, Emitter<LessonState> emit) async {
     var numOfHeart = state.numOfHeart;
     final Queue<Challenge> challengeQueue = state.challengeQueue;
     int streak = state.streak;
@@ -104,6 +123,26 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       if (startTime != null) {
         lessonDuration = DateTime.now().difference(startTime);
       }
+
+      final Result result = Result(
+        lessonId: lessonId,
+        exercises: state.incorrectExerciseIds
+            .map((e) => ResultIncorrectExerciseModel(exerciseId: e))
+            .toList(),
+        hearts: numOfHeart,
+        experienceGained: earnedXP,
+        timeSpent: lessonDuration?.inSeconds ?? 0,
+        streak: (user?.streak ?? 0) + 1,
+      );
+
+      emit(LessonState.loading());
+      if (user != null) {
+        await _lessonRepository.sendResult(
+            result: result, unitId: unitId, userId: user!.id);
+      }
+
+      await _userRepository.triggerUserInfoUpdate();
+
       emit(LessonState.finished(
         startTime: startTime,
         lessonDuration: lessonDuration,

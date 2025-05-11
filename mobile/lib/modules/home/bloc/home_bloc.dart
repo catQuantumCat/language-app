@@ -65,6 +65,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         log("language is null");
         return;
       }
+
       final units = await _homeScreenFetchUseCase.call(
           languageId: state.language!.languageId);
 

@@ -3,7 +3,7 @@ import 'package:language_app/domain/models/challenge.dart';
 
 part 'lesson.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class Lesson {
   String id;
   String unitId;
@@ -21,4 +21,6 @@ class Lesson {
       this.challenges});
 
   factory Lesson.fromJson(Map<String, dynamic> json) => _$LessonFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LessonToJson(this);
 }

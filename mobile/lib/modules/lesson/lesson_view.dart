@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
 
 import 'package:language_app/domain/repos/lesson_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/gen/assets.gen.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
@@ -17,9 +18,10 @@ import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widgets/completion_widget.dart';
 
 class LessonPage extends StatelessWidget {
-  const LessonPage({super.key, required this.lessonId});
+  const LessonPage({super.key, required this.lessonId, required this.unitId});
 
   final String lessonId;
+  final String unitId;
 
   void returnToMenuTapped(BuildContext context) {
     GoRouter.of(context).go("/home");
@@ -48,8 +50,9 @@ class LessonPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => LessonBloc(
+        userRepository: getIt<UserRepo>(),
         lessonRepository: getIt<LessonRepo>(),
-      )..add(LessonStartEvent(lessonId: lessonId)),
+      )..add(LessonStartEvent(lessonId: lessonId, unitId: unitId)),
       child: BlocListener<LessonBloc, LessonState>(
         listenWhen: (previous, current) =>
             (previous.status != current.status) ||

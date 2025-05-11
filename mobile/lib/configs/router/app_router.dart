@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/enums/auth_state_enum.dart';
-import 'package:language_app/data/dummy/dummy_data.dart';
 import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/auth/bloc/auth_bloc.dart';
@@ -127,7 +126,7 @@ final class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoute.profile.path,
-                builder: (context, state) => ProfileView(),
+                builder: (context, state) => ProfilePage(),
               ),
             ],
           ),
@@ -135,14 +134,16 @@ final class AppRouter {
       ),
       // Lesson route
       GoRoute(
-        path: "/lesson/:id",
+        path: "/lesson/:unitId/:lessonId",
         builder: (context, state) {
-          final id = state.pathParameters["id"];
-          if (id == null) {
+          final unitId = state.pathParameters["unitId"];
+          final lessonId = state.pathParameters["lessonId"];
+          if (lessonId == null || unitId == null) {
             return ErrorPage(error: Exception("Lesson id not found"));
           }
           return LessonPage(
-            lessonId: id,
+            lessonId: lessonId,
+            unitId: unitId,
           );
         },
       ),

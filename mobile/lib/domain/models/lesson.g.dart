@@ -12,3 +12,10 @@ Lesson _$LessonFromJson(Map<String, dynamic> json) => Lesson(
       title: json['title'] as String,
       order: (json['order'] as num).toInt(),
     );
+
+Map<String, dynamic> _$LessonToJson(Lesson instance) => <String, dynamic>{
+      'id': instance.id,
+      'unitId': instance.unitId,
+      'title': instance.title,
+      'order': instance.order,
+    };

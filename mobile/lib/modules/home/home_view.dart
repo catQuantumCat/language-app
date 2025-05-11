@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/constants/view_state_enum.dart';
 import 'package:language_app/domain/models/lesson.dart';
-import 'package:language_app/data/models/unit.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/domain/use_cases/home_screen_fetch_use_case.dart';
 import 'package:language_app/gen/assets.gen.dart';

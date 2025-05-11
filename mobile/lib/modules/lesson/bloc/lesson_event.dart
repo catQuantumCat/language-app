@@ -4,10 +4,11 @@ sealed class LessonEvent extends Equatable {}
 
 class LessonStartEvent extends LessonEvent {
   final String lessonId;
+  final String unitId;
 
-  LessonStartEvent({required this.lessonId});
+  LessonStartEvent({required this.lessonId, required this.unitId});
   @override
-  List<Object?> get props => [lessonId];
+  List<Object?> get props => [lessonId, unitId];
 }
 
 class CheckAnswerEvent<T> extends LessonEvent {

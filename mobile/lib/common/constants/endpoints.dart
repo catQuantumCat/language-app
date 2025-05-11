@@ -11,3 +11,4 @@ const String availableLanguagesEndpoint =
     "/languages"; // Add constant for available languages
 const String userLanguagesEndpoint =
     "/users/languages"; // Add constant for user languages
+const String getProfileEndpoint = "/auth/me";

@@ -5,12 +5,12 @@ import 'package:language_app/domain/models/lesson.dart';
 
 part 'unit.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class Unit {
   String id;
   String title;
   int order;
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(includeIfNull: false)
   List<Lesson>? lessons;
 
   Unit(
@@ -34,6 +34,8 @@ class Unit {
   }
 
   factory Unit.fromJson(Map<String, dynamic> json) => _$UnitFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UnitToJson(this);
 
   @override
   String toString() {

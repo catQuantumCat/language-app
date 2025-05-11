@@ -20,6 +20,7 @@ class LessonState extends Equatable {
   final int totalAttempts;
   final int correctFirstAttempts;
   final int earnedXP;
+  final List<String> incorrectExerciseIds;
 
   double get accuracy =>
       totalAttempts == 0 ? 0 : correctFirstAttempts / totalAttempts;
@@ -42,6 +43,7 @@ class LessonState extends Equatable {
     this.totalAttempts = 0,
     this.correctFirstAttempts = 0,
     this.earnedXP = 0,
+    this.incorrectExerciseIds = const [],
   }) : challengeQueue = challengeQueue ?? Queue<Challenge>();
 
   LessonState.loading() : this._(status: LessonStatus.loading);
@@ -98,6 +100,7 @@ class LessonState extends Equatable {
         totalAttempts,
         correctFirstAttempts,
         earnedXP,
+        incorrectExerciseIds,
       ];
 
   LessonState copyWith({
@@ -114,6 +117,7 @@ class LessonState extends Equatable {
     int? totalAttempts,
     int? correctFirstAttempts,
     int? earnedXP,
+    List<String>? incorrectExerciseIds,
   }) {
     return LessonState._(
       status: status ?? this.status,
@@ -129,6 +133,7 @@ class LessonState extends Equatable {
       totalAttempts: totalAttempts ?? this.totalAttempts,
       correctFirstAttempts: correctFirstAttempts ?? this.correctFirstAttempts,
       earnedXP: earnedXP ?? this.earnedXP,
+      incorrectExerciseIds: incorrectExerciseIds ?? this.incorrectExerciseIds,
     );
   }
 }
