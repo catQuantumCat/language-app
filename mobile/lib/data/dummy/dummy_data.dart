@@ -136,44 +136,44 @@ List<Challenge> get dummyChallenges {
 //       exerciseType: ExerciseType.multipleChoice),
 // ];
 
-List<Lesson> dummyLessons = List.generate(50, (index) {
-  final lessonId = index + 1;
-  // 10 lessons per unit: unitId will be 1, 2, 3, 4, and 5.
-  final unitId = ((lessonId - 1) ~/ 10) + 1;
-  return Lesson(
-    id: lessonId,
-    unitId: unitId,
-    title: 'Lesson $lessonId of Unit $unitId',
-    order: lessonId,
-    challenges: dummyChallenges
-        .where((challenge) => challenge.lessonId == lessonId.toString())
-        .toList(),
-  );
-});
+// List<Lesson> dummyLessons = List.generate(50, (index) {
+//   final lessonId = index + 1;
+//   // 10 lessons per unit: unitId will be 1, 2, 3, 4, and 5.
+//   final unitId = ((lessonId - 1) ~/ 10) + 1;
+//   return Lesson(
+//     id: lessonId,
+//     unitId: unitId,
+//     title: 'Lesson $lessonId of Unit $unitId',
+//     order: lessonId,
+//     challenges: dummyChallenges
+//         .where((challenge) => challenge.lessonId == lessonId.toString())
+//         .toList(),
+//   );
+// });
 
-List<Unit> dummyUnits = [
-  Unit(
-    id: 1,
-    title: 'Basic Knowledge',
-    order: 1,
-    lessons: dummyLessons.where((lesson) => lesson.unitId == 1).toList(),
-  ),
-  Unit(
-    id: 2,
-    title: 'Intermediate Knowledge',
-    order: 2,
-    lessons: dummyLessons.where((lesson) => lesson.unitId == 2).toList(),
-  ),
-  Unit(
-    id: 3,
-    title: 'Advanced Knowledge',
-    order: 3,
-    lessons: dummyLessons.where((lesson) => lesson.unitId == 3).toList(),
-  ),
-  Unit(
-    id: 4,
-    title: 'Expert Knowledge',
-    order: 4,
-    lessons: dummyLessons.where((lesson) => lesson.unitId == 3).toList(),
-  ),
-];
+// List<Unit> dummyUnits = [
+//   Unit(
+//     id: "1",
+//     title: 'Basic Knowledge',
+//     order: 1,
+//     lessons: dummyLessons.where((lesson) => lesson.unitId == 1).toList(),
+//   ),
+//   Unit(
+//     id: "2",
+//     title: 'Intermediate Knowledge',
+//     order: 2,
+//     lessons: dummyLessons.where((lesson) => lesson.unitId == 2).toList(),
+//   ),
+//   Unit(
+//     id: "3",
+//     title: 'Advanced Knowledge',
+//     order: 3,
+//     lessons: dummyLessons.where((lesson) => lesson.unitId == 3).toList(),
+//   ),
+//   Unit(
+//     id: "4",
+//     title: 'Expert Knowledge',
+//     order: 4,
+//     lessons: dummyLessons.where((lesson) => lesson.unitId == 3).toList(),
+//   ),
+// ];

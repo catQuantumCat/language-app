@@ -2,17 +2,6 @@ abstract class Endpoints {
   static String baseApi = "https://english-app-backend2.onrender.com/api/";
   static String getExercises =
       "$baseApi/lesson/680230982f05fe8c6a1166ed/exercises";
-
-  static String loginShort = "auth/login";
-
-  static String login = "$baseApi/auth/login";
-  static String register = "$baseApi/auth/register";
-  static String getAvailableLanguages =
-      "$baseApi/languages"; // Add available languages endpoint
-  static String getUserLanguages =
-      "$baseApi/users/languages"; // Get user's languages
-  static String addUserLanguage =
-      "$baseApi/users/languages"; // Add language to user
 }
 
 const String loginEndpoint = "/auth/login";

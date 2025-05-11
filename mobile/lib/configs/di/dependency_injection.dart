@@ -13,6 +13,7 @@ import 'package:language_app/data/repo_imp/user_repo_imp.dart';
 import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/domain/repos/lesson_repo.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
+import 'package:language_app/domain/use_cases/home_screen_fetch_use_case.dart';
 
 abstract class DependencyInjection {
   static Future<void> setup(GetIt getIt) async {
@@ -41,6 +42,13 @@ abstract class DependencyInjection {
       () => UserRepoImpl(
         localDatasource: getIt<UserLocalDatasource>(),
         remoteDatasource: getIt<UserRemoteDatasource>(),
+      ),
+    );
+
+    // Register HomeScreenFetchUseCase
+    getIt.registerLazySingleton<HomeScreenFetchUseCase>(
+      () => HomeScreenFetchUseCase(
+        lessonRepo: getIt<LessonRepo>(),
       ),
     );
 

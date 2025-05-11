@@ -45,7 +45,7 @@ class LessonList extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   elevation: 0,
                 ),
-                onPressed: () => _onLessonPressed(context),
+                onPressed: () => _onLessonPressed(context, lessons[index].id),
                 child: Text(
                   "${lessons[index].order}",
                   style: TextStyle(
@@ -63,10 +63,10 @@ class LessonList extends StatelessWidget {
     );
   }
 
-  void _onLessonPressed(BuildContext context) {
+  void _onLessonPressed(BuildContext context, String lessonId) {
     //TODO: remove dummy
 
-    GoRouter.of(context).go("/lesson/1");
+    GoRouter.of(context).go("/lesson/$lessonId");
 
     // Navigator.push(
     //     context,

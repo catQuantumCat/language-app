@@ -13,7 +13,11 @@ final class HomeState extends Equatable {
     required this.viewState,
     this.units = const [],
     required this.currentLesson,
-    this.language,
+    this.language = const Language(
+        flagUrl: "",
+        languageId: "68022c102f05fe8c6a1166e4",
+        level: 10,
+        experience: 10),
     this.heartCount = 0,
     this.streakCount = 0,
   });

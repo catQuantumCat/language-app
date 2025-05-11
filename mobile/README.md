@@ -31,3 +31,9 @@ dart run build_runner build --delete-conflicting-outputs
 - Generic with `<T>` to clear type ambiguity when using the `checkAnswer` method - declared in `ChallengeData` abstract class and inherited by it's children
     -   Enable type safety and avoid runtime errors, by forcing a type when calling the method
     - Use generic caused a lot of trouble when debugging why the type of this `ChallengeData` child is being passed through another `ChallengeData` child's method
+
+
+### May 11
+- Use `Future.wait` to fetch all lessons in parallel
+- Use `map` to create a list of futures, each future is a lesson fetch
+- Use `Future.wait` to wait for all the futures to complete

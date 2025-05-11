@@ -45,6 +45,7 @@ class UserRepoImpl implements UserRepo {
         ? AppStateEnum.authenticated
         : AppStateEnum.unauthenticated;
 
+    log(initialToken.toString(), name: "Token");
     _appStateController.onListen = () {
       _appStateController.add(initialState);
     };

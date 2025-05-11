@@ -119,7 +119,7 @@ final class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoute.home.path,
-                builder: (context, state) => HomePage(unit: dummyUnits.first),
+                builder: (context, state) => HomePage(),
               ),
             ],
           ),
@@ -137,7 +137,7 @@ final class AppRouter {
       GoRoute(
         path: "/lesson/:id",
         builder: (context, state) {
-          final id = int.tryParse(state.pathParameters["id"] ?? "");
+          final id = state.pathParameters["id"];
           if (id == null) {
             return ErrorPage(error: Exception("Lesson id not found"));
           }
