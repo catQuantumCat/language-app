@@ -6,7 +6,7 @@ const userRoutes = require('./user/user.route');
 const authRoutes = require('./auth/auth.route');
 const leaderboardRoutes = require('./leaderboard/leaderboard.route');
 const notificationRoutes = require('./notification/notification.route');
-
+const mistakeRoutes = require('./mistake/mistake.route');
 module.exports = (app) => {
  
   app.use('/api/lesson/:lessonId/exercises', exerciseRoutes);
@@ -17,4 +17,5 @@ module.exports = (app) => {
   app.use('/api/auth', authRoutes);
   app.use('/api/leaderboard', leaderboardRoutes);
   app.use('/api/notifications', notificationRoutes);
+  app.use('/api/mistakes', mistakeRoutes);
 };

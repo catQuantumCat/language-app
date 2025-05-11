@@ -16,6 +16,7 @@ module.exports.saveLessonResults = async (req, res) => {
   try {
     const { 
       userId, 
+      unitId,
       lessonId, 
       exercises,
       hearts, 
@@ -25,7 +26,7 @@ module.exports.saveLessonResults = async (req, res) => {
     } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
-    if (!userId || !lessonId || !exercises || !Array.isArray(exercises)) {
+    if (!userId ||!unitId || !lessonId || !exercises || !Array.isArray(exercises)) {
       return res.status(400).json({ 
         success: false, 
         message: 'Thiếu thông tin bắt buộc hoặc định dạng exercises không hợp lệ' 
@@ -68,6 +69,7 @@ module.exports.saveLessonResults = async (req, res) => {
       // Nếu không tìm thấy, tạo mới
       lessonProgress = new UserLessonProgress({
         userId,
+        unitId,
         lessonId,
         exercises: [], // Khởi tạo mảng rỗng
         hearts,
@@ -108,6 +110,7 @@ module.exports.saveLessonResults = async (req, res) => {
       try {
         const mistake = new UserMistake({
           userId,
+          unitId,
           lessonId,
           exerciseId: exercise.exerciseId,
           timestamp: new Date()
@@ -149,165 +152,17 @@ module.exports.saveLessonResults = async (req, res) => {
 
 
 
-// API lấy danh sách câu sai của người dùng (tiếp)
+// API lấy danh sách câu sai của người dùng (đã sửa)
 module.exports.getUserMistakes = async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const { languageId, unitId, lessonId, limit } = req.query;
-      
-      const query = { userId };
-      
-      if (languageId) query.languageId = languageId;
-      if (unitId) query.unitId = unitId;
-      if (lessonId) query.lessonId = lessonId;
-      
-      // Lấy danh sách lỗi, sắp xếp theo thời gian tạo gần nhất
-      let mistakesQuery = UserMistake.find(query)
-        .sort({ createdAt: -1 });
-      
-      if (limit) {
-        mistakesQuery = mistakesQuery.limit(parseInt(limit));
-      }
-      
-      const mistakes = await mistakesQuery.exec();
-      
-      // Lấy thông tin chi tiết cho mỗi lỗi
-      const response = await Promise.all(mistakes.map(async (mistake) => {
-        const mistakeObj = mistake.toObject();
-        mistakeObj.id = mistakeObj._id.toString();
-        delete mistakeObj._id;
-        
-        // Lấy thông tin exercise
-        const exercise = await Exercise.findById(mistake.exerciseId);
-        
-        // Lấy thông tin đáp án đã chọn
-        const selectedOption = await ExerciseOption.findById(mistake.selectedOptionId);
-        
-        // Lấy thông tin đáp án đúng
-        const correctOption = await ExerciseOption.findById(mistake.correctOptionId);
-        
-        // Lấy tất cả các đáp án của bài tập
-        const allOptions = await ExerciseOption.find({ exerciseId: mistake.exerciseId });
-        
-        return {
-          ...mistakeObj,
-          exercise: exercise ? {
-            id: exercise._id.toString(),
-            question: exercise.question,
-            instruction: exercise.instruction,
-            exerciseType: exercise.exerciseType,
-            audioUrl: exercise.audioUrl,
-            imageUrl: exercise.imageUrl
-          } : null,
-          selectedOption: selectedOption ? {
-            id: selectedOption._id.toString(),
-            text: selectedOption.text,
-            audioUrl: selectedOption.audioUrl,
-            imageUrl: selectedOption.imageUrl
-          } : null,
-          correctOption: correctOption ? {
-            id: correctOption._id.toString(),
-            text: correctOption.text,
-            audioUrl: correctOption.audioUrl,
-            imageUrl: correctOption.imageUrl
-          } : null,
-          allOptions: allOptions.map(option => ({
-            id: option._id.toString(),
-            text: option.text,
-            isCorrect: option.correct,
-            audioUrl: option.audioUrl,
-            imageUrl: option.imageUrl
-          }))
-        };
-      }));
-      
-      res.status(200).json(response);
-    } catch (error) {
-      console.error('Lỗi khi lấy danh sách câu sai:', error);
-      res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy dữ liệu' });
-    }
-  };
-  
-  
-  
-  // API xem chi tiết một câu sai
-  module.exports.getMistakeDetail = async (req, res) => {
-    try {
-      const { mistakeId } = req.params;
-      
-      const mistake = await UserMistake.findById(mistakeId);
-      if (!mistake) {
-        return res.status(404).json({ message: 'Không tìm thấy câu sai' });
-      }
-      
-      // Lấy thông tin exercise
-      const exercise = await Exercise.findById(mistake.exerciseId);
-      
-      // Lấy thông tin đáp án đã chọn
-      const selectedOption = await ExerciseOption.findById(mistake.selectedOptionId);
-      
-      // Lấy thông tin đáp án đúng
-      const correctOption = await ExerciseOption.findById(mistake.correctOptionId);
-      
-      // Lấy tất cả các đáp án của bài tập
-      const allOptions = await ExerciseOption.find({ exerciseId: mistake.exerciseId });
-      
-      const mistakeObj = mistake.toObject();
-      mistakeObj.id = mistakeObj._id.toString();
-      delete mistakeObj._id;
-      
-      res.status(200).json({
-        ...mistakeObj,
-        exercise: exercise ? {
-          id: exercise._id.toString(),
-          question: exercise.question,
-          instruction: exercise.instruction,
-          exerciseType: exercise.exerciseType,
-          audioUrl: exercise.audioUrl,
-          imageUrl: exercise.imageUrl
-        } : null,
-        selectedOption: selectedOption ? {
-          id: selectedOption._id.toString(),
-          text: selectedOption.text,
-          audioUrl: selectedOption.audioUrl,
-          imageUrl: selectedOption.imageUrl
-        } : null,
-        correctOption: correctOption ? {
-          id: correctOption._id.toString(),
-          text: correctOption.text,
-          audioUrl: correctOption.audioUrl,
-          imageUrl: correctOption.imageUrl
-        } : null,
-        allOptions: allOptions.map(option => ({
-          id: option._id.toString(),
-          text: option.text,
-          isCorrect: option.correct,
-          audioUrl: option.audioUrl,
-          imageUrl: option.imageUrl
-        }))
-      });
-    } catch (error) {
-      console.error('Lỗi khi lấy chi tiết câu sai:', error);
-      res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy dữ liệu' });
-    }
-  };
-  
-  // Thêm vào file User_exercise.controller.js
-
-// API làm lại danh sách câu hỏi sai
-module.exports.retryMistakes = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { languageId, limit } = req.query;
+    const { languageId, unitId, lessonId, limit } = req.query;
     
-    // Kiểm tra quyền truy cập
-    if (req.user.id !== userId) {
-      return res.status(403).json({ message: 'Không có quyền truy cập dữ liệu của người dùng khác' });
-    }
+    const query = { userId };
     
-    // Xây dựng query
-    const query = { userId, mastered: false };
     if (languageId) query.languageId = languageId;
+    if (unitId) query.unitId = unitId;
+    if (lessonId) query.lessonId = lessonId;
     
     // Lấy danh sách lỗi, sắp xếp theo thời gian tạo gần nhất
     let mistakesQuery = UserMistake.find(query)
@@ -317,201 +172,162 @@ module.exports.retryMistakes = async (req, res) => {
       mistakesQuery = mistakesQuery.limit(parseInt(limit));
     }
     
-    const mistakes = await mistakesQuery.exec();
+    const allMistakes = await mistakesQuery.exec();
     
-    // Lấy thông tin chi tiết cho mỗi lỗi để tạo bài tập ôn tập
-    const exercisesFromMistakes = await Promise.all(mistakes.map(async (mistake) => {
+    // Lọc ra các mistake có exerciseId duy nhất (lấy cái gần đây nhất)
+    const uniqueExerciseIds = new Set();
+    const uniqueMistakes = [];
+    
+    for (const mistake of allMistakes) {
+      if (!uniqueExerciseIds.has(mistake.exerciseId)) {
+        uniqueExerciseIds.add(mistake.exerciseId);
+        uniqueMistakes.push(mistake);
+      }
+    }
+    
+    // Lấy thông tin chi tiết cho mỗi lỗi
+    const mistakesWithDetails = await Promise.all(uniqueMistakes.map(async (mistake) => {
+      const mistakeObj = mistake.toObject();
+      mistakeObj.id = mistakeObj._id.toString();
+      delete mistakeObj._id;
+      
+      // Lấy thông tin unit và order
+      const unit = await mongoose.model('units').findById(mistake.unitId);
+      
+      // Lấy thông tin lesson và order
+      const lesson = await mongoose.model('lessons').findById(mistake.lessonId);
+      
       // Lấy thông tin exercise
       const exercise = await Exercise.findById(mistake.exerciseId);
-      if (!exercise) return null;
       
-      // Lấy tất cả các đáp án của bài tập
-      const options = await ExerciseOption.find({ exerciseId: mistake.exerciseId });
-      
-      // Định dạng lại exercise để trả về
-      const exerciseObj = exercise.toObject();
-      exerciseObj.id = exerciseObj._id.toString();
-      delete exerciseObj._id;
-      
-      // Xử lý khác nhau tùy theo loại bài tập
-      if (exerciseObj.exerciseType === 'sentenceOrder') {
-        // Định dạng lại options
-        const formattedOptions = options.map(option => {
-          const optionObject = option.toObject();
-          optionObject.id = optionObject._id.toString();
-          delete optionObject._id;
-          
-          // Lọc các trường null
-          Object.keys(optionObject).forEach(key => {
-            if (optionObject[key] === null) {
-              delete optionObject[key];
-            }
-          });
-          
-          return optionObject;
-        });
-        
-        // Thêm sentenceLength vào data
-        const data = {
-          options: formattedOptions,
-          sentenceLength: formattedOptions.length
-        };
-
-        return {
-          ...exerciseObj,
-          data: data,
-          mistakeId: mistake._id.toString()
-        };
-      } 
-      else if (exerciseObj.exerciseType === 'translateWritten') {
-        if (options.length > 0) {
-          // Lấy thông tin từ option đầu tiên
-          const option = options[0].toObject();
-          
-          // Trả về data không bọc trong mảng options
-          return {
-            ...exerciseObj,
-            data: {
-              acceptedAnswer: option.acceptedAnswer || [],
-              translateWord: option.translateWord || ""
-            },
-            mistakeId: mistake._id.toString()
-          };
-        } else {
-          return {
-            ...exerciseObj,
-            data: {
-              acceptedAnswer: [],
-              translateWord: ""
-            },
-            mistakeId: mistake._id.toString()
-          };
-        }
-      }
-      else {
-        // Định dạng lại options
-        const formattedOptions = options.map(option => {
-          const optionObject = option.toObject();
-          optionObject.id = optionObject._id.toString();
-          delete optionObject._id;
-          
-          // Lọc các trường null
-          Object.keys(optionObject).forEach(key => {
-            if (optionObject[key] === null) {
-              delete optionObject[key];
-            }
-          });
-          
-          return optionObject;
-        });
-
-        return {
-          ...exerciseObj,
-          data: {
-            options: formattedOptions
-          },
-          mistakeId: mistake._id.toString()
-        };
-      }
+      return {
+        id: mistakeObj.id,
+        exerciseId: mistake.exerciseId,
+        unitOrder: unit ? unit.order : null,
+        unitName: unit ? unit.title : null,
+        lessonOrder: lesson ? lesson.order : null,
+        lessonName: lesson ? lesson.title : null,
+        instruction: exercise ? exercise.instruction : null,
+        question: exercise ? exercise.question : null,
+        createdAt: mistakeObj.createdAt
+      };
     }));
     
-    // Lọc bỏ các exercise null
-    const validExercises = exercisesFromMistakes.filter(ex => ex !== null);
-    
-    res.status(200).json({
-      totalExercises: validExercises.length,
-      exercises: validExercises
+    // Sắp xếp kết quả theo unitOrder, lessonOrder
+    mistakesWithDetails.sort((a, b) => {
+      // Sắp xếp theo unit order
+      if (a.unitOrder !== b.unitOrder) {
+        return (a.unitOrder || 0) - (b.unitOrder || 0);
+      }
+      
+      // Nếu cùng unit, sắp xếp theo lesson order
+      return (a.lessonOrder || 0) - (b.lessonOrder || 0);
     });
+    
+    res.status(200).json(mistakesWithDetails);
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách câu hỏi sai để làm lại:', error);
+    console.error('Lỗi khi lấy danh sách câu sai:', error);
     res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy dữ liệu' });
   }
 };
 
-// API lưu kết quả sau khi làm lại các câu hỏi sai
-module.exports.saveMistakesResults = async (req, res) => {
+  
+  
+ // API xem chi tiết một câu sai
+module.exports.getMistakeDetail = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { results, timeSpent } = req.body;
+    const { mistakeId } = req.params;
     
-    // Kiểm tra quyền truy cập
-    if (req.user.id !== userId) {
-      return res.status(403).json({ message: 'Không có quyền truy cập dữ liệu của người dùng khác' });
+    const mistake = await UserMistake.findById(mistakeId);
+    if (!mistake) {
+      return res.status(404).json({ message: 'Không tìm thấy câu sai' });
     }
     
-    // Kiểm tra dữ liệu đầu vào
-    if (!results || !Array.isArray(results)) {
-      return res.status(400).json({ message: 'Thiếu thông tin kết quả' });
+    // Lấy thông tin exercise
+    const exercise = await Exercise.findById(mistake.exerciseId);
+    if (!exercise) {
+      return res.status(404).json({ message: 'Không tìm thấy bài tập' });
     }
     
-    // Tính toán số câu đúng
-    const totalExercises = results.length;
-    const correctAnswers = results.filter(result => result.isCorrect).length;
-    const score = Math.round((correctAnswers / totalExercises) * 100);
     
-    // Cập nhật trạng thái cho các câu hỏi sai
-    for (const result of results) {
-      if (result.mistakeId && result.isCorrect) {
-        const mistake = await UserMistake.findById(result.mistakeId);
-        if (mistake) {
-          mistake.reviewedCount += 1;
-          mistake.lastReviewed = new Date();
-          
-          // Nếu đã xem lại và làm đúng >= 2 lần, đánh dấu là đã thành thạo
-          if (mistake.reviewedCount >= 2) {
-            mistake.mastered = true;
-          }
-          
-          await mistake.save();
-        }
-      }
+    
+   
+    
+    // Lấy tất cả các đáp án của bài tập
+    const allOptions = await ExerciseOption.find({ exerciseId: mistake.exerciseId });
+    
+    // Lấy thông tin unit
+    const unit = await mongoose.model('units').findById(mistake.unitId);
+    
+    // Lấy thông tin lesson
+    const lesson = await mongoose.model('lessons').findById(mistake.lessonId);
+    
+    const mistakeObj = mistake.toObject();
+    mistakeObj.id = mistakeObj._id.toString();
+    delete mistakeObj._id;
+    
+    // Xử lý khác nhau tùy theo loại bài tập
+    let exerciseData = {};
+    
+    if (exercise.exerciseType === 'sentenceOrder') {
+      // Định dạng lại options cho sentenceOrder
+      exerciseData = {
+        options: allOptions.map(option => ({
+          id: option._id.toString(),
+          text: option.text,
+          order: option.order,
+          audioUrl: option.audioUrl,
+          imageUrl: option.imageUrl
+        })),
+        sentenceLength: allOptions.length
+      };
+    } 
+    else if (exercise.exerciseType === 'translateWritten') {
+      // Định dạng cho translateWritten
+      const option = allOptions.length > 0 ? allOptions[0] : null;
+      exerciseData = {
+        acceptedAnswer: option ? option.acceptedAnswer || [] : [],
+        translateWord: option ? option.translateWord || "" : ""
+      };
     }
-    
-    // Cộng kinh nghiệm cho người dùng (cộng ít hơn so với làm bài thường)
-    const experienceGained = Math.round((correctAnswers / totalExercises) * 5); // 5 XP cho mỗi bài ôn tập
-    
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    else {
+      // Định dạng cho các loại bài tập khác
+      exerciseData = {
+        options: allOptions.map(option => ({
+          id: option._id.toString(),
+          text: option.text,
+          isCorrect: option.correct,
+          audioUrl: option.audioUrl,
+          imageUrl: option.imageUrl
+        }))
+      };
     }
-    
-    // Cộng kinh nghiệm
-    user.experience += experienceGained;
-    
-    // Cập nhật kinh nghiệm cho ngôn ngữ cụ thể (nếu có)
-    if (results.length > 0 && results[0].languageId) {
-      const languageId = results[0].languageId;
-      const languageIndex = user.languages.findIndex(
-        lang => lang.languageId.toString() === languageId
-      );
-      
-      if (languageIndex !== -1) {
-        user.languages[languageIndex].experience += experienceGained;
-      }
-    }
-    
-    // Cập nhật streak nếu là ngày mới
-    const today = new Date().setHours(0, 0, 0, 0);
-    const lastActiveDay = new Date(user.lastActive).setHours(0, 0, 0, 0);
-    
-    if (today > lastActiveDay) {
-      user.streak += 1;
-    }
-    
-    user.lastActive = new Date();
-    
-    await user.save();
     
     res.status(200).json({
-      totalExercises,
-      correctAnswers,
-      score,
-      experienceGained,
-      message: 'Đã lưu kết quả ôn tập thành công'
+      id: mistakeObj.id,
+      unitOrder: unit ? unit.order : null,
+      unitName: unit ? unit.name : null,
+      lessonOrder: lesson ? lesson.order : null,
+      lessonName: lesson ? lesson.name : null,
+      exercise: {
+        id: exercise._id.toString(),
+        question: exercise.question,
+        instruction: exercise.instruction,
+        exerciseType: exercise.exerciseType,
+        audioUrl: exercise.audioUrl,
+        imageUrl: exercise.imageUrl,
+        data: exerciseData
+      },
+      
+      createdAt: mistakeObj.createdAt
     });
   } catch (error) {
-    console.error('Lỗi khi lưu kết quả ôn tập:', error);
-    res.status(500).json({ message: 'Đã xảy ra lỗi khi lưu kết quả' });
+    console.error('Lỗi khi lấy chi tiết câu sai:', error);
+    res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy dữ liệu' });
   }
 };
+
+ 
+
+
 

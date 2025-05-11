@@ -44,13 +44,17 @@ const userSchema = new mongoose.Schema({
       type: String,
       ref: 'languages'
     },
-    lessonId:{
-      type: String,
-      ref: 'lessons'
+    languageFlag: {
+      type: String
+      
     },
+    lessonOrder:{
+      type: Number
+    },
+   
     order:{
       type: Number,
-      default: 1
+      default: 2
     }
   }]
 }, {

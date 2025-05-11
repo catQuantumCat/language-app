@@ -6,6 +6,11 @@ const userMistakeSchema = new mongoose.Schema({
     ref: 'users',
     required: true
   },
+  unitId: {
+    type: String,
+    ref: 'units',
+    required: true
+  },
   lessonId: {
     type: String,
     ref: 'lessons',

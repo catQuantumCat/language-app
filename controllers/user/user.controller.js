@@ -101,13 +101,13 @@ module.exports.updateUserProfile = async (req, res) => {
 module.exports.updateUserLanguage = async (req, res) => {
   try {
     const { userId } = req.params;
-    const {  languageId, lessonId, order } = req.body;
+    const { languageId, lessonId, order } = req.body;
 
     // Kiểm tra xem có dữ liệu cập nhật không
-    if ( !languageId) {
+    if (!languageId) {
       return res.status(400).json({
         success: false,
-        message: 'Cần cung cấp ít nhất một trong hai thông tin:  languageId'
+        message: 'Cần cung cấp ít nhất một thông tin: languageId'
       });
     }
 
@@ -120,29 +120,52 @@ module.exports.updateUserLanguage = async (req, res) => {
       });
     }
 
+    // Lấy thông tin về ngôn ngữ để lấy flagUrl
+    const language = await mongoose.model('languages').findById(languageId);
+    if (!language) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy ngôn ngữ'
+      });
+    }
+
+    // Biến để lưu lessonOrder
+    let lessonOrder = null;
     
-
-    // Cập nhật hoặc thêm mới ngôn ngữ vào mảng languages nếu được cung cấp
-    if (languageId) {
-      // Tìm xem ngôn ngữ đã tồn tại trong mảng chưa
-      const existingLanguageIndex = user.languages.findIndex(
-        lang => lang.languageId === languageId
-      );
-
-      if (existingLanguageIndex !== -1) {
-        // Cập nhật ngôn ngữ đã tồn tại
-        if (lessonId) {
-          user.languages[existingLanguageIndex].lessonId = lessonId;
-          user.languages[existingLanguageIndex].order = order;
-        }
-      } else {
-        // Thêm ngôn ngữ mới vào mảng
-        user.languages.push({
-          languageId,
-          lessonId: lessonId || null,
-          order: 1
+    // Nếu có lessonId, lấy thông tin về lesson để lấy order
+    if (lessonId) {
+      const lesson = await mongoose.model('lessons').findById(lessonId);
+      if (!lesson) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy bài học'
         });
       }
+      lessonOrder = lesson.order;
+    }
+
+    // Cập nhật hoặc thêm mới ngôn ngữ vào mảng languages
+    const existingLanguageIndex = user.languages.findIndex(
+      lang => lang.languageId === languageId
+    );
+
+    if (existingLanguageIndex !== -1) {
+      // Cập nhật ngôn ngữ đã tồn tại
+      if (lessonId) {
+        user.languages[existingLanguageIndex].lessonId = lessonId;
+        user.languages[existingLanguageIndex].lessonOrder = lessonOrder;
+      }
+      user.languages[existingLanguageIndex].order = order || user.languages[existingLanguageIndex].order;
+      user.languages[existingLanguageIndex].languageFlag = language.flagUrl;
+    } else {
+      // Thêm ngôn ngữ mới vào mảng
+      user.languages.push({
+        languageId,
+        languageFlag: language.flagUrl,
+       
+        lessonOrder: lessonOrder || 1,
+        order: order || 1
+      });
     }
 
     // Lưu thay đổi
@@ -152,7 +175,6 @@ module.exports.updateUserLanguage = async (req, res) => {
       success: true,
       message: 'Cập nhật thông tin ngôn ngữ thành công',
       data: {
-       
         languages: user.languages
       }
     });
