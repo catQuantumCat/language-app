@@ -5,13 +5,19 @@ import 'package:language_app/common/constants/storage_keys.dart';
 import 'package:language_app/configs/service_providers/dio_provider.dart';
 import 'package:language_app/data/datasources/local/user_local_datasource.dart';
 import 'package:language_app/data/datasources/remote/language_remote_datasource.dart';
+import 'package:language_app/data/datasources/remote/leaderboard_remote_datasource.dart';
 import 'package:language_app/data/datasources/remote/lesson_remote_datasource.dart';
+import 'package:language_app/data/datasources/remote/mistake_remote_datasource.dart';
 import 'package:language_app/data/datasources/remote/user_remote_datasource.dart';
 import 'package:language_app/data/repo_imp/language_repo_imp.dart';
+import 'package:language_app/data/repo_imp/leaderboard_repo_imp.dart';
 import 'package:language_app/data/repo_imp/lesson_repo_imp.dart';
+import 'package:language_app/data/repo_imp/mistake_repo_imp.dart';
 import 'package:language_app/data/repo_imp/user_repo_imp.dart';
 import 'package:language_app/domain/repos/language_repo.dart';
+import 'package:language_app/domain/repos/leaderboard_repo.dart';
 import 'package:language_app/domain/repos/lesson_repo.dart';
+import 'package:language_app/domain/repos/mistake_repo.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 
 abstract class DependencyInjection {
@@ -68,6 +74,30 @@ abstract class DependencyInjection {
     getIt.registerLazySingleton<LessonRepo>(
       () => LessonRepoImp(
         remoteDatasource: getIt<LessonRemoteDatasource>(),
+      ),
+    );
+
+    // Register LeaderboardRemoteDatasource
+    getIt.registerLazySingleton<LeaderboardRemoteDatasource>(
+      () => LeaderboardRemoteDatasource(getIt<Dio>()),
+    );
+
+    // Register LeaderboardRepo
+    getIt.registerLazySingleton<LeaderboardRepo>(
+      () => LeaderboardRepoImpl(
+        remoteDatasource: getIt<LeaderboardRemoteDatasource>(),
+        userRepo: getIt<UserRepo>(),
+      ),
+    );
+        // Register MistakeRemoteDatasource
+    getIt.registerLazySingleton<MistakeRemoteDatasource>(
+      () => MistakeRemoteDatasource(getIt<Dio>()),
+    );
+
+    // Register MistakeRepo
+    getIt.registerLazySingleton<MistakeRepo>(
+      () => MistakeRepoImpl(
+        remoteDatasource: getIt<MistakeRemoteDatasource>(),
       ),
     );
 

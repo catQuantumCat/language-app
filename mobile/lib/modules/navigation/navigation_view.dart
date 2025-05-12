@@ -1,3 +1,4 @@
+// navigation_view.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
@@ -35,14 +36,19 @@ class NavigationView extends StatelessWidget {
         ),
         child: NavigationBar(
           backgroundColor: context.colorTheme.background,
-          selectedIndex:
-              GoRouterState.of(context).matchedLocation == '/profile' ? 1 : 0,
+          selectedIndex: _getSelectedIndex(context),
           onDestinationSelected: (index) {
             switch (index) {
               case 0:
                 context.go('/home');
                 break;
               case 1:
+                context.go('/leaderboard');
+                break;
+              case 2:
+                context.go('/mistakes');
+                break;
+              case 3:
                 context.go('/profile');
                 break;
             }
@@ -59,6 +65,14 @@ class NavigationView extends StatelessWidget {
               label: 'Home',
             ),
             NavigationDestination(
+              icon: Icon(Icons.leaderboard),
+              label: 'Leaderboard',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.error_outline),
+              label: 'Mistakes',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.person),
               label: 'Profile',
             ),
@@ -67,5 +81,14 @@ class NavigationView extends StatelessWidget {
       ),
       body: child,
     );
+  }
+  
+  int _getSelectedIndex(BuildContext context) {
+    final location = GoRouterState.of(context).matchedLocation;
+    if (location.startsWith('/home')) return 0;
+    if (location.startsWith('/leaderboard')) return 1;
+    if (location.startsWith('/mistakes')) return 2;
+    if (location.startsWith('/profile')) return 3;
+    return 0;
   }
 }

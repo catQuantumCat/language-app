@@ -9,19 +9,30 @@ abstract class ChallengeData<T> {
 
 @JsonSerializable(createToJson: false)
 class TranslateChallengeData extends ChallengeData<String> {
-  TranslateChallengeData(
-      {required this.acceptedAnswer, required this.translateWord});
+  TranslateChallengeData({
+    required this.acceptedAnswer, 
+    required this.translateWord
+  });
 
   List<String> acceptedAnswer;
   String translateWord;
+  
   @override
   bool checkAnswer(userAnswer) {
     return acceptedAnswer.contains(userAnswer);
   }
 
-  factory TranslateChallengeData.fromJson(Map<String, dynamic> json) =>
-      _$TranslateChallengeDataFromJson(json);
+  factory TranslateChallengeData.fromJson(Map<String, dynamic> json) {
+    return TranslateChallengeData(
+      acceptedAnswer: (json['acceptedAnswer'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ?? [],
+      translateWord: json['translateWord'] as String? ?? "",
+    );
+  }
 }
+
+
 
 @JsonSerializable(createToJson: false)
 class MultipleChoiceChallengeData extends ChallengeData<MultipleChoiceOption> {
@@ -34,13 +45,19 @@ class MultipleChoiceChallengeData extends ChallengeData<MultipleChoiceOption> {
     return userAnswer.correct;
   }
 
-  factory MultipleChoiceChallengeData.fromJson(Map<String, dynamic> json) =>
-      _$MultipleChoiceChallengeDataFromJson(json);
+  factory MultipleChoiceChallengeData.fromJson(Map<String, dynamic> json) {
+    return MultipleChoiceChallengeData(
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => MultipleChoiceOption.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
+    );
+  }
 }
 
+
+
 @JsonSerializable(createToJson: false)
-class SentenceOrderChallengeData
-    extends ChallengeData<List<SentenceOrderOption>> {
+class SentenceOrderChallengeData extends ChallengeData<List<SentenceOrderOption>> {
   List<SentenceOrderOption> options;
   int sentenceLength;
 
@@ -59,9 +76,18 @@ class SentenceOrderChallengeData
     return true;
   }
 
-  factory SentenceOrderChallengeData.fromJson(Map<String, dynamic> json) =>
-      _$SentenceOrderChallengeDataFromJson(json);
+  factory SentenceOrderChallengeData.fromJson(Map<String, dynamic> json) {
+    return SentenceOrderChallengeData(
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => SentenceOrderOption.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
+      sentenceLength: json['sentenceLength'] as int? ?? 
+                     (json['options'] as List<dynamic>?)?.length ?? 0,
+    );
+  }
 }
+
+
 
 @JsonSerializable(createToJson: false)
 class PairMatchingChallengeData extends ChallengeData<bool> {
@@ -80,6 +106,12 @@ class PairMatchingChallengeData extends ChallengeData<bool> {
     return left.pairId == right.pairId;
   }
 
-  factory PairMatchingChallengeData.fromJson(Map<String, dynamic> json) =>
-      _$PairMatchingChallengeDataFromJson(json);
+  factory PairMatchingChallengeData.fromJson(Map<String, dynamic> json) {
+    return PairMatchingChallengeData(
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => PairMatchingOption.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
+    );
+  }
 }
+

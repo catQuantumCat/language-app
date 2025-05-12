@@ -1,4 +1,5 @@
-import 'dart:developer';
+// configs/router/app_router.dart (chỉ sửa phần import)
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,16 +13,23 @@ import 'package:language_app/modules/auth/register/register_view.dart';
 import 'package:language_app/modules/error/error_page.dart';
 import 'package:language_app/modules/home/home_view.dart';
 import 'package:language_app/modules/language_selection/language_selection_view.dart';
+import 'package:language_app/modules/leaderboard/leaderboard_view.dart';
 import 'package:language_app/modules/lesson/lesson_view.dart';
+import 'package:language_app/modules/mistakes/mistake_detail_view.dart';
+import 'package:language_app/modules/mistakes/mistakes_view.dart';
 import 'package:language_app/modules/navigation/navigation_view.dart';
 import 'package:language_app/modules/profile/profile_view.dart';
 import 'package:language_app/utils/stream_to_listenable.dart';
+
 
 enum AppRoute {
   login("/login"),
   register("/register"),
   languageSelection("/language-selection"),
   home("/home"),
+  leaderboard("/leaderboard"),
+  mistakes("/mistakes"),
+  mistakeDetail("/mistakes/:id"),
   profile("/profile");
 
   final String path;
@@ -76,7 +84,7 @@ final class AppRouter {
 
         return AppRoute.home.path;
       } catch (e) {
-        log('Error checking user languages: $e');
+        log('Error checking user languages: $e' as num);
 
         return AppRoute.home.path;
       }
@@ -89,63 +97,89 @@ final class AppRouter {
   }
 
   List<RouteBase> _buildRoutes() {
-    return [
-      // Auth routes
-      ShellRoute(
-          builder: (context, state, child) => Scaffold(body: child),
+  return [
+    // Auth routes
+    ShellRoute(
+        builder: (context, state, child) => Scaffold(body: child),
+        routes: [
+          GoRoute(
+            path: AppRoute.login.path,
+            builder: (context, state) => LoginPage(),
+          ),
+          GoRoute(
+            path: AppRoute.register.path,
+            builder: (context, state) => RegisterPage(),
+          ),
+          GoRoute(
+            path: AppRoute.languageSelection.path,
+            builder: (context, state) => LanguageSelectionPage(),
+          )
+        ]),
+    // Main navigation routes with StatefulShellRoute
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return NavigationPage(
+          child: navigationShell,
+        );
+      },
+      branches: [
+        StatefulShellBranch(
           routes: [
             GoRoute(
-              path: AppRoute.login.path,
-              builder: (context, state) => LoginPage(),
+              path: AppRoute.home.path,
+              builder: (context, state) => HomePage(unit: dummyUnits.first),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoute.leaderboard.path,
+              builder: (context, state) => LeaderboardPage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoute.mistakes.path,
+              builder: (context, state) => MistakesPage(),
             ),
             GoRoute(
-              path: AppRoute.register.path,
-              builder: (context, state) => RegisterPage(),
+              path: AppRoute.mistakeDetail.path,
+              builder: (context, state) {
+                final id = state.pathParameters["id"];
+                if (id == null) {
+                  return ErrorPage(error: Exception("Mistake ID not found"));
+                }
+                return MistakeDetailPage(mistakeId: id);
+              },
             ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
             GoRoute(
-              path: AppRoute.languageSelection.path,
-              builder: (context, state) => LanguageSelectionPage(),
-            )
-          ]),
-      // Main navigation routes with StatefulShellRoute
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return NavigationPage(
-            child: navigationShell,
-          );
-        },
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.home.path,
-                builder: (context, state) => HomePage(unit: dummyUnits.first),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.profile.path,
-                builder: (context, state) => ProfileView(),
-              ),
-            ],
-          ),
-        ],
-      ),
-      // Lesson route
-      GoRoute(
-        path: "/lesson/:id",
-        builder: (context, state) {
-          final id = int.tryParse(state.pathParameters["id"] ?? "");
-          if (id == null) {
-            return ErrorPage(error: Exception("Lesson id not found"));
-          }
-          return LessonPage(
-            lessonId: id,
-          );
-        },
-      ),
-    ];
-  }
+              path: AppRoute.profile.path,
+              builder: (context, state) => ProfileView(),
+            ),
+          ],
+        ),
+      ],
+    ),
+    // Lesson route
+    GoRoute(
+      path: "/lesson/:id",
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters["id"] ?? "");
+        if (id == null) {
+          return ErrorPage(error: Exception("Lesson id not found"));
+        }
+        return LessonPage(
+          lessonId: id,
+        );
+      },
+    ),
+  ];
+}
 }
