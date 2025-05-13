@@ -10,12 +10,12 @@ const exerciseOptionSchema = new mongoose.Schema({
   },
   correct: {
     type: Boolean,
-    required: true,
+    
     default: null
   },
   text: {
     type: String,
-    required: true,
+    
     default: null
   },
   audioUrl: {

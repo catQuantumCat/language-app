@@ -7,9 +7,12 @@ const authRoutes = require('./auth/auth.route');
 const leaderboardRoutes = require('./leaderboard/leaderboard.route');
 const notificationRoutes = require('./notification/notification.route');
 const mistakeRoutes = require('./mistake/mistake.route');
+const knowledgeRoutes = require('./knowledge/knowledge.route');
+
 module.exports = (app) => {
  
   app.use('/api/lesson/:lessonId/exercises', exerciseRoutes);
+  app.use('/api/lesson/:lessonId/knowledge', knowledgeRoutes);
   app.use('/api/languages', languageRoutes);
   app.use('/api/languages/:languageId/units', unitRoutes);
   app.use('/api/unit/:unitId/lessons', lessonRoutes);

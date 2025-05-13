@@ -29,7 +29,7 @@ const ExerciseOption = require('../../models/exercise/exercise_option.model');
 module.exports.getExercisesByLesson = async (req, res) => {
   try {
     const { lessonId } = req.params;
-    console.log('LessonId từ params:', lessonId);
+    
 
     // Lấy tất cả bài tập trong lesson, sắp xếp theo order
     const exercises = await Exercise.find({ lessonId }).sort({ order: 1 });
