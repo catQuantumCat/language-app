@@ -12,6 +12,9 @@ import 'package:language_app/modules/auth/login/login_view.dart';
 import 'package:language_app/modules/auth/register/register_view.dart';
 import 'package:language_app/modules/error/error_page.dart';
 import 'package:language_app/modules/home/home_view.dart';
+import 'package:language_app/modules/knowledge/knowledge_view.dart';
+import 'package:language_app/modules/knowledge/lessons_view.dart';
+import 'package:language_app/modules/knowledge/units_view.dart';
 import 'package:language_app/modules/language_selection/language_selection_view.dart';
 import 'package:language_app/modules/leaderboard/leaderboard_view.dart';
 import 'package:language_app/modules/lesson/lesson_view.dart';
@@ -22,6 +25,7 @@ import 'package:language_app/modules/profile/profile_view.dart';
 import 'package:language_app/utils/stream_to_listenable.dart';
 
 
+// Cập nhật enum AppRoute trong app_router.dart
 enum AppRoute {
   login("/login"),
   register("/register"),
@@ -30,6 +34,7 @@ enum AppRoute {
   leaderboard("/leaderboard"),
   mistakes("/mistakes"),
   mistakeDetail("/mistakes/:id"),
+  units("/units"), // Thêm route mới
   profile("/profile");
 
   final String path;
@@ -98,6 +103,44 @@ final class AppRouter {
 
   List<RouteBase> _buildRoutes() {
   return [
+    GoRoute(
+  path: "/units",
+  builder: (context, state) => UnitsPage(),
+),
+GoRoute(
+  path: "/units/:unitId/lessons",
+  builder: (context, state) {
+    final unitId = state.pathParameters["unitId"];
+    final unitTitle = state.uri.queryParameters["unitTitle"];
+    final unitOrder = int.tryParse(state.uri.queryParameters["unitOrder"] ?? "");
+    
+    if (unitId == null) {
+      return ErrorPage(error: Exception("Unit ID not found"));
+    }
+    
+    return LessonsPage(
+      unitId: unitId, 
+      unitTitle: unitTitle ?? "Unit", 
+      unitOrder: unitOrder ?? 0
+    );
+  },
+),
+GoRoute(
+  path: "/lessons/:lessonId/knowledge",
+  builder: (context, state) {
+    final lessonId = state.pathParameters["lessonId"];
+    final lessonTitle = state.uri.queryParameters["lessonTitle"];
+    
+    if (lessonId == null) {
+      return ErrorPage(error: Exception("Lesson ID not found"));
+    }
+    
+    return KnowledgePage(
+      lessonId: lessonId, 
+      lessonTitle: lessonTitle ?? "Lesson"
+    );
+  },
+),
     // Auth routes
     ShellRoute(
         builder: (context, state, child) => Scaffold(body: child),
@@ -116,57 +159,102 @@ final class AppRouter {
           )
         ]),
     // Main navigation routes with StatefulShellRoute
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) {
-        return NavigationPage(
-          child: navigationShell,
-        );
-      },
-      branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: AppRoute.home.path,
-              builder: (context, state) => HomePage(unit: dummyUnits.first),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: AppRoute.leaderboard.path,
-              builder: (context, state) => LeaderboardPage(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: AppRoute.mistakes.path,
-              builder: (context, state) => MistakesPage(),
-            ),
-            GoRoute(
-              path: AppRoute.mistakeDetail.path,
-              builder: (context, state) {
-                final id = state.pathParameters["id"];
-                if (id == null) {
-                  return ErrorPage(error: Exception("Mistake ID not found"));
-                }
-                return MistakeDetailPage(mistakeId: id);
-              },
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: AppRoute.profile.path,
-              builder: (context, state) => ProfileView(),
-            ),
-          ],
+    // Cập nhật phần StatefulShellRoute trong _buildRoutes()
+StatefulShellRoute.indexedStack(
+  builder: (context, state, navigationShell) {
+    return NavigationPage(
+      child: navigationShell,
+    );
+  },
+  branches: [
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: AppRoute.home.path,
+          builder: (context, state) => HomePage(unit: dummyUnits.first),
         ),
       ],
     ),
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: AppRoute.leaderboard.path,
+          builder: (context, state) => LeaderboardPage(),
+        ),
+      ],
+    ),
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: AppRoute.mistakes.path,
+          builder: (context, state) => MistakesPage(),
+        ),
+        GoRoute(
+          path: AppRoute.mistakeDetail.path,
+          builder: (context, state) {
+            final id = state.pathParameters["id"];
+            if (id == null) {
+              return ErrorPage(error: Exception("Mistake ID not found"));
+            }
+            return MistakeDetailPage(mistakeId: id);
+          },
+        ),
+      ],
+    ),
+    // Thêm branch mới cho Knowledge
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: "/units",
+          builder: (context, state) => UnitsPage(),
+        ),
+        GoRoute(
+          path: "/units/:unitId/lessons",
+          builder: (context, state) {
+            final unitId = state.pathParameters["unitId"];
+            final unitTitle = state.uri.queryParameters["unitTitle"];
+            final unitOrder = int.tryParse(state.uri.queryParameters["unitOrder"] ?? "");
+            
+            if (unitId == null) {
+              return ErrorPage(error: Exception("Unit ID not found"));
+            }
+            
+            return LessonsPage(
+              unitId: unitId, 
+              unitTitle: unitTitle ?? "Unit", 
+              unitOrder: unitOrder ?? 0
+            );
+          },
+        ),
+        GoRoute(
+          path: "/lessons/:lessonId/knowledge",
+          builder: (context, state) {
+            final lessonId = state.pathParameters["lessonId"];
+            final lessonTitle = state.uri.queryParameters["lessonTitle"];
+            
+            if (lessonId == null) {
+              return ErrorPage(error: Exception("Lesson ID not found"));
+            }
+            
+            return KnowledgePage(
+              lessonId: lessonId, 
+              lessonTitle: lessonTitle ?? "Lesson"
+            );
+          },
+        ),
+      ],
+    ),
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: AppRoute.profile.path,
+          builder: (context, state) => ProfileView(),
+        ),
+      ],
+    ),
+  ],
+),
+
     // Lesson route
     GoRoute(
       path: "/lesson/:id",

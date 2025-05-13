@@ -49,6 +49,9 @@ class NavigationView extends StatelessWidget {
                 context.go('/mistakes');
                 break;
               case 3:
+                context.go('/units'); // Thêm tab mới cho Knowledge
+                break;
+              case 4:
                 context.go('/profile');
                 break;
             }
@@ -73,6 +76,10 @@ class NavigationView extends StatelessWidget {
               label: 'Mistakes',
             ),
             NavigationDestination(
+              icon: Icon(Icons.book), // Icon mới cho Knowledge
+              label: 'Knowledge',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.person),
               label: 'Profile',
             ),
@@ -88,7 +95,8 @@ class NavigationView extends StatelessWidget {
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/leaderboard')) return 1;
     if (location.startsWith('/mistakes')) return 2;
-    if (location.startsWith('/profile')) return 3;
+    if (location.startsWith('/units') || location.startsWith('/lessons')) return 3; // Cập nhật điều kiện
+    if (location.startsWith('/profile')) return 4;
     return 0;
   }
 }

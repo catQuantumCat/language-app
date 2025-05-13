@@ -20,6 +20,10 @@ abstract class Endpoints {
   static String getUserRank = "${baseApi}leaderboard/user";
   static String getUserMistakes = "${baseApi}mistakes/users";
   static String getMistakeDetail = "${baseApi}mistakes/detail";
+  // Endpoints cho knowledge feature
+  static String getUnits(String languageId) => "${baseApi}languages/$languageId/units";
+  static String getLessons(String unitId) => "${baseApi}unit/$unitId/lessons";
+  static String getKnowledge(String lessonId) => "${baseApi}lesson/$lessonId/knowledge";
 }
 
 const String loginEndpoint = "/auth/login";
@@ -31,3 +35,7 @@ const String leaderboardEndpoint = "/leaderboard";
 const String userRankEndpoint = "/leaderboard/user/{userId}";
 const String userMistakesEndpoint = "/mistakes/users/{userId}";
 const String mistakeDetailEndpoint = "/mistakes/detail/{mistakeId}";
+// Thêm các endpoint constants mới
+const String unitsEndpoint = "/languages/{languageId}/units";
+const String lessonsEndpoint = "/unit/{unitId}/lessons";
+const String knowledgeEndpoint = "/lesson/{lessonId}/knowledge";
