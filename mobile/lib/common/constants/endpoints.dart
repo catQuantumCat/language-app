@@ -24,6 +24,10 @@ abstract class Endpoints {
   static String getUnits(String languageId) => "${baseApi}languages/$languageId/units";
   static String getLessons(String unitId) => "${baseApi}unit/$unitId/lessons";
   static String getKnowledge(String lessonId) => "${baseApi}lesson/$lessonId/knowledge";
+  // Thêm endpoints cho profile
+  static String getUserProfile = "${baseApi}auth/me";
+  static String getUserRankInfo = "${baseApi}leaderboard/me";
+  static String updateUserProfile = "${baseApi}users"; // Sẽ thêm /{userId}/profile khi gọi
 }
 
 const String loginEndpoint = "/auth/login";
@@ -39,3 +43,7 @@ const String mistakeDetailEndpoint = "/mistakes/detail/{mistakeId}";
 const String unitsEndpoint = "/languages/{languageId}/units";
 const String lessonsEndpoint = "/unit/{unitId}/lessons";
 const String knowledgeEndpoint = "/lesson/{lessonId}/knowledge";
+// Constants cho endpoints
+const String userProfileEndpoint = "/auth/me";
+const String userRankInfoEndpoint = "/leaderboard/me";
+const String updateUserProfileEndpoint = "/users/{userId}/profile";

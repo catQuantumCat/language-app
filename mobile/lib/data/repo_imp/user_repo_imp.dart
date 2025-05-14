@@ -1,3 +1,4 @@
+// data/repo_imp/user_repo_imp.dart (cập nhật)
 import 'dart:async';
 import 'dart:developer';
 
@@ -7,8 +8,11 @@ import 'package:language_app/data/datasources/remote/user_remote_datasource.dart
 import 'package:language_app/data/models/auth_response_model.dart';
 import 'package:language_app/data/models/login_model.dart';
 import 'package:language_app/data/models/register_model.dart';
+import 'package:language_app/domain/dtos/update_profile_dto.dart';
 import 'package:language_app/domain/dtos/user_dto.dart';
 import 'package:language_app/domain/models/user.dart';
+import 'package:language_app/domain/models/user_profile.dart';
+import 'package:language_app/domain/models/user_rank_info.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 
 class UserRepoImpl implements UserRepo {
@@ -114,5 +118,36 @@ class UserRepoImpl implements UserRepo {
   @override
   Stream<AppStateEnum> watchAppState() {
     return _appStateController.stream;
+  }
+  
+  @override
+  Future<UserProfile> getUserProfile() async {
+    return await _remoteDatasource.getUserProfile();
+  }
+  
+  @override
+  Future<UserRankInfo> getUserRankInfo() async {
+    return await _remoteDatasource.getUserRankInfo();
+  }
+  
+  @override
+  Future<UserProfile> updateUserProfile(String userId, UpdateProfileDto data) async {
+    final updatedProfile = await _remoteDatasource.updateUserProfile(
+      userId, 
+      data.toJson()
+    );
+    
+    // Cập nhật thông tin user trong local storage
+    final currentUser = _localDatasource.getUserInfo();
+    if (currentUser != null) {
+      final updatedUser = currentUser.copyWith(
+        fullName: data.fullName ?? currentUser.fullName,
+        email: data.email ?? currentUser.email,
+        avatar: data.avatar ?? currentUser.avatar,
+      );
+      await _localDatasource.setUserInfo(data: updatedUser);
+    }
+    
+    return updatedProfile;
   }
 }

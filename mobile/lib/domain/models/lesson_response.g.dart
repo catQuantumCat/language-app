@@ -8,12 +8,13 @@ part of 'lesson_response.dart';
 
 LessonResponse _$LessonResponseFromJson(Map<String, dynamic> json) =>
     LessonResponse(
-      experienceReward: json['experienceReward'] as int,
-      order: json['order'] as int,
+      experienceReward: (json['experienceReward'] as num).toInt(),
+      order: (json['order'] as num).toInt(),
       title: json['title'] as String,
       unitId: json['unitId'] as String,
       id: json['id'] as String,
-      progress: LessonProgress.fromJson(json['progress'] as Map<String, dynamic>),
+      progress:
+          LessonProgress.fromJson(json['progress'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$LessonResponseToJson(LessonResponse instance) =>
@@ -29,8 +30,8 @@ Map<String, dynamic> _$LessonResponseToJson(LessonResponse instance) =>
 LessonProgress _$LessonProgressFromJson(Map<String, dynamic> json) =>
     LessonProgress(
       completed: json['completed'] as bool,
-      score: json['score'] as int,
-      attempts: json['attempts'] as int,
+      score: (json['score'] as num).toInt(),
+      attempts: (json['attempts'] as num).toInt(),
     );
 
 Map<String, dynamic> _$LessonProgressToJson(LessonProgress instance) =>

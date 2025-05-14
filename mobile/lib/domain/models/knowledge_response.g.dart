@@ -10,7 +10,7 @@ KnowledgeResponse _$KnowledgeResponseFromJson(Map<String, dynamic> json) =>
     KnowledgeResponse(
       lessonId: json['lessonId'] as String,
       lessonTitle: json['lessonTitle'] as String,
-      lessonOrder: json['lessonOrder'] as int,
+      lessonOrder: (json['lessonOrder'] as num).toInt(),
       vocabulary: (json['vocabulary'] as List<dynamic>)
           .map((e) => Vocabulary.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -37,7 +37,7 @@ Vocabulary _$VocabularyFromJson(Map<String, dynamic> json) => Vocabulary(
       examples: (json['examples'] as List<dynamic>)
           .map((e) => Example.fromJson(e as Map<String, dynamic>))
           .toList(),
-      order: json['order'] as int,
+      order: (json['order'] as num).toInt(),
     );
 
 Map<String, dynamic> _$VocabularyToJson(Vocabulary instance) =>
@@ -58,7 +58,7 @@ Grammar _$GrammarFromJson(Map<String, dynamic> json) => Grammar(
       examples: (json['examples'] as List<dynamic>)
           .map((e) => Example.fromJson(e as Map<String, dynamic>))
           .toList(),
-      order: json['order'] as int,
+      order: (json['order'] as num).toInt(),
     );
 
 Map<String, dynamic> _$GrammarToJson(Grammar instance) => <String, dynamic>{

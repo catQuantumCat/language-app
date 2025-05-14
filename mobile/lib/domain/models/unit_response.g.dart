@@ -8,7 +8,7 @@ part of 'unit_response.dart';
 
 UnitResponse _$UnitResponseFromJson(Map<String, dynamic> json) => UnitResponse(
       languageId: json['languageId'] as String,
-      order: json['order'] as int,
+      order: (json['order'] as num).toInt(),
       title: json['title'] as String,
       id: json['id'] as String,
     );

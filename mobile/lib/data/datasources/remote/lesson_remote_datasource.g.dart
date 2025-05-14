@@ -27,7 +27,7 @@ class _LessonRemoteDatasource implements LessonRemoteDatasource {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'lesson/680230982f05fe8c6a1166ed/exercises',
+            '/lesson/61a7f56d9f5f7a001f9d4d01/exercises',
             queryParameters: queryParameters,
             data: _data,
           )

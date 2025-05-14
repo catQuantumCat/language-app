@@ -9,27 +9,26 @@ class ApiInteceptor extends Interceptor {
   final Box _userBox;
 
   ApiInteceptor({required Box userBox}) : _userBox = userBox;
+  
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final key = _userBox.get(StorageKeys.tokenKey);
+    final token = _userBox.get(StorageKeys.tokenKey);
 
-    if (key != null) {
-      options.headers.addAll({HttpHeaders.authorizationHeader: key});
+    if (token != null) {
+      log('Adding token to request: $token', name: 'ApiInterceptor');
+      options.headers.addAll({HttpHeaders.authorizationHeader: 'Bearer $token'});
+    } else {
+      log('No token found for request: ${options.path}', name: 'ApiInterceptor');
     }
-
     
-    
-
     super.onRequest(options, handler);
   }
-
-  
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     //If error is 401 -> unauthenticate
     if (err.response?.statusCode == 401) {
-      log('Unauthorized error: ${err.response?.statusMessage}');
+      log('Unauthorized error: ${err.response?.data}');
       _userBox.deleteAll([StorageKeys.userKey, StorageKeys.tokenKey]);
     }
     super.onError(err, handler);
