@@ -6,13 +6,15 @@ part 'language_model.g.dart';
 @JsonSerializable()
 class LanguageModel {
   final String languageId;
-  final int level;
-  final int experience;
+  final String languageFlag;
+  final int order;
+  final int lessonOrder;
 
   LanguageModel(
       {required this.languageId,
-      required this.level,
-      required this.experience});
+      required this.languageFlag,
+      required this.order,
+      required this.lessonOrder});
 
   Map<String, dynamic> toJson() => _$LanguageModelToJson(this);
 
@@ -21,6 +23,10 @@ class LanguageModel {
 
   Language toLanguage() {
     return Language(
-        languageId: languageId, level: level, experience: experience);
+      languageId: languageId,
+      languageFlag: languageFlag,
+      order: order,
+      lessonOrder: lessonOrder,
+    );
   }
 }

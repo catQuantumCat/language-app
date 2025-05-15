@@ -24,7 +24,8 @@ class LanguageRepoImpl implements LanguageRepo {
 
     if (user != null) {
       final data = user.copyWith(languages: [
-        Language(languageId: languageId, level: 0, experience: 0)
+
+        Language(languageId: languageId, languageFlag: "", order: 1, lessonOrder: 1)
       ]);
       await _userRepo.setUserInfo(data: data);
     }
