@@ -47,48 +47,78 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   Future<void> _onUpdateProfile(
-    UpdateProfileEvent event,
-    Emitter<ProfileState> emit,
-  ) async {
-    if (state.userProfile == null) return;
+  UpdateProfileEvent event,
+  Emitter<ProfileState> emit,
+) async {
+  if (state.userProfile == null) return;
+  
+  emit(state.copyWith(
+    updateState: ViewStateEnum.loading,
+    updateMessage: 'Đang cập nhật thông tin...',
+  ));
+
+  try {
+    final updatedProfile = await _userRepo.updateUserProfile(
+      state.userProfile!.id,
+      UpdateProfileDto(
+        fullName: event.fullName,
+        email: event.email,
+        password: event.password,
+        avatarFile: state.avatarFile,
+      ),
+    );
     
     emit(state.copyWith(
-      updateState: ViewStateEnum.loading,
-      updateMessage: 'Đang cập nhật thông tin...',
+      userProfile: updatedProfile,
+      updateState: ViewStateEnum.succeed,
+      updateMessage: 'Cập nhật thành công!',
+      avatarFile: null, // Reset avatarFile sau khi cập nhật
     ));
+  } catch (e) {
+    emit(state.copyWith(
+      updateState: ViewStateEnum.failed,
+      updateMessage: 'Cập nhật thất bại: ${e.toString()}',
+    ));
+  }
+}
 
+ Future<void> _onChangeAvatar(
+  ChangeAvatarEvent event,
+  Emitter<ProfileState> emit,
+) async {
+  if (event.imageFile != null && state.userProfile != null) {
+    // Cập nhật state để hiển thị loading
+    emit(state.copyWith(
+      avatarFile: event.imageFile,
+      updateState: ViewStateEnum.loading,
+      updateMessage: 'Đang cập nhật ảnh đại diện...',
+    ));
+    
     try {
       final updatedProfile = await _userRepo.updateUserProfile(
         state.userProfile!.id,
         UpdateProfileDto(
-          fullName: event.fullName,
-          email: event.email,
-          password: event.password,
-          avatar: state.avatarUrl,
+          avatarFile: event.imageFile,
         ),
       );
       
       emit(state.copyWith(
         userProfile: updatedProfile,
         updateState: ViewStateEnum.succeed,
-        updateMessage: 'Cập nhật thành công!',
-        avatarUrl: null, // Reset avatarUrl sau khi cập nhật
+        updateMessage: 'Cập nhật ảnh đại diện thành công!',
+        avatarFile: null, // Reset avatarFile sau khi cập nhật
       ));
     } catch (e) {
       emit(state.copyWith(
         updateState: ViewStateEnum.failed,
-        updateMessage: 'Cập nhật thất bại: ${e.toString()}',
+        updateMessage: 'Cập nhật ảnh đại diện thất bại: ${e.toString()}',
       ));
     }
-  }
-
-  Future<void> _onChangeAvatar(
-    ChangeAvatarEvent event,
-    Emitter<ProfileState> emit,
-  ) async {
+  } else {
+    // Chỉ cập nhật avatarFile trong state nếu không có profile
     emit(state.copyWith(
       avatarFile: event.imageFile,
-      avatarUrl: event.imageUrl,
     ));
   }
+}
 }

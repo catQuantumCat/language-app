@@ -22,6 +22,7 @@ import 'package:language_app/domain/repos/leaderboard_repo.dart';
 import 'package:language_app/domain/repos/lesson_repo.dart';
 import 'package:language_app/domain/repos/mistake_repo.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
+import 'package:language_app/services/upload_service.dart';
 
 abstract class DependencyInjection {
   static Future<void> setup(GetIt getIt) async {
@@ -50,6 +51,7 @@ abstract class DependencyInjection {
       () => UserRepoImpl(
         localDatasource: getIt<UserLocalDatasource>(),
         remoteDatasource: getIt<UserRemoteDatasource>(),
+        dio: getIt<Dio>(), // Thêm Dio
       ),
     );
 
@@ -115,6 +117,9 @@ abstract class DependencyInjection {
         remoteDatasource: getIt<KnowledgeRemoteDatasource>(),
       ),
     );
+    getIt.registerLazySingleton<UploadService>(
+  () => UploadService(getIt<Dio>()),
+);
 
     // Wait for async dependencies to be ready
     await getIt.allReady();

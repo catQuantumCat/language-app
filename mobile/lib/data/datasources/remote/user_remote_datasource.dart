@@ -1,4 +1,6 @@
-// data/datasources/remote/user_remote_datasource.dart (cập nhật)
+// data/datasources/remote/user_remote_datasource.dart
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:language_app/common/constants/endpoints.dart';
 import 'package:language_app/data/models/auth_response_model.dart';
 import 'package:language_app/data/models/login_model.dart';
@@ -6,9 +8,6 @@ import 'package:language_app/data/models/register_model.dart';
 import 'package:language_app/domain/dtos/update_profile_dto.dart';
 import 'package:language_app/domain/models/user_profile.dart';
 import 'package:language_app/domain/models/user_rank_info.dart';
-
-import 'package:dio/dio.dart';
-
 import 'package:retrofit/retrofit.dart';
 
 part 'user_remote_datasource.g.dart';
@@ -30,9 +29,11 @@ abstract class UserRemoteDatasource {
   @GET(userRankInfoEndpoint)
   Future<UserRankInfo> getUserRankInfo();
   
-  @PATCH("${updateUserProfileEndpoint}")
+  // Sửa lại định nghĩa phương thức để phù hợp với cách Retrofit hoạt động
+  @PATCH("/users/{userId}/profile")
   Future<UserProfile> updateUserProfile(
     @Path("userId") String userId,
-    @Body() Map<String, dynamic> data
+    @Body() Map<String, dynamic> data,
   );
 }
+

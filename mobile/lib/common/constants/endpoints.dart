@@ -28,6 +28,7 @@ abstract class Endpoints {
   static String getUserProfile = "${baseApi}auth/me";
   static String getUserRankInfo = "${baseApi}leaderboard/me";
   static String updateUserProfile = "${baseApi}users"; // Sẽ thêm /{userId}/profile khi gọi
+  static String uploadImage = "${baseApi}upload";
 }
 
 const String loginEndpoint = "/auth/login";

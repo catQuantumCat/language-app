@@ -194,7 +194,9 @@ class _ProfileContentState extends State<ProfileContent> {
           children: [
             // Avatar
             GestureDetector(
-              onTap: () => _showImageSourceOptions(context),
+            onTap: () => _showImageSourceOptions(context),
+            child: Hero(
+              tag: 'profileAvatar',
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: context.colorTheme.primary.withOpacity(0.1),
@@ -202,25 +204,44 @@ class _ProfileContentState extends State<ProfileContent> {
                 child: _getAvatarChild(state, profile),
               ),
             ),
-            
-            // Edit avatar button
-            Positioned(
-              bottom: 0,
-              right: 0,
+          ),
+          
+          // Hiển thị indicator khi đang upload
+          if (state.updateState == ViewStateEnum.loading)
+            Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: context.colorTheme.primary,
+                  color: Colors.black.withOpacity(0.5),
                   shape: BoxShape.circle,
                 ),
-                child: IconButton(
-                  icon: const Icon(Icons.camera_alt, size: 20),
-                  color: context.colorTheme.onPrimary,
-                  onPressed: () => _showImageSourceOptions(context),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: context.colorTheme.onPrimary,
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          
+          // Edit avatar button
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.colorTheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.camera_alt, size: 20),
+                color: context.colorTheme.onPrimary,
+                onPressed: state.updateState == ViewStateEnum.loading
+                  ? null
+                  : () => _showImageSourceOptions(context),
+              ),
+            ),
+          ),
+        ],
+      ),
         
         const SizedBox(height: 16),
         
@@ -437,29 +458,26 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
+  // Trong _ProfileContentState
+Future<void> _pickImage(ImageSource source) async {
+  try {
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+    
+    if (image != null && mounted) {
+      // Thêm file vào state mà không hiển thị dialog loading
+      context.read<ProfileBloc>().add(
+        ChangeAvatarEvent(
+          imageFile: File(image.path),
+        ),
       );
-      
-      if (image != null) {
-        // Upload ảnh lên server và lấy URL
-        // Đây là nơi bạn sẽ thêm code upload ảnh
-        // Giả sử sau khi upload thành công, bạn nhận được URL
-        final String imageUrl = await _uploadImage(File(image.path));
-        
-        context.read<ProfileBloc>().add(
-          ChangeAvatarEvent(
-            imageFile: File(image.path),
-            imageUrl: imageUrl,
-          ),
-        );
-      }
-    } catch (e) {
+    }
+  } catch (e) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Không thể chọn ảnh: ${e.toString()}'),
@@ -468,6 +486,8 @@ class _ProfileContentState extends State<ProfileContent> {
       );
     }
   }
+}
+
 
   // Giả lập việc upload ảnh
   Future<String> _uploadImage(File imageFile) async {
@@ -478,22 +498,17 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   void _showEditProfileDialog(BuildContext context, UserProfile profile) {
-    showDialog(
-      context: context,
-      builder: (context) => EditProfileDialog(
+  showDialog(
+    context: context, // Truyền context đúng
+    builder: (dialogContext) => BlocProvider.value(
+      value: context.read<ProfileBloc>(), // Sử dụng BlocProvider.value để chia sẻ bloc
+      child: EditProfileDialog(
         initialFullName: profile.fullName,
         initialEmail: profile.email,
-        onSave: (fullName, email, password) {
-          context.read<ProfileBloc>().add(
-            UpdateProfileEvent(
-              fullName: fullName.isNotEmpty ? fullName : null,
-              email: email.isNotEmpty ? email : null,
-              password: password.isNotEmpty ? password : null,
-            ),
-          );
-        },
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 

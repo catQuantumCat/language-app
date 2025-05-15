@@ -1,17 +1,17 @@
 // modules/profile/widgets/edit_profile_dialog.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
+import 'package:language_app/modules/profile/bloc/profile_bloc.dart';
 
 class EditProfileDialog extends StatefulWidget {
   final String initialFullName;
   final String initialEmail;
-  final Function(String fullName, String email, String password) onSave;
 
   const EditProfileDialog({
     Key? key,
     required this.initialFullName,
     required this.initialEmail,
-    required this.onSave,
   }) : super(key: key);
 
   @override
@@ -66,6 +66,17 @@ class _EditProfileDialogState extends State<EditProfileDialog> {
       _passwordError = null;
     });
     return true;
+  }
+
+  void _onSavePressed() {
+    if (_validateForm()) {
+      context.read<ProfileBloc>().add(UpdateProfileEvent(
+        fullName: _fullNameController.text.isNotEmpty ? _fullNameController.text : null,
+        email: _emailController.text.isNotEmpty ? _emailController.text : null,
+        password: _passwordController.text.isNotEmpty ? _passwordController.text : null,
+      ));
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -175,16 +186,7 @@ class _EditProfileDialogState extends State<EditProfileDialog> {
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {
-                      if (_validateForm()) {
-                        widget.onSave(
-                          _fullNameController.text,
-                          _emailController.text,
-                          _passwordController.text,
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
+                    onPressed: _onSavePressed,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.colorTheme.primary,
                       foregroundColor: context.colorTheme.onPrimary,
