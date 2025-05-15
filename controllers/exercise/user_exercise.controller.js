@@ -14,9 +14,10 @@ const leaderboardController = require('../leaderboard/leaderboard.controller');
 // API lưu kết quả sau khi hoàn thành bài học
 module.exports.saveLessonResults = async (req, res) => {
   try {
+    const { unitId } = req.params;
     const { 
       userId, 
-      unitId,
+      
       lessonId, 
       exercises,
       hearts, 
@@ -26,7 +27,7 @@ module.exports.saveLessonResults = async (req, res) => {
     } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
-    if (!userId ||!unitId || !lessonId || !exercises || !Array.isArray(exercises)) {
+    if (!userId ||!unitId || !lessonId ) {
       return res.status(400).json({ 
         success: false, 
         message: 'Thiếu thông tin bắt buộc hoặc định dạng exercises không hợp lệ' 
