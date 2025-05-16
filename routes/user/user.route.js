@@ -68,7 +68,7 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  * /users/{userId}/update-language:
  *   patch:
  *     summary: Cập nhật thông tin ngôn ngữ của người dùng
- *     description: API cập nhật ngôn ngữ đã chọn gần đây và/hoặc thêm/cập nhật ngôn ngữ trong danh sách ngôn ngữ của người dùng
+ *     description: API cập nhật một hoặc nhiều ngôn ngữ trong danh sách ngôn ngữ của người dùng
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -78,21 +78,26 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  *           type: string
  *         description: ID của người dùng
  *     requestBody:
- *       required: false
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             properties:
- *               languageId:
- *                 type: string
- *                 description: ID của ngôn ngữ cần thêm/cập nhật trong danh sách
- *               lessonId:
- *                 type: string
- *                 description: ID của bài học hiện tại cho ngôn ngữ đã chọn
- *               order:
- *                 type: number
- *                 description: Thứ tự của ngôn ngữ trong danh sách
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     languageId:
+ *                       type: string
+ *                       description: ID của ngôn ngữ cần thêm/cập nhật
+ *                     lessonId:
+ *                       type: string
+ *                       description: ID của bài học hiện tại cho ngôn ngữ
+ *                     order:
+ *                       type: number
+ *                       description: Thứ tự của ngôn ngữ trong danh sách
  *     responses:
  *       200:
  *         description: Cập nhật thông tin ngôn ngữ thành công
@@ -117,8 +122,10 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  *                         properties:
  *                           languageId:
  *                             type: string
- *                           lessonId:
+ *                           languageFlag:
  *                             type: string
+ *                           lessonOrder:
+ *                             type: number
  *                           order:
  *                             type: number
  *       400:
@@ -133,7 +140,7 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Cần cung cấp thông tin languageId"
+ *                   example: "Cần cung cấp mảng languages với ít nhất một phần tử"
  *       404:
  *         description: Không tìm thấy người dùng
  *         content:
@@ -163,6 +170,7 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  *                 error:
  *                   type: string
  */
+
 router.patch('/:userId/update-language', userController.updateUserLanguage);
 
 
