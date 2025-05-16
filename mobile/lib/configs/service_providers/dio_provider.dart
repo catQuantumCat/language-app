@@ -25,11 +25,11 @@ class DioProvider {
 
     dio.interceptors.add(ApiInteceptor(userBox: _userBox));
     dio.interceptors.add(LogInterceptor(
-        requestBody: false,
+        requestBody: true,
         responseHeader: false,
         requestHeader: false,
         request: false,
-        responseBody: false,
+        responseBody: true,
         error: true));
 
     dio.options.baseUrl = Endpoints.baseApi;

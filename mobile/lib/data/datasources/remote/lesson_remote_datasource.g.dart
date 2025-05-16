@@ -85,7 +85,7 @@ class _LessonRemoteDatasource implements LessonRemoteDatasource {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/lesson/61a7f56d9f5f7a001f9d4d01/exercises',
+            '/lesson/${lessonId}/exercises',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -116,6 +116,26 @@ class _LessonRemoteDatasource implements LessonRemoteDatasource {
           .compose(
             _dio.options,
             '/unit/${unitId}/lessons/save-results',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<void> updateLanguage(String userId, Map<String, dynamic> map) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(map);
+    final _options = _setStreamType<void>(
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/users/${userId}/update-language',
             queryParameters: queryParameters,
             data: _data,
           )

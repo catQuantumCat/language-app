@@ -4,8 +4,9 @@ import 'package:language_app/domain/models/lesson.dart';
 import 'package:language_app/theme/color_theme.dart';
 
 class LessonList extends StatelessWidget {
-  const LessonList({super.key, required this.lessons});
+  const LessonList({super.key, required this.lessons, required this.languageId});
 
+  final String languageId;
   final List<Lesson> lessons;
 
   int get _lengthModifiedByEight => lessons.length - (lessons.length % 4);
@@ -68,7 +69,7 @@ class LessonList extends StatelessWidget {
       {required String unitId, required String lessonId}) {
     //TODO: remove dummy
 
-    GoRouter.of(context).go("/lesson/$unitId/$lessonId");
+    GoRouter.of(context).go("/lesson/$languageId/$unitId/$lessonId");
 
     // Navigator.push(
     //     context,

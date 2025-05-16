@@ -30,7 +30,7 @@ class MistakesBloc extends Bloc<MistakesEvent, MistakesState> {
     emit(state.copyWith(viewState: ViewStateEnum.loading));
 
     try {
-      final User? currentUser = _userRepo.getUserInfo();
+      final User? currentUser = await _userRepo.getUserInfo();
       if (currentUser == null) {
         emit(state.copyWith(
           viewState: ViewStateEnum.failed,

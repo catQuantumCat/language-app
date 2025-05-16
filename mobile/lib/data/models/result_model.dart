@@ -7,6 +7,7 @@ part 'result_model.g.dart';
 class ResultModel {
   final String userId;
   final String lessonId;
+  @JsonKey(fromJson: _incorrectListToModel, toJson: _modelToJson)
   final List<ResultIncorrectExerciseModel> exercises;
   final int hearts;
   final int experienceGained;
@@ -22,6 +23,14 @@ class ResultModel {
     required this.timeSpent,
     required this.streak,
   });
+
+  static List<ResultIncorrectExerciseModel> _incorrectListToModel(
+          List<Map<String, dynamic>> data) =>
+      data.map((e) => ResultIncorrectExerciseModel.fromJson(e)).toList();
+
+  static List<Map<String, dynamic>> _modelToJson(
+          List<ResultIncorrectExerciseModel> data) =>
+      data.map((e) => e.toJson()).toList();
 
   factory ResultModel.fromJson(Map<String, dynamic> json) =>
       _$ResultModelFromJson(json);

@@ -18,10 +18,11 @@ import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widgets/completion_widget.dart';
 
 class LessonPage extends StatelessWidget {
-  const LessonPage({super.key, required this.lessonId, required this.unitId});
+  const LessonPage({super.key, required this.lessonId, required this.unitId, required this.languageId});
 
   final String lessonId;
   final String unitId;
+  final String languageId;
 
   void returnToMenuTapped(BuildContext context) {
     GoRouter.of(context).go("/home");
@@ -52,7 +53,7 @@ class LessonPage extends StatelessWidget {
       create: (context) => LessonBloc(
         userRepository: getIt<UserRepo>(),
         lessonRepository: getIt<LessonRepo>(),
-      )..add(LessonStartEvent(lessonId: lessonId, unitId: unitId)),
+      )..add(LessonStartEvent(lessonId: lessonId, unitId: unitId, languageId: languageId)),
       child: BlocListener<LessonBloc, LessonState>(
         listenWhen: (previous, current) =>
             (previous.status != current.status) ||

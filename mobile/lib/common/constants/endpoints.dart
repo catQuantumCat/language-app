@@ -1,8 +1,7 @@
 // common/constants/endpoints.dart (bổ sung)
 abstract class Endpoints {
   static String baseApi = "https://english-app-backend2.onrender.com/api/";
-  static String getExercises =
-      "$baseApi/lesson/61a7f56d9f5f7a001f9d4d01/exercises";
+  
 
   static String loginShort = "auth/login";
 
@@ -33,7 +32,6 @@ abstract class Endpoints {
 
 const String loginEndpoint = "/auth/login";
 const String registerEndpoint = "/auth/register";
-const String getExercises = "/lesson/61a7f56d9f5f7a001f9d4d01/exercises";
 const String availableLanguagesEndpoint = "/languages";
 const String userLanguagesEndpoint = "/users/languages";
 const String leaderboardEndpoint = "/leaderboard";

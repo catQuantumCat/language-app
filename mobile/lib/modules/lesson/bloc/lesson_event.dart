@@ -3,12 +3,14 @@ part of 'lesson_bloc.dart';
 sealed class LessonEvent extends Equatable {}
 
 class LessonStartEvent extends LessonEvent {
-  final String lessonId;
   final String unitId;
+  final String lessonId; 
+  final String languageId;
 
-  LessonStartEvent({required this.lessonId, required this.unitId});
+  LessonStartEvent({required this.unitId, required this.lessonId, required this.languageId});
+
   @override
-  List<Object?> get props => [lessonId, unitId];
+  List<Object?> get props => [unitId, lessonId, languageId];
 }
 
 class CheckAnswerEvent<T> extends LessonEvent {

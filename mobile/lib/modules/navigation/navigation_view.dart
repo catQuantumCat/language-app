@@ -49,7 +49,7 @@ class NavigationView extends StatelessWidget {
                 context.go('/mistakes');
                 break;
               case 3:
-                context.go('/units'); // Thêm tab mới cho Knowledge
+                context.go('/units');
                 break;
               case 4:
                 context.go('/profile');

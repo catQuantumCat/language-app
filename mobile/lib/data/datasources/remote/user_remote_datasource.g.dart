@@ -74,12 +74,12 @@ class _UserRemoteDatasource implements UserRemoteDatasource {
   }
 
   @override
-  Future<UserProfile> getUserProfile() async {
+  Future<User> getUserProfile() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<UserProfile>(
+    final _options = _setStreamType<User>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -90,9 +90,9 @@ class _UserRemoteDatasource implements UserRemoteDatasource {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UserProfile _value;
+    late User _value;
     try {
-      _value = UserProfile.fromJson(_result.data!);
+      _value = User.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -128,7 +128,7 @@ class _UserRemoteDatasource implements UserRemoteDatasource {
   }
 
   @override
-  Future<UserProfile> updateUserProfile(
+  Future<User> updateUserProfile(
     String userId,
     Map<String, dynamic> data,
   ) async {
@@ -137,7 +137,7 @@ class _UserRemoteDatasource implements UserRemoteDatasource {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(data);
-    final _options = _setStreamType<UserProfile>(
+    final _options = _setStreamType<User>(
       Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -148,9 +148,9 @@ class _UserRemoteDatasource implements UserRemoteDatasource {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UserProfile _value;
+    late User _value;
     try {
-      _value = UserProfile.fromJson(_result.data!);
+      _value = User.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

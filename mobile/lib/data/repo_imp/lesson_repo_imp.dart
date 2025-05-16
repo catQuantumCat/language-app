@@ -28,10 +28,20 @@ class LessonRepoImp implements LessonRepo {
   }
 
   @override
-  Future<void> sendResult({required Result result, required String unitId, required String userId}) async{
+  Future<void> sendResult(
+      {required Result result,
+      required String unitId,
+      required String userId,
+      required String languageId}) async {
     final resultModel = ResultModel.fromDomain(result, userId: userId);
-    return await _remoteDatasource.sendResult(unitId, resultModel);
-  }
 
-  
+    List<Future<void>> futures = [
+      _remoteDatasource.sendResult(unitId, resultModel),
+      _remoteDatasource.updateLanguage(userId, {
+        'languageId': languageId,
+        'lessonId': result.lessonId,
+      })
+    ];
+    await Future.wait(futures);
+  }
 }

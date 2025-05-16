@@ -7,17 +7,37 @@ part 'language.g.dart';
 @JsonSerializable()
 class Language {
   final String languageId;
-  final String flagUrl;
-  final int level;
-  final int experience;
-
+  final String languageFlag;
+  final int order;
+  final int lessonOrder;
   const Language(
       {required this.languageId,
-      required this.flagUrl,
-      required this.level,
-      required this.experience});
+      required this.languageFlag,
+      required this.order,
+      required this.lessonOrder});
 
   Map<String, dynamic> toJson() => _$LanguageToJson(this);
 
-  factory Language.fromJson(Map<String, dynamic> map) => _$LanguageFromJson(map);
+  factory Language.fromJson(Map<String, dynamic> map) =>
+      _$LanguageFromJson(map);
+
+  @override
+  String toString() {
+    return 'Language(languageId: $languageId, languageFlag: $languageFlag, order: $order, lessonOrder: $lessonOrder)';
+  }
+
+  @override
+  bool operator ==(covariant Language other) {
+    if (identical(this, other)) return true;
+
+    return other.languageId == languageId;
+  }
+
+  @override
+  int get hashCode {
+    return languageId.hashCode ^
+        languageFlag.hashCode ^
+        order.hashCode ^
+        lessonOrder.hashCode;
+  }
 }

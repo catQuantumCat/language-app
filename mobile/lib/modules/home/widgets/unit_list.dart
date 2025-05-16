@@ -6,11 +6,11 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class UnitList extends StatefulWidget {
   const UnitList(
-      {super.key, required this.units, required this.itemPositionsListener});
+      {super.key, required this.units, required this.itemPositionsListener, required this.languageId});
 
   final ItemPositionsListener itemPositionsListener;
   final List<Unit> units;
-
+  final String languageId;
   @override
   State<UnitList> createState() => _UnitListState();
 }
@@ -33,7 +33,7 @@ class _UnitListState extends State<UnitList> {
       padding: EdgeInsets.zero,
       itemPositionsListener: widget.itemPositionsListener,
       itemBuilder: (context, index) =>
-          LessonList(lessons: widget.units[index].lessons ?? []),
+          LessonList(lessons: widget.units[index].lessons ?? [], languageId: widget.languageId),
       itemCount: widget.units.length,
     );
   }

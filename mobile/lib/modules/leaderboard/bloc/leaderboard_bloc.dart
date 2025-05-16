@@ -35,7 +35,7 @@ class LeaderboardBloc extends Bloc<LeaderboardEvent, LeaderboardState> {
       // Nếu không có currentUserRank từ API, thử lấy thông tin người dùng hiện tại
       LeaderboardEntry? currentUserRank = leaderboardResponse.currentUserRank;
       if (currentUserRank == null) {
-        final currentUser = _userRepo.getUserInfo();
+        final currentUser = await _userRepo.getUserInfo();
         if (currentUser != null) {
           try {
             currentUserRank = await _leaderboardRepo.getUserRank(currentUser.id);

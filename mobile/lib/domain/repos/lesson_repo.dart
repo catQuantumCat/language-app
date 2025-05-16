@@ -12,5 +12,5 @@ abstract class LessonRepo {
 
   Future<List<Lesson>> getLessons({required String unitId});
 
-  Future<void> sendResult({required Result result, required String unitId, required String userId});
+  Future<void> sendResult({required Result result, required String unitId, required String userId, required String languageId});
 }

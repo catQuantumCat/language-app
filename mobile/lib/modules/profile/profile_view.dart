@@ -6,7 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:language_app/common/enums/view_state_enum.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
-import 'package:language_app/domain/models/user_profile.dart';
+import 'package:language_app/domain/models/language.dart';
+import 'package:language_app/domain/models/user.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/gen/assets.gen.dart';
 import 'package:language_app/main.dart';
@@ -185,7 +186,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildProfileHeader(
     BuildContext context, 
-    UserProfile profile,
+    User profile,
     ProfileState state,
   ) {
     return Column(
@@ -287,7 +288,7 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
-  ImageProvider? _getProfileImage(ProfileState state, UserProfile profile) {
+  ImageProvider? _getProfileImage(ProfileState state, User profile) {
     if (state.avatarFile != null) {
       return FileImage(state.avatarFile!);
     } else if (profile.avatar != null && profile.avatar!.isNotEmpty) {
@@ -296,7 +297,7 @@ class _ProfileContentState extends State<ProfileContent> {
     return null;
   }
 
-  Widget? _getAvatarChild(ProfileState state, UserProfile profile) {
+  Widget? _getAvatarChild(ProfileState state, User profile) {
     if (state.avatarFile != null || (profile.avatar != null && profile.avatar!.isNotEmpty)) {
       return null;
     }
@@ -309,7 +310,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildStatistics(
     BuildContext context, 
-    UserProfile profile,
+    User profile,
     ProfileState state,
   ) {
     return Row(
@@ -354,7 +355,7 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
-  Widget _buildLanguagesList(BuildContext context, List<UserLanguageProfile> languages) {
+  Widget _buildLanguagesList(BuildContext context, List<Language> languages) {
     if (languages.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -497,7 +498,7 @@ Future<void> _pickImage(ImageSource source) async {
     return "https://example.com/uploaded_avatar.jpg";
   }
 
-  void _showEditProfileDialog(BuildContext context, UserProfile profile) {
+  void _showEditProfileDialog(BuildContext context, User profile) {
   showDialog(
     context: context, // Truyền context đúng
     builder: (dialogContext) => BlocProvider.value(

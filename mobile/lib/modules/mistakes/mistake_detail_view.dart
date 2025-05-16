@@ -54,7 +54,8 @@ class MistakeDetailView extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             case ViewStateEnum.succeed:
               if (state.mistakeDetail == null) {
-                return const Center(child: Text('Không tìm thấy chi tiết lỗi sai'));
+                return const Center(
+                    child: Text('Không tìm thấy chi tiết lỗi sai'));
               }
               return _buildMistakeDetail(context, state);
             case ViewStateEnum.failed:
@@ -92,104 +93,120 @@ class MistakeDetailView extends StatelessWidget {
   }
 
   Widget _buildMistakeDetail(BuildContext context, MistakeDetailState state) {
-  final mistakeDetail = state.mistakeDetail!;
-  final challenge = mistakeDetail.exercise;
-  
-  return Column(
-    children: [
-      // Thông tin bài học
-      Container(
-        padding: const EdgeInsets.all(16),
-        color: context.colorTheme.background,
-        child: Row(
-          children: [
-            Icon(
-              Icons.info_outline,
-              color: context.colorTheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (mistakeDetail.unitName != null)
-                    Text(
-                      'Unit ${mistakeDetail.unitOrder}: ${mistakeDetail.unitName}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  Text(
-                    'Bài ${mistakeDetail.lessonOrder}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      
-      // Hiển thị thông tin chi tiết về challenge nếu là translateWritten
-      if (challenge.exerciseType == ExerciseType.translateWritten)
-        Padding(
+    final mistakeDetail = state.mistakeDetail!;
+    final challenge = mistakeDetail.exercise;
+
+    return Column(
+      children: [
+        // Thông tin bài học
+        Container(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          color: context.colorTheme.background,
+          child: Row(
             children: [
-              Text(
-                'Hướng dẫn: ${challenge.instruction}',
-                style: Theme.of(context).textTheme.bodyLarge,
+              Icon(
+                Icons.info_outline,
+                color: context.colorTheme.primary,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Từ cần dịch: ${(challenge.data as TranslateChallengeData).translateWord}',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Đáp án đúng: ${(challenge.data as TranslateChallengeData).acceptedAnswer.join(", ")}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.green,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (mistakeDetail.unitName != null)
+                      Text(
+                        'Unit ${mistakeDetail.unitOrder}: ${mistakeDetail.unitName}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    Text(
+                      'Bài ${mistakeDetail.lessonOrder}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      
-      // Hiển thị câu hỏi
-      Expanded(
-        child: ChallengeWidgetFactory.produce(
-          key: ValueKey(challenge.id),
-          challenge: challenge,
-          onAnswerTapped: (_) {
-            // Chỉ hiển thị, không xử lý đáp án
-            context.go('/mistakes');
-          },
-          answerStatus: AnswerStatus.none,
-        ),
-      ),
-      
-      // Nút quay lại
-      Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: () => context.go('/mistakes'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.colorTheme.primary,
-            foregroundColor: context.colorTheme.onPrimary,
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+
+        // Hiển thị thông tin chi tiết về challenge nếu là translateWritten
+        if (challenge.exerciseType == ExerciseType.translateWritten)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hướng dẫn: ${challenge.instruction}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Từ cần dịch: ${(challenge.data as TranslateChallengeData).translateWord}',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Đáp án đúng: ${(challenge.data as TranslateChallengeData).acceptedAnswer.join(", ")}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.green,
+                      ),
+                ),
+              ],
             ),
           ),
-          child: const Text('Quay lại danh sách'),
-        ),
-      ),
-    ],
-  );
-}
 
+        // Hiển thị câu hỏi
+        Expanded(
+          child: ChallengeWidgetFactory.produce(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            onAnswerTapped: (dynamic answer) {
+              final data = challenge.data;
+              bool isCorrect = false;
+
+              if (data is TranslateChallengeData) {
+                isCorrect = data.acceptedAnswer.contains(answer.toString());
+              }
+
+              // Show feedback to the user
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(isCorrect
+                      ? 'Chính xác!'
+                      : 'Chưa chính xác. Hãy thử lại.'),
+                  backgroundColor: isCorrect ? Colors.green : Colors.red,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+
+              // Optional: You can add more logic here based on whether the answer is correct
+            },
+            answerStatus: AnswerStatus.none,
+          ),
+        ),
+
+        // Nút quay lại
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton(
+            onPressed: () => context.go('/mistakes'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.colorTheme.primary,
+              foregroundColor: context.colorTheme.onPrimary,
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('Quay lại danh sách'),
+          ),
+        ),
+      ],
+    );
+  }
 }

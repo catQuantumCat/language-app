@@ -6,6 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 @JsonSerializable()
 class Result {
   final String lessonId;
+  @JsonKey(fromJson: _incorrectListToModel, toJson: _modelToJson)
   final List<ResultIncorrectExerciseModel> exercises;
   final int hearts;
   final int experienceGained;
@@ -20,6 +21,16 @@ class Result {
     required this.timeSpent,
     required this.streak,
   });
+
+  static List<ResultIncorrectExerciseModel> _incorrectListToModel(
+          List<Map<String, dynamic>> data) =>
+      data.map((e) => ResultIncorrectExerciseModel.fromJson(e)).toList();
+
+  static List<Map<String, dynamic>> _modelToJson(
+          List<ResultIncorrectExerciseModel> data) =>
+      data.map((e) => e.toJson()).toList();
+
+    
 }
 
 class ResultIncorrectExerciseModel {
@@ -27,16 +38,18 @@ class ResultIncorrectExerciseModel {
 
   ResultIncorrectExerciseModel({required this.exerciseId});
 
-
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'exerciseId': exerciseId,
     };
   }
+
   factory ResultIncorrectExerciseModel.fromJson(Map<String, dynamic> map) {
     return ResultIncorrectExerciseModel(
       exerciseId: map['exerciseId'] as String,
     );
   }
-}
 
+  @override
+  String toString() => 'ResultIncorrectExerciseModel(exerciseId: $exerciseId)';
+}

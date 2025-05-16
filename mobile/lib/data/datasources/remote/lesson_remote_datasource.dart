@@ -25,4 +25,8 @@ abstract class LessonRemoteDatasource {
   @POST("/unit/{unitId}/lessons/save-results")
   Future<void> sendResult(
       @Path("unitId") String unitId, @Body() ResultModel result);
+
+
+  @PATCH("/users/{userId}/update-language")
+  Future<void> updateLanguage(@Path("userId") String userId, @Body() Map<String, dynamic> map);
 }

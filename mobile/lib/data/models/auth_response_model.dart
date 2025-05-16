@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:language_app/data/models/language_model.dart';
 import 'package:language_app/domain/models/user.dart';

@@ -27,8 +27,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CompleteLesson>(_onCompleteLesson);
     on<LoadMetadataEvent>(_onLoadMetadata);
 
-    add(LoadUnits());
     add(LoadMetadataEvent());
+    add(LoadUnits());
   }
 
   Future<void> _onLoadMetadata(
@@ -44,10 +44,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           return state.copyWith(
               streakCount: data.streak,
               heartCount: data.hearts,
-              language:
-                  data.languages.isNotEmpty ? data.languages.first : null);
+              language: data.languages.isNotEmpty
+                  ? data.languages.firstWhere((lang) => lang.order == 1)
+                  : null);
         }
-
         return state;
       },
       onError: (error, stackTrace) {

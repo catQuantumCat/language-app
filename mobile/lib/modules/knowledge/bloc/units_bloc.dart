@@ -28,7 +28,7 @@ class UnitsBloc extends Bloc<UnitsEvent, UnitsState> {
     emit(state.copyWith(viewState: ViewStateEnum.loading));
 
     try {
-      final currentUser = _userRepo.getUserInfo();
+      final currentUser = await _userRepo.getUserInfo();
       if (currentUser == null || currentUser.languages.isEmpty) {
         emit(state.copyWith(
           viewState: ViewStateEnum.failed,

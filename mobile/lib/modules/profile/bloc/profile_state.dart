@@ -4,7 +4,7 @@ part of 'profile_bloc.dart';
 
 class ProfileState extends Equatable {
   final ViewStateEnum viewState;
-  final UserProfile? userProfile;
+  final User? userProfile;
   final UserRankDetail? userRank;
   final String? errorMessage;
   
@@ -29,7 +29,7 @@ class ProfileState extends Equatable {
 
   ProfileState copyWith({
     ViewStateEnum? viewState,
-    UserProfile? userProfile,
+    User? userProfile,
     UserRankDetail? userRank,
     String? errorMessage,
     ViewStateEnum? updateState,

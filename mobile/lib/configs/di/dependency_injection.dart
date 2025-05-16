@@ -22,7 +22,10 @@ import 'package:language_app/domain/repos/leaderboard_repo.dart';
 import 'package:language_app/domain/repos/lesson_repo.dart';
 import 'package:language_app/domain/repos/mistake_repo.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
+import 'package:language_app/domain/use_cases/home_screen_fetch_use_case.dart';
+
 import 'package:language_app/services/upload_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class DependencyInjection {
   static Future<void> setup(GetIt getIt) async {
@@ -72,7 +75,7 @@ abstract class DependencyInjection {
         userRepo: getIt<UserRepo>(),
       ),
     );
-    
+
     getIt.registerLazySingleton<LessonRemoteDatasource>(
       () => LessonRemoteDatasource(getIt<Dio>()),
     );
@@ -95,7 +98,7 @@ abstract class DependencyInjection {
         userRepo: getIt<UserRepo>(),
       ),
     );
-        // Register MistakeRemoteDatasource
+    // Register MistakeRemoteDatasource
     getIt.registerLazySingleton<MistakeRemoteDatasource>(
       () => MistakeRemoteDatasource(getIt<Dio>()),
     );
@@ -107,7 +110,7 @@ abstract class DependencyInjection {
       ),
     );
 
-        // Register KnowledgeRemoteDatasource
+    // Register KnowledgeRemoteDatasource
     getIt.registerLazySingleton<KnowledgeRemoteDatasource>(
       () => KnowledgeRemoteDatasource(getIt<Dio>()),
     );
@@ -119,8 +122,8 @@ abstract class DependencyInjection {
       ),
     );
     getIt.registerLazySingleton<UploadService>(
-  () => UploadService(getIt<Dio>()),
-);
+      () => UploadService(getIt<Dio>()),
+    );
 
     // Wait for async dependencies to be ready
     await getIt.allReady();

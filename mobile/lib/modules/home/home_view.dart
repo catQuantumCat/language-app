@@ -44,6 +44,13 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     itemPositionsListener.itemPositions.addListener(_onPositionChange);
+
+    // Reload units when returning to this page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<HomeBloc>().add(LoadUnits());
+      }
+    });
   }
 
   void _onPositionChange() {
@@ -97,7 +104,7 @@ class _HomeViewState extends State<HomeView> {
       children: [
         SizedBox(height: 8),
         InfoRow(
-            countryFlag: Assets.france.svg(),
+            language: state.language,
             hasTodayStreak: true,
             heartCount: state.heartCount,
             streakCount: state.streakCount),
@@ -105,6 +112,7 @@ class _HomeViewState extends State<HomeView> {
         HeaderWidget(unitIndex: _currentIndexNotifier),
         Expanded(
             child: UnitList(
+                languageId: state.language?.languageId ?? "",
                 units: state.units,
                 itemPositionsListener: itemPositionsListener))
       ],

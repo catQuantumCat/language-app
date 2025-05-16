@@ -18,6 +18,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
 
   late final String unitId;
   late final String lessonId;
+  late final String languageId;
   late final User? user;
 
   LessonBloc(
@@ -35,6 +36,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     emit(LessonState.loading());
     unitId = event.unitId;
     lessonId = event.lessonId;
+    languageId = event.languageId;
     user = await _userRepository.getUserInfo();
     final challengeList =
         await _lessonRepository.getChallengeList(lessonId: event.lessonId);
@@ -79,10 +81,9 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     }
 
     emit(state.copyWith(
-        incorrectExerciseIds: [
-          ...state.incorrectExerciseIds,
-          challengeQueue.first.id
-        ],
+        incorrectExerciseIds: isCorrect
+            ? state.incorrectExerciseIds
+            : [...state.incorrectExerciseIds, challengeQueue.first.id],
         answerStatus:
             isCorrect == true ? AnswerStatus.correct : AnswerStatus.wrong,
         numOfHeart: numOfHeart != state.numOfHeart ? numOfHeart : null,
@@ -118,7 +119,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
         break;
     }
 
-    //End condition
+    // End condition
     if (numOfHeart == 0 || state.userProgressIndex == state.lessonLength) {
       if (startTime != null) {
         lessonDuration = DateTime.now().difference(startTime);
@@ -132,16 +133,24 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
         hearts: numOfHeart,
         experienceGained: earnedXP,
         timeSpent: lessonDuration?.inSeconds ?? 0,
-        streak: (user?.streak ?? 0) + 1,
+        streak: 1,
       );
 
       emit(LessonState.loading());
-      if (user != null) {
-        await _lessonRepository.sendResult(
-            result: result, unitId: unitId, userId: user!.id);
-      }
+      try {
+        if (user != null) {
+          await _lessonRepository.sendResult(
+              languageId: languageId,
+              result: result,
+              unitId: unitId,
+              userId: user!.id);
 
-      await _userRepository.triggerUserInfoUpdate();
+          await _userRepository.forceUpdateUserProfile();
+        }
+      } catch (e) {
+        print('Error sending lesson results: $e');
+        // Could potentially emit an error state here if needed
+      }
 
       emit(LessonState.finished(
         startTime: startTime,

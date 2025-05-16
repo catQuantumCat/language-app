@@ -12,10 +12,9 @@ import 'package:language_app/data/models/register_model.dart';
 import 'package:language_app/domain/dtos/update_profile_dto.dart';
 import 'package:language_app/domain/dtos/user_dto.dart';
 import 'package:language_app/domain/models/user.dart';
-import 'package:language_app/domain/models/user_profile.dart';
+
 import 'package:language_app/domain/models/user_rank_info.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
-import 'package:retrofit/http.dart';
 
 class UserRepoImpl implements UserRepo {
   final UserLocalDatasource _localDatasource;
@@ -71,6 +70,8 @@ class UserRepoImpl implements UserRepo {
   Future<User> login({required LoginModel data}) async {
     final AuthResponseModel res = await _remoteDatasource.login(data);
 
+    log(res.toString(), name: "Login Response");
+
     //set to local storage
     await _localDatasource.setToken(token: res.token);
     await _localDatasource.setUserInfo(data: res.toUser());
@@ -108,7 +109,7 @@ class UserRepoImpl implements UserRepo {
     }
 
     try {
-      final remoteUser = await _remoteDatasource.getProfile();
+      final remoteUser = await _remoteDatasource.getUserProfile();
       await _localDatasource.setUserInfo(data: remoteUser);
       return remoteUser;
     } catch (e) {
@@ -120,13 +121,6 @@ class UserRepoImpl implements UserRepo {
   @override
   Future<void> setUserInfo({required User data}) async {
     await _localDatasource.setUserInfo(data: data);
-  }
-
-  @override
-  Future<void> triggerUserInfoUpdate() async {
-    final remoteUser = await _remoteDatasource.getProfile();
-    await _localDatasource.setUserInfo(data: remoteUser);
-    _userInfoController.add(remoteUser);
   }
 
   @override
@@ -144,90 +138,90 @@ class UserRepoImpl implements UserRepo {
   Stream<AppStateEnum> watchAppState() {
     return _appStateController.stream;
   }
-  
+
   @override
-  Future<UserProfile> getUserProfile() async {
-    return await _remoteDatasource.getUserProfile();
+  Future<User> getUserProfile() async {
+    final userProfile = await _remoteDatasource.getUserProfile();
+    // Convert UserProfile to User if needed
+    return userProfile;
   }
-  
+
   @override
   Future<UserRankInfo> getUserRankInfo() async {
     return await _remoteDatasource.getUserRankInfo();
   }
-  
-@override
-Future<UserProfile> updateUserProfile(String userId, UpdateProfileDto data) async {
-  try {
-    // Tạo Map để gửi dữ liệu
-    Map<String, dynamic> requestData = {};
-    
-    // Thêm các trường dữ liệu cơ bản
-    if (data.fullName != null) requestData['fullName'] = data.fullName;
-    if (data.email != null) requestData['email'] = data.email;
-    if (data.password != null) requestData['password'] = data.password;
-    
-    // Xử lý file ảnh đại diện
-    if (data.avatarFile != null) {
-      // Sử dụng FormData và MultipartFile
-      FormData formData = FormData.fromMap(requestData);
-      
-      String fileName = data.avatarFile!.path.split('/').last;
-      formData.files.add(MapEntry(
-        'avatar',
-        await MultipartFile.fromFile(
-          data.avatarFile!.path,
-          filename: fileName,
-        ),
-      ));
-      
-      // Gọi API trực tiếp với Dio thay vì qua Retrofit
-      final response = await _dio.patch(
-        '${Endpoints.baseApi}users/$userId/profile',
-        data: formData,
-        options: Options(
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        ),
-      );
-      
-      final updatedProfile = UserProfile.fromJson(response.data);
-      
-      // Cập nhật thông tin user trong local storage
-      final currentUser = _localDatasource.getUserInfo();
-      if (currentUser != null) {
-        final updatedUser = currentUser.copyWith(
-          fullName: updatedProfile.fullName,
-          email: updatedProfile.email,
-          avatar: updatedProfile.avatar,
-        );
-        await _localDatasource.setUserInfo(data: updatedUser);
+
+  @override
+  Future<User> updateUserProfile(String userId, UpdateProfileDto data) async {
+    try {
+      // Tạo Map để gửi dữ liệu
+      Map<String, dynamic> requestData = {};
+
+      // Thêm các trường dữ liệu cơ bản
+      if (data.fullName != null) requestData['fullName'] = data.fullName;
+      if (data.email != null) requestData['email'] = data.email;
+      if (data.password != null) requestData['password'] = data.password;
+      if (data.languages != null) requestData['languages'] = data.languages;
+      if (data.lastSelectedLanguage != null) {
+        requestData['lastSelectedLanguage'] = data.lastSelectedLanguage;
       }
-      
-      return updatedProfile;
-    } else {
-      // Nếu không có file, sử dụng phương thức từ Retrofit
-      final updatedProfile = await _remoteDatasource.updateUserProfile(userId, requestData);
-      
-      // Cập nhật thông tin user trong local storage
-      final currentUser = _localDatasource.getUserInfo();
-      if (currentUser != null) {
-        final updatedUser = currentUser.copyWith(
-          fullName: updatedProfile.fullName,
-          email: updatedProfile.email,
-          avatar: updatedProfile.avatar,
+
+      if (data.avatarFile != null) {
+        FormData formData = FormData.fromMap(requestData);
+
+        String fileName = data.avatarFile!.path.split('/').last;
+        formData.files.add(MapEntry(
+          'avatar',
+          await MultipartFile.fromFile(
+            data.avatarFile!.path,
+            filename: fileName,
+          ),
+        ));
+
+        final response = await _dio.patch(
+          '${Endpoints.baseApi}users/$userId/profile',
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          ),
         );
-        await _localDatasource.setUserInfo(data: updatedUser);
+
+        log(response.data.toString(), name: "Update User Profile");
+
+        final updatedProfile = User.fromJson(response.data);
+
+        // Cập nhật thông tin user trong local storage
+        await _localDatasource.setUserInfo(data: updatedProfile);
+
+        // Add to stream controller
+        _userInfoController.add(updatedProfile);
+
+        return updatedProfile;
+      } else {
+        // Nếu không có file, sử dụng phương thức từ Retrofit
+        final updatedProfile =
+            await _remoteDatasource.updateUserProfile(userId, requestData);
+
+        // Cập nhật thông tin user trong local storage
+        await _localDatasource.setUserInfo(data: updatedProfile);
+
+        // Add to stream controller
+        _userInfoController.add(updatedProfile);
+
+        return updatedProfile;
       }
-      
-      return updatedProfile;
+    } catch (e) {
+      print('Error updating profile: $e');
+      rethrow;
     }
-  } catch (e) {
-    print('Error updating profile: $e');
-    rethrow;
   }
-}
-
-
-
+  
+  @override
+  Future<void> forceUpdateUserProfile() async {
+    final user = await _remoteDatasource.getUserProfile();
+    await _localDatasource.setUserInfo(data: user);
+    _userInfoController.add(user);
+  }
 }
