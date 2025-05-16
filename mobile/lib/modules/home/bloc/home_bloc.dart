@@ -4,9 +4,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:language_app/common/constants/view_state_enum.dart';
 import 'package:language_app/data/models/unit.dart';
-import 'package:language_app/data/dummy/dummy_data.dart';
 import 'package:language_app/domain/models/language.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
+import 'package:language_app/domain/use_cases/home_screen_fetch_use_case.dart';
 import 'package:meta/meta.dart';
 
 part 'home_event.dart';
@@ -14,8 +14,13 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final UserRepo _userRepo;
-  HomeBloc({required UserRepo userRepo})
+  final HomeScreenFetchUseCase _homeScreenFetchUseCase;
+
+  HomeBloc(
+      {required UserRepo userRepo,
+      required HomeScreenFetchUseCase homeScreenFetchUseCase})
       : _userRepo = userRepo,
+        _homeScreenFetchUseCase = homeScreenFetchUseCase,
         super(HomeState(viewState: ViewStateEnum.initial, currentLesson: 0)) {
     on<LoadUnits>(_onLoadUnits);
     on<SelectLesson>(_onSelectLesson);
@@ -55,12 +60,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(state.copyWith(viewState: ViewStateEnum.loading));
 
     try {
-      final units = dummyUnits;
+      if (state.language == null) {
+        emit(HomeState.failed());
+        log("language is null");
+        return;
+      }
+
+      final units = await _homeScreenFetchUseCase.call(
+          languageId: state.language!.languageId);
+
       emit(state.copyWith(
         viewState: ViewStateEnum.succeed,
         units: units,
       ));
     } catch (e) {
+      log(e.toString());
       emit(HomeState.failed());
     }
   }

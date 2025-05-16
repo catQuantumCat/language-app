@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/enums/auth_state_enum.dart';
-import 'package:language_app/data/dummy/dummy_data.dart';
 import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/auth/bloc/auth_bloc.dart';

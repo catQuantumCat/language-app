@@ -20,8 +20,8 @@ class LanguageRepoImpl implements LanguageRepo {
     //TODO Patch to user info
     // await _remoteDatasource.addUserLanguage({'languageId': languageId});
 
-    final User? user = _userRepo.getUserInfo();
-
+    final User? user = await _userRepo.getUserInfo();
+    //TODO: get flag url from remote datasource
     if (user != null) {
       final data = user.copyWith(languages: [
 
@@ -39,7 +39,7 @@ class LanguageRepoImpl implements LanguageRepo {
   @override
   Future<List<Language>> getUserLanguages() async {
     //TODO: separate user languages
-    final info = _userRepo.getUserInfo();
+    final info = await _userRepo.getUserInfo();
     return info?.languages ?? [];
 
     // final languageModels = await _remoteDatasource.getUserLanguages();
@@ -49,7 +49,7 @@ class LanguageRepoImpl implements LanguageRepo {
   @override
   Future<bool> hasUserLanguages() async {
     try {
-      final User? user = _userRepo.getUserInfo();
+      final User? user = await _userRepo.getUserInfo();
       return user != null && user.languages.isNotEmpty;
     } catch (e) {
       return false;

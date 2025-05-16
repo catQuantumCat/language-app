@@ -9,35 +9,37 @@ import 'package:go_router/go_router.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
 
 import 'package:language_app/domain/repos/lesson_repo.dart';
+import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/gen/assets.gen.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
+import 'package:language_app/modules/lesson/widgets/completion_widget.dart';
 
 class LessonPage extends StatelessWidget {
-  const LessonPage({super.key, required this.lessonId});
+  const LessonPage({super.key, required this.lessonId, required this.unitId});
 
-  final int lessonId;
+  final String lessonId;
+  final String unitId;
 
-  void _returnToMenuTapped(BuildContext context) {
+  void returnToMenuTapped(BuildContext context) {
     GoRouter.of(context).go("/home");
-
     Navigator.pop(context);
   }
 
   void showExitDialog(BuildContext context, String dialogTitle) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(dialogTitle),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(dialogContext);
-              _returnToMenuTapped(context);
+              returnToMenuTapped(dialogContext);
             },
-            child: Text("Return to menu"),
+            child: Text("Return to home"),
           )
         ],
       ),
@@ -46,17 +48,24 @@ class LessonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: DI here
     return BlocProvider(
       create: (context) => LessonBloc(
+        userRepository: getIt<UserRepo>(),
         lessonRepository: getIt<LessonRepo>(),
-      ),
+      )..add(LessonStartEvent(lessonId: lessonId, unitId: unitId)),
       child: BlocListener<LessonBloc, LessonState>(
+        listenWhen: (previous, current) =>
+            (previous.status != current.status) ||
+            (current.isOutOfHeart != previous.isOutOfHeart),
         listener: (context, state) {
-          //TODO handle later
-          // if (state.status == LessonStatus.finished) {
-          //   showExitDialog(context, state.message!);
-          // }
+          if (state.status == LessonStatus.error) {
+            showExitDialog(context, state.message ?? "Error");
+          }
+
+          if (state.isOutOfHeart == true &&
+              state.status == LessonStatus.inProgress) {
+            showExitDialog(context, "Out of heart");
+          }
         },
         child: LessonView(),
       ),
@@ -76,8 +85,32 @@ class LessonView extends StatelessWidget {
     context.read<LessonBloc>().add(CheckAnswerEvent<T>(userAnswer: userAnswer));
   }
 
-  void _onExitTapped(BuildContext context) {
-    context.read<LessonBloc>().add(LessonExitEvent());
+  void _onExitTapped(BuildContext context, {required bool isInProgress}) {
+    if (!isInProgress) {
+      _returnToHome(context);
+    }
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text("Do you want to exit lesson?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+            },
+            child: Text("No"),
+          ),
+          TextButton(
+            onPressed: () {
+              _returnToHome(dialogContext);
+            },
+            child: Text("Yes"),
+          )
+        ],
+      ),
+    );
   }
 
   void _onContinueTapped(BuildContext context) {
@@ -99,7 +132,17 @@ class LessonView extends StatelessWidget {
               case LessonStatus.inProgress:
                 return _questionStackBuilder(context, state);
               case LessonStatus.finished:
-                return _buildCompletionScreen(context, state);
+                return CompletionWidget(
+                  onContinueTapped: () => _returnToHome(context),
+                  message: state.message,
+                  time: state.lessonDuration ?? Duration.zero,
+                  xp: state.earnedXP,
+                  accuracy: state.accuracy,
+                );
+              case LessonStatus.error:
+                return Center(
+                  child: Text(state.message ?? "Error"),
+                );
             }
           },
         ),
@@ -179,7 +222,9 @@ class LessonView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           InkWell(
-              child: Icon(Icons.clear), onTap: () => _onExitTapped(context)),
+              child: Icon(Icons.clear),
+              onTap: () =>
+                  _onExitTapped(context, isInProgress: state.isInProgress)),
           const SizedBox(
             width: 4,
           ),
@@ -205,146 +250,6 @@ class LessonView extends StatelessWidget {
           Text("${state.numOfHeart}")
         ],
       ),
-    );
-  }
-
-  Widget _buildCompletionScreen(BuildContext context, LessonState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Trophy image or celebration image
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: context.colorTheme.primary.withAlpha(127)),
-            child: Center(
-              child: Icon(
-                Icons.emoji_events,
-                size: 100,
-                color: context.colorTheme.primary,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Congratulation text
-          Text(
-            "Lesson completed",
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            state.message ?? 'You\'ve completed the lesson',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 32),
-
-          // Metrics section
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.colorTheme.background,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: context.colorTheme.border),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildMetricRow(
-                  context,
-                  icon: Icons.timer,
-                  title: 'Time',
-                  value: '2m 30s',
-                ),
-                const Divider(height: 24),
-                _buildMetricRow(
-                  context,
-                  icon: Icons.star,
-                  title: 'XP Earned',
-                  value: '+20 XP',
-                ),
-                const Divider(height: 24),
-                _buildMetricRow(
-                  context,
-                  icon: Icons.check_circle,
-                  title: 'Accuracy',
-                  value: '80%',
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // Continue button
-          ElevatedButton(
-            onPressed: () => _returnToHome(context),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: context.colorTheme.primary,
-              foregroundColor: context.colorTheme.onPrimary,
-            ),
-            child: Text(
-              'Continue',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: context.colorTheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMetricRow(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: context.colorTheme.selection.withOpacity(0.2),
-          ),
-          child: Icon(
-            icon,
-            color: context.colorTheme.selection,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const Spacer(),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
     );
   }
 }

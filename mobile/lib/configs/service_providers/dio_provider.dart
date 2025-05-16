@@ -7,7 +7,7 @@ class DioProvider {
   static DioProvider? _instance;
   static Dio? _dio;
   final Box _userBox;
-
+  
   DioProvider._internal(this._userBox);
 
   factory DioProvider(Box userBox) {
@@ -25,10 +25,11 @@ class DioProvider {
 
     dio.interceptors.add(ApiInteceptor(userBox: _userBox));
     dio.interceptors.add(LogInterceptor(
+        requestBody: false,
         responseHeader: false,
         requestHeader: false,
-        request: true,
-        responseBody: true,
+        request: false,
+        responseBody: false,
         error: true));
 
     dio.options.baseUrl = Endpoints.baseApi;

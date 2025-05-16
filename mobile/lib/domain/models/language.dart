@@ -7,17 +7,17 @@ part 'language.g.dart';
 @JsonSerializable()
 class Language {
   final String languageId;
-  final String languageFlag;
-  final int order;
-  final int lessonOrder;
+  final String flagUrl;
+  final int level;
+  final int experience;
 
   const Language(
       {required this.languageId,
-      required this.languageFlag,
-      required this.order,
-      required this.lessonOrder});
+      required this.flagUrl,
+      required this.level,
+      required this.experience});
 
   Map<String, dynamic> toJson() => _$LanguageToJson(this);
 
-  factory Language.fromMap(Map<String, dynamic> map) => _$LanguageFromJson(map);
+  factory Language.fromJson(Map<String, dynamic> map) => _$LanguageFromJson(map);
 }

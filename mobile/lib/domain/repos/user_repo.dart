@@ -22,7 +22,7 @@ abstract class UserRepo {
   Future<String?> getToken();
 
   //get user info
-  User? getUserInfo();
+  Future<User?> getUserInfo();
 
   Stream<User?> watchUserInfo();
   Stream<AppStateEnum> watchAppState();
