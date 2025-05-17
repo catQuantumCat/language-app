@@ -26,6 +26,12 @@ module.exports.saveLessonResults = async (req, res) => {
       streak
     } = req.body;
 
+    console.log("req.params:", req.params); // Kiểm tra tham số
+    console.log("req.body:", req.body); // Kiểm tra body
+    
+   
+    console.log("unitId from params:", unitId); // Kiểm tra unitId
+
     // Kiểm tra dữ liệu đầu vào
     if (!userId ||!unitId || !lessonId ) {
       return res.status(400).json({ 

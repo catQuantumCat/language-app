@@ -130,8 +130,8 @@ module.exports.updateUserLanguage = async (req, res) => {
     }
 
     // Biến để lưu lessonOrder và unitOrder
-    let lessonOrder = 0;
-    let unitOrder = 0;
+    let lessonOrder = 1;
+    let unitOrder = 1;
     
     // Nếu có lessonId, lấy thông tin về lesson để lấy order
     if (lessonId) {
@@ -189,9 +189,9 @@ module.exports.updateUserLanguage = async (req, res) => {
         languageFlag: language.flagUrl,
         languageName: language.name,
         lessonId: lessonId || null,
-        lessonOrder: lessonOrder || 0, // Mặc định lessonOrder = 0 nếu không có lessonId
+        lessonOrder: lessonOrder || 1, 
         unitId: unitId || null,
-        unitOrder: unitOrder || 0, // Mặc định unitOrder = 0 nếu không có unitId
+        unitOrder: unitOrder || 1, 
         order: defaultOrder
       });
     }
