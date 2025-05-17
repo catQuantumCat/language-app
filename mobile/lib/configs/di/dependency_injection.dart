@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:language_app/common/constants/storage_keys.dart';
 import 'package:language_app/configs/service_providers/dio_provider.dart';
 import 'package:language_app/data/datasources/local/user_local_datasource.dart';
@@ -123,6 +124,10 @@ abstract class DependencyInjection {
     );
     getIt.registerLazySingleton<UploadService>(
       () => UploadService(getIt<Dio>()),
+    );
+
+    getIt.registerLazySingleton<AudioPlayer>(
+      () => AudioPlayer(),
     );
 
     // Wait for async dependencies to be ready

@@ -4,7 +4,9 @@ import 'package:animations/animations.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:just_audio/just_audio.dart';
 
 import 'package:language_app/common/extensions/context_extension.dart';
 
@@ -17,7 +19,7 @@ import 'package:language_app/modules/lesson/bloc/lesson_bloc.dart';
 import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widgets/completion_widget.dart';
 
-class LessonPage extends StatelessWidget {
+class LessonPage extends StatefulWidget {
   const LessonPage(
       {super.key,
       required this.lessonId,
@@ -28,10 +30,17 @@ class LessonPage extends StatelessWidget {
   final String unitId;
   final String languageId;
 
+  @override
+  State<LessonPage> createState() => _LessonPageState();
+}
+
+class _LessonPageState extends State<LessonPage> {
   void returnToMenuTapped(BuildContext context) {
     GoRouter.of(context).go("/home");
     Navigator.pop(context);
   }
+
+  final AudioPlayer _player = GetIt.I<AudioPlayer>();
 
   void showExitDialog(BuildContext context, String dialogTitle) {
     showDialog(
@@ -58,20 +67,29 @@ class LessonPage extends StatelessWidget {
         userRepository: getIt<UserRepo>(),
         lessonRepository: getIt<LessonRepo>(),
       )..add(LessonStartEvent(
-          lessonId: lessonId, unitId: unitId, languageId: languageId)),
+          lessonId: widget.lessonId,
+          unitId: widget.unitId,
+          languageId: widget.languageId)),
       child: BlocListener<LessonBloc, LessonState>(
         listenWhen: (previous, current) =>
             (previous.status != current.status) ||
-            (current.isOutOfHeart != previous.isOutOfHeart),
+            (current.isOutOfHeart != previous.isOutOfHeart ||
+                current.answerStatus != previous.answerStatus),
         listener: (context, state) {
           if (state.status == LessonStatus.error) {
             showExitDialog(context, state.message ?? "Error");
           }
+          if (state.answerStatus != AnswerStatus.none) {
+            _player.setAsset(state.answerStatus == AnswerStatus.correct
+                ? Assets.audio.correctAudio
+                : Assets.audio.wrongAudio);
+            _player.play();
+          }
 
           if (state.isOutOfHeart == true &&
               state.status == LessonStatus.inProgress) {
-            showExitDialog(context, "Out of heart");
             context.read<LessonBloc>().add(LessonExitEvent(isOutOfHeart: true));
+            showExitDialog(context, "Out of heart");
           }
         },
         child: LessonView(),

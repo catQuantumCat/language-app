@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:language_app/main.dart';
 
 class AudioWidget extends StatefulWidget {
   const AudioWidget({super.key, required String using}) : _path = using;
@@ -11,7 +12,7 @@ class AudioWidget extends StatefulWidget {
 }
 
 class _AudioWidgetState extends State<AudioWidget> {
-  final _player = AudioPlayer();
+  final _player = getIt<AudioPlayer>();
   bool _audioEnabled = true;
 
   @override

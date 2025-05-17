@@ -12,29 +12,34 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart' as _svg;
 import 'package:vector_graphics/vector_graphics.dart' as _vg;
 
+class $AssetsAudioGen {
+  const $AssetsAudioGen();
+
+  /// File path: assets/audio/correct-audio.mp3
+  String get correctAudio => 'assets/audio/correct-audio.mp3';
+
+  /// File path: assets/audio/wrong-audio.mp3
+  String get wrongAudio => 'assets/audio/wrong-audio.mp3';
+
+  /// List of all assets
+  List<String> get values => [correctAudio, wrongAudio];
+}
+
 class Assets {
   const Assets._();
 
-  static const AssetGenImage duck = AssetGenImage('assets/duck.jpg');
-  static const SvgGenImage france = SvgGenImage('assets/france.svg');
+  static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const SvgGenImage heart = SvgGenImage('assets/heart.svg');
-  static const AssetGenImage scence = AssetGenImage('assets/scence.JPG');
   static const AssetGenImage streakFire = AssetGenImage(
     'assets/streak_fire.png',
   );
   static const AssetGenImage streakFireBlack = AssetGenImage(
     'assets/streak_fire_black.png',
   );
+  static const SvgGenImage us = SvgGenImage('assets/us.svg');
 
   /// List of all assets
-  static List<dynamic> get values => [
-    duck,
-    france,
-    heart,
-    scence,
-    streakFire,
-    streakFireBlack,
-  ];
+  static List<dynamic> get values => [heart, streakFire, streakFireBlack, us];
 }
 
 class AssetGenImage {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/domain/models/challenge_data.dart';
@@ -130,7 +132,9 @@ class _ChoiceListState extends State<ChoiceList> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.choicesData.options[0].imageUrl == null
+    log('widget.choicesData.options: ${widget.choicesData.options}');
+    return (widget.choicesData.options.isNotEmpty &&
+            widget.choicesData.options[0].imageUrl == null)
         ? textChoices()
         : photoChoices();
   }
