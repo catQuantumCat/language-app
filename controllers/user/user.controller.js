@@ -101,13 +101,13 @@ module.exports.updateUserProfile = async (req, res) => {
 module.exports.updateUserLanguage = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { languages } = req.body;
+    const { languageId, lessonId, order } = req.body;
 
     // Kiểm tra xem có dữ liệu cập nhật không
-    if (!languages || !Array.isArray(languages) || languages.length === 0) {
+    if (!languageId) {
       return res.status(400).json({
         success: false,
-        message: 'Cần cung cấp mảng languages với ít nhất một phần tử'
+        message: 'Cần cung cấp ít nhất một thông tin: languageId'
       });
     }
 
@@ -120,53 +120,59 @@ module.exports.updateUserLanguage = async (req, res) => {
       });
     }
 
-    // Xử lý từng phần tử trong mảng languages
-    for (const item of languages) {
-      const { languageId, lessonId } = item;
+    // Lấy thông tin về ngôn ngữ để lấy flagUrl
+    const language = await mongoose.model('languages').findById(languageId);
+    if (!language) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy ngôn ngữ'
+      });
+    }
 
-      if (!languageId) {
-        continue; // Bỏ qua phần tử không có languageId
-      }
-
-      // Lấy thông tin về ngôn ngữ để lấy flagUrl
-      const language = await mongoose.model('languages').findById(languageId);
-      if (!language) {
-        continue; // Bỏ qua nếu không tìm thấy ngôn ngữ
-      }
-
-      // Biến để lưu lessonOrder
-      let lessonOrder = 0; // Mặc định lessonOrder là 0
-      if (lessonId) {
-        const lesson = await mongoose.model('lessons').findById(lessonId);
-        if (lesson) {
-          lessonOrder = lesson.order;
-        }
-      }
-
-      // Cập nhật hoặc thêm mới ngôn ngữ vào mảng languages
-      const existingLanguageIndex = user.languages.findIndex(
-        lang => lang.languageId === languageId
-      );
-
-      const order = item.order || 1; // Mặc định order là 1
-
-      if (existingLanguageIndex !== -1) {
-        // Cập nhật ngôn ngữ đã tồn tại
-        if (lessonId) {
-          user.languages[existingLanguageIndex].lessonId = lessonId;
-          user.languages[existingLanguageIndex].lessonOrder = lessonOrder;
-        }
-        user.languages[existingLanguageIndex].order = order;
-        user.languages[existingLanguageIndex].languageFlag = language.flagUrl;
-      } else {
-        // Thêm ngôn ngữ mới vào mảng
-        user.languages.push({
-          languageId,
-          languageFlag: language.flagUrl,
-          lessonOrder: lessonOrder,
-          order: order
+    // Biến để lưu lessonOrder
+    let lessonOrder = 0;
+    
+    // Nếu có lessonId, lấy thông tin về lesson để lấy order
+    if (lessonId) {
+      const lesson = await mongoose.model('lessons').findById(lessonId);
+      if (!lesson) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy bài học'
         });
       }
+      lessonOrder = lesson.order;
+    }
+
+    // Cập nhật hoặc thêm mới ngôn ngữ vào mảng languages
+    const existingLanguageIndex = user.languages.findIndex(
+      lang => lang.languageId === languageId
+    );
+
+    // Đặt tất cả các ngôn ngữ hiện có về order = 2
+    user.languages.forEach(lang => {
+      lang.order = 2;
+    });
+
+    if (existingLanguageIndex !== -1) {
+      // Cập nhật ngôn ngữ đã tồn tại
+      if (lessonId) {
+        user.languages[existingLanguageIndex].lessonId = lessonId;
+        user.languages[existingLanguageIndex].lessonOrder = lessonOrder;
+      }
+      // Đặt order = 1 cho ngôn ngữ được chọn
+      user.languages[existingLanguageIndex].order = 1;
+      user.languages[existingLanguageIndex].languageFlag = language.flagUrl;
+    } else {
+      // Thêm ngôn ngữ mới vào mảng
+      const defaultOrder = user.languages.length === 0 ? 1 : 1; // Nếu là ngôn ngữ đầu tiên hoặc bất kỳ ngôn ngữ mới nào, order = 1
+      user.languages.push({
+        languageId,
+        languageFlag: language.flagUrl,
+        lessonId: lessonId || null,
+        lessonOrder: lessonOrder || 0, // Mặc định lessonOrder = 0 nếu không có lessonId
+        order: defaultOrder
+      });
     }
 
     // Lưu thay đổi
@@ -188,3 +194,4 @@ module.exports.updateUserLanguage = async (req, res) => {
     });
   }
 };
+
