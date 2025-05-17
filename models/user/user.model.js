@@ -48,11 +48,17 @@ const userSchema = new mongoose.Schema({
       type: String
       
     },
+    languageName: {
+      type: String
+    },
     lessonOrder:{
       type: Number,
       default: 0
     },
-   
+    unitOrder:{
+      type: Number,
+      default: 1
+    },
     order:{
       type: Number,
       default: 1

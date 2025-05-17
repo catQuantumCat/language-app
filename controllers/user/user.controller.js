@@ -101,7 +101,7 @@ module.exports.updateUserProfile = async (req, res) => {
 module.exports.updateUserLanguage = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { languageId, lessonId, order } = req.body;
+    const { languageId, lessonId, unitId, order } = req.body;
 
     // Kiểm tra xem có dữ liệu cập nhật không
     if (!languageId) {
@@ -129,8 +129,9 @@ module.exports.updateUserLanguage = async (req, res) => {
       });
     }
 
-    // Biến để lưu lessonOrder
+    // Biến để lưu lessonOrder và unitOrder
     let lessonOrder = 0;
+    let unitOrder = 0;
     
     // Nếu có lessonId, lấy thông tin về lesson để lấy order
     if (lessonId) {
@@ -142,6 +143,18 @@ module.exports.updateUserLanguage = async (req, res) => {
         });
       }
       lessonOrder = lesson.order;
+    }
+    
+    // Nếu có unitId, lấy thông tin về unit để lấy order
+    if (unitId) {
+      const unit = await mongoose.model('units').findById(unitId);
+      if (!unit) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy đơn vị học'
+        });
+      }
+      unitOrder = unit.order;
     }
 
     // Cập nhật hoặc thêm mới ngôn ngữ vào mảng languages
@@ -160,17 +173,25 @@ module.exports.updateUserLanguage = async (req, res) => {
         user.languages[existingLanguageIndex].lessonId = lessonId;
         user.languages[existingLanguageIndex].lessonOrder = lessonOrder;
       }
+      if (unitId) {
+        user.languages[existingLanguageIndex].unitId = unitId;
+        user.languages[existingLanguageIndex].unitOrder = unitOrder;
+      }
       // Đặt order = 1 cho ngôn ngữ được chọn
       user.languages[existingLanguageIndex].order = 1;
       user.languages[existingLanguageIndex].languageFlag = language.flagUrl;
+      user.languages[existingLanguageIndex].languageName = language.name;
     } else {
       // Thêm ngôn ngữ mới vào mảng
       const defaultOrder = user.languages.length === 0 ? 1 : 1; // Nếu là ngôn ngữ đầu tiên hoặc bất kỳ ngôn ngữ mới nào, order = 1
       user.languages.push({
         languageId,
         languageFlag: language.flagUrl,
+        languageName: language.name,
         lessonId: lessonId || null,
         lessonOrder: lessonOrder || 0, // Mặc định lessonOrder = 0 nếu không có lessonId
+        unitId: unitId || null,
+        unitOrder: unitOrder || 0, // Mặc định unitOrder = 0 nếu không có unitId
         order: defaultOrder
       });
     }
@@ -194,4 +215,3 @@ module.exports.updateUserLanguage = async (req, res) => {
     });
   }
 };
-

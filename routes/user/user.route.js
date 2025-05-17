@@ -90,6 +90,9 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  *               lessonId:
  *                 type: string
  *                 description: ID của bài học hiện tại cho ngôn ngữ đã chọn
+ *               unitId:
+ *                 type: string
+ *                 description: ID của đơn vị học hiện tại cho ngôn ngữ đã chọn
  *               order:
  *                 type: number
  *                 description: Thứ tự của ngôn ngữ trong danh sách
@@ -117,8 +120,18 @@ router.patch('/:userId/profile', authMiddleware.verifyToken, userController.uplo
  *                         properties:
  *                           languageId:
  *                             type: string
+ *                           languageFlag:
+ *                             type: string
+ *                           languageName:
+ *                             type: string
  *                           lessonId:
  *                             type: string
+ *                           lessonOrder:
+ *                             type: number
+ *                           unitId:
+ *                             type: string
+ *                           unitOrder:
+ *                             type: number
  *                           order:
  *                             type: number
  *       400:

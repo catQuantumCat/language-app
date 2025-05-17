@@ -160,8 +160,10 @@ module.exports.getCurrentUser = async (req, res) => {
       streak: user.streak,
       languages: user.languages.map(lang => ({
         languageId: lang.languageId.toString(),
+        languageName: lang.languageName,
         languageFlag: lang.languageFlag,
         lessonOrder: lang.lessonOrder,
+        unitOrder: lang.unitOrder,
         order: lang.order,
       
       }))
