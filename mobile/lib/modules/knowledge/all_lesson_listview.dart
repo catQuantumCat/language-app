@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,12 +10,12 @@ import 'package:language_app/domain/repos/knowledge_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/knowledge/bloc/lessons_bloc.dart';
 
-class LessonsPage extends StatelessWidget {
+class AllLessonListPage extends StatefulWidget {
   final String unitId;
   final String unitTitle;
   final int unitOrder;
 
-  const LessonsPage({
+  const AllLessonListPage({
     super.key,
     required this.unitId,
     required this.unitTitle,
@@ -21,22 +23,54 @@ class LessonsPage extends StatelessWidget {
   });
 
   @override
+  State<AllLessonListPage> createState() => _AllLessonListPageState();
+}
+
+class _AllLessonListPageState extends State<AllLessonListPage>
+    with AutomaticKeepAliveClientMixin {
+  late final LessonsBloc _lessonsBloc;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    _lessonsBloc = LessonsBloc(
+      knowledgeRepo: getIt<KnowledgeRepo>(),
+    );
+
+    if (!_initialized) {
+      _lessonsBloc.add(LoadLessonsEvent(
+        unitId: widget.unitId,
+        unitTitle: widget.unitTitle,
+        unitOrder: widget.unitOrder,
+      ));
+      _initialized = true;
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    log('dispose');
+    _lessonsBloc.close();
+    super.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocProvider(
-      create: (context) => LessonsBloc(
-        knowledgeRepo: getIt<KnowledgeRepo>(),
-      )..add(LoadLessonsEvent(
-          unitId: unitId,
-          unitTitle: unitTitle,
-          unitOrder: unitOrder,
-        )),
-      child: const LessonsView(),
+      create: (context) => _lessonsBloc,
+      child: const AllLessonListView(),
     );
   }
 }
 
-class LessonsView extends StatelessWidget {
-  const LessonsView({super.key});
+class AllLessonListView extends StatelessWidget {
+  const AllLessonListView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +89,7 @@ class LessonsView extends StatelessWidget {
         foregroundColor: context.colorTheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/units'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: BlocBuilder<LessonsBloc, LessonsState>(
@@ -91,7 +125,7 @@ class LessonsView extends StatelessWidget {
                                 unitOrder: state.unitOrder ?? 0,
                               ));
                         } else {
-                          context.go('/units');
+                          context.pop();
                         }
                       },
                       child: const Text('Thử lại'),
@@ -193,7 +227,7 @@ class LessonsView extends StatelessWidget {
   }
 
   void _navigateToKnowledge(BuildContext context, LessonResponse lesson) {
-    context.go(
+    context.push(
       '/lessons/${lesson.id}/knowledge?lessonTitle=${Uri.encodeComponent(lesson.title)}',
     );
   }

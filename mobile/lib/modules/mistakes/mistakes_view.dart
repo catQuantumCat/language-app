@@ -110,7 +110,7 @@ class MistakesView extends StatelessWidget {
   Widget _buildMistakesList(BuildContext context, MistakesState state) {
     // Nhóm các lỗi sai theo ngày
     final Map<String, List<MistakeEntry>> groupedMistakes = {};
-    
+
     for (var mistake in state.mistakes) {
       final date = _formatDate(mistake.createdAt);
       if (!groupedMistakes.containsKey(date)) {
@@ -128,7 +128,7 @@ class MistakesView extends StatelessWidget {
       itemBuilder: (context, index) {
         final date = sortedDates[index];
         final mistakes = groupedMistakes[date]!;
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -137,11 +137,13 @@ class MistakesView extends StatelessWidget {
               child: Text(
                 date,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ),
-            ...mistakes.map((mistake) => _buildMistakeItem(context, mistake)).toList(),
+            ...mistakes
+                .map((mistake) => _buildMistakeItem(context, mistake))
+                .toList(),
             if (index < sortedDates.length - 1)
               const Divider(height: 32, thickness: 1),
           ],
@@ -164,7 +166,8 @@ class MistakesView extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: context.colorTheme.primary.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(4),
@@ -180,7 +183,8 @@ class MistakesView extends StatelessWidget {
                   const SizedBox(width: 8),
                   if (mistake.unitName != null) ...[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: context.colorTheme.warning.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(4),
@@ -198,8 +202,8 @@ class MistakesView extends StatelessWidget {
                   Text(
                     _formatTime(mistake.createdAt),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                    ),
+                          color: Colors.grey,
+                        ),
                   ),
                 ],
               ),
@@ -213,8 +217,8 @@ class MistakesView extends StatelessWidget {
                 Text(
                   mistake.question!,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
-                  ),
+                        color: Colors.grey[700],
+                      ),
                 ),
               ],
               const SizedBox(height: 8),
@@ -244,16 +248,20 @@ class MistakesView extends StatelessWidget {
   }
 
   void _navigateToMistakeDetail(BuildContext context, MistakeEntry mistake) {
-    context.go('/mistakes/${mistake.id}');
+    context.push('/mistakes/${mistake.id}');
   }
 
   String _formatDate(String dateString) {
     final date = DateTime.parse(dateString);
     final now = DateTime.now();
-    
-    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
       return 'Hôm nay';
-    } else if (date.year == now.year && date.month == now.month && date.day == now.day - 1) {
+    } else if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day - 1) {
       return 'Hôm qua';
     } else {
       return DateFormat('dd/MM/yyyy').format(date);

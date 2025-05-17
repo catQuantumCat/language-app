@@ -74,7 +74,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     } else if (isCorrect == false) {
       numOfHeart--;
 
-      streak = 0; // Reset streak on wrong answer
+      streak = 0;
     }
     if (isFirstAttempt) {
       totalAttempts++;
@@ -95,7 +95,8 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
         correctFirstAttempts: correctFirstAttempts));
   }
 
-  void _onContinueTapped(ContinueEvent event, Emitter<LessonState> emit) async {
+  Future<void> _onContinueTapped(
+      ContinueEvent event, Emitter<LessonState> emit) async {
     var numOfHeart = state.numOfHeart;
     final Queue<Challenge> challengeQueue = state.challengeQueue;
     int streak = state.streak;
@@ -120,37 +121,12 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     }
 
     // End condition
-    if (numOfHeart == 0 || state.userProgressIndex == state.lessonLength) {
+    if (state.userProgressIndex == state.lessonLength) {
       if (startTime != null) {
         lessonDuration = DateTime.now().difference(startTime);
       }
 
-      final Result result = Result(
-        lessonId: lessonId,
-        exercises: state.incorrectExerciseIds
-            .map((e) => ResultIncorrectExerciseModel(exerciseId: e))
-            .toList(),
-        hearts: numOfHeart,
-        experienceGained: earnedXP,
-        timeSpent: lessonDuration?.inSeconds ?? 0,
-        streak: 1,
-      );
-
-      emit(LessonState.loading());
-      try {
-        if (user != null) {
-          await _lessonRepository.sendResult(
-              languageId: languageId,
-              result: result,
-              unitId: unitId,
-              userId: user!.id);
-
-          await _userRepository.forceUpdateUserProfile();
-        }
-      } catch (e) {
-        print('Error sending lesson results: $e');
-        // Could potentially emit an error state here if needed
-      }
+      _sendResult(state, emit);
 
       emit(LessonState.finished(
         startTime: startTime,
@@ -171,6 +147,10 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     if (startTime != null) {
       lessonDuration = DateTime.now().difference(startTime);
     }
+
+    if (event.isOutOfHeart == true) {
+      _sendResult(state, emit);
+    }
     emit(LessonState.finished(
       startTime: startTime,
       lessonDuration: lessonDuration,
@@ -179,5 +159,32 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       correctFirstAttempts: state.correctFirstAttempts,
       earnedXP: state.earnedXP,
     ));
+  }
+
+  Future<void> _sendResult(LessonState state, Emitter<LessonState> emit) async {
+    final Result result = Result(
+      lessonId: lessonId,
+      exercises: state.incorrectExerciseIds
+          .map((e) => ResultIncorrectExerciseModel(exerciseId: e))
+          .toList(),
+      hearts: state.numOfHeart,
+      experienceGained: state.earnedXP,
+      timeSpent: state.lessonDuration?.inSeconds ?? 0,
+      streak: 1,
+    );
+
+    try {
+      if (user != null) {
+        await _lessonRepository.sendResult(
+            languageId: languageId,
+            result: result,
+            unitId: unitId,
+            userId: user!.id);
+
+        await _userRepository.forceUpdateUserProfile();
+      }
+    } catch (e) {
+      emit(LessonState.error(message: 'Error sending lesson results: $e'));
+    }
   }
 }

@@ -18,7 +18,11 @@ import 'package:language_app/modules/challenge/base_challenge_widget.dart';
 import 'package:language_app/modules/lesson/widgets/completion_widget.dart';
 
 class LessonPage extends StatelessWidget {
-  const LessonPage({super.key, required this.lessonId, required this.unitId, required this.languageId});
+  const LessonPage(
+      {super.key,
+      required this.lessonId,
+      required this.unitId,
+      required this.languageId});
 
   final String lessonId;
   final String unitId;
@@ -53,7 +57,8 @@ class LessonPage extends StatelessWidget {
       create: (context) => LessonBloc(
         userRepository: getIt<UserRepo>(),
         lessonRepository: getIt<LessonRepo>(),
-      )..add(LessonStartEvent(lessonId: lessonId, unitId: unitId, languageId: languageId)),
+      )..add(LessonStartEvent(
+          lessonId: lessonId, unitId: unitId, languageId: languageId)),
       child: BlocListener<LessonBloc, LessonState>(
         listenWhen: (previous, current) =>
             (previous.status != current.status) ||
@@ -66,6 +71,7 @@ class LessonPage extends StatelessWidget {
           if (state.isOutOfHeart == true &&
               state.status == LessonStatus.inProgress) {
             showExitDialog(context, "Out of heart");
+            context.read<LessonBloc>().add(LessonExitEvent(isOutOfHeart: true));
           }
         },
         child: LessonView(),

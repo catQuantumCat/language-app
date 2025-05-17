@@ -128,7 +128,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildProfileView(BuildContext context, ProfileState state) {
     final profile = state.userProfile!;
-    
+
     return RefreshIndicator(
       onRefresh: () async {
         context.read<ProfileBloc>().add(LoadProfileEvent());
@@ -142,22 +142,22 @@ class _ProfileContentState extends State<ProfileContent> {
             children: [
               // Avatar và thông tin cơ bản
               _buildProfileHeader(context, profile, state),
-              
+
               const SizedBox(height: 24),
-              
+
               // Thống kê
               _buildStatistics(context, profile, state),
-              
+
               const SizedBox(height: 24),
-              
+
               // Ngôn ngữ đang học
               ProfileSection(
                 title: 'Ngôn ngữ đang học',
                 child: _buildLanguagesList(context, profile.languages),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Nút chỉnh sửa hồ sơ
               SizedBox(
                 width: double.infinity,
@@ -185,7 +185,7 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildProfileHeader(
-    BuildContext context, 
+    BuildContext context,
     User profile,
     ProfileState state,
   ) {
@@ -195,57 +195,57 @@ class _ProfileContentState extends State<ProfileContent> {
           children: [
             // Avatar
             GestureDetector(
-            onTap: () => _showImageSourceOptions(context),
-            child: Hero(
-              tag: 'profileAvatar',
-              child: CircleAvatar(
-                radius: 60,
-                backgroundColor: context.colorTheme.primary.withOpacity(0.1),
-                backgroundImage: _getProfileImage(state, profile),
-                child: _getAvatarChild(state, profile),
+              onTap: () => _showImageSourceOptions(context),
+              child: Hero(
+                tag: 'profileAvatar',
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundColor: context.colorTheme.primary.withOpacity(0.1),
+                  backgroundImage: _getProfileImage(state, profile),
+                  child: _getAvatarChild(state, profile),
+                ),
               ),
             ),
-          ),
-          
-          // Hiển thị indicator khi đang upload
-          if (state.updateState == ViewStateEnum.loading)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: context.colorTheme.onPrimary,
+
+            // Hiển thị indicator khi đang upload
+            if (state.updateState == ViewStateEnum.loading)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: context.colorTheme.onPrimary,
+                    ),
                   ),
                 ),
               ),
-            ),
-          
-          // Edit avatar button
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: context.colorTheme.primary,
-                shape: BoxShape.circle,
+
+            // Edit avatar button
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: context.colorTheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.camera_alt, size: 20),
+                  color: context.colorTheme.onPrimary,
+                  onPressed: state.updateState == ViewStateEnum.loading
+                      ? null
+                      : () => _showImageSourceOptions(context),
+                ),
               ),
-              child: IconButton(
-                icon: const Icon(Icons.camera_alt, size: 20),
-                color: context.colorTheme.onPrimary,
-                onPressed: state.updateState == ViewStateEnum.loading
-                  ? null
-                  : () => _showImageSourceOptions(context),
-              ),
             ),
-          ),
-        ],
-      ),
-        
+          ],
+        ),
+
         const SizedBox(height: 16),
-        
+
         // Tên người dùng
         Text(
           profile.fullName,
@@ -253,9 +253,9 @@ class _ProfileContentState extends State<ProfileContent> {
                 fontWeight: FontWeight.bold,
               ),
         ),
-        
+
         const SizedBox(height: 4),
-        
+
         // Username
         Text(
           '@${profile.username}',
@@ -263,9 +263,9 @@ class _ProfileContentState extends State<ProfileContent> {
                 color: Colors.grey[600],
               ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Email
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -298,7 +298,8 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget? _getAvatarChild(ProfileState state, User profile) {
-    if (state.avatarFile != null || (profile.avatar != null && profile.avatar!.isNotEmpty)) {
+    if (state.avatarFile != null ||
+        (profile.avatar != null && profile.avatar!.isNotEmpty)) {
       return null;
     }
     return Icon(
@@ -309,7 +310,7 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildStatistics(
-    BuildContext context, 
+    BuildContext context,
     User profile,
     ProfileState state,
   ) {
@@ -377,28 +378,28 @@ class _ProfileContentState extends State<ProfileContent> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: context.colorTheme.primary.withOpacity(0.1),
+              color: context.colorTheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: language.languageFlag != null && language.languageFlag!.isNotEmpty
+            child: language.languageFlag != null &&
+                    language.languageFlag!.isNotEmpty
                 ? ClipOval(
                     child: Image.network(
                       language.languageFlag!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => 
-                          Icon(Icons.language, color: context.colorTheme.primary),
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.language,
+                          color: context.colorTheme.primary),
                     ),
                   )
                 : Icon(Icons.language, color: context.colorTheme.primary),
           ),
           title: Text('Ngôn ngữ ${index + 1}'),
-          subtitle: language.lessonOrder != null 
+          subtitle: language.lessonOrder != null
               ? Text('Bài học hiện tại: ${language.lessonOrder}')
               : null,
           trailing: Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () {
-            // TODO: Điều hướng đến trang chi tiết ngôn ngữ
-          },
+          onTap: () {},
         );
       },
     );
@@ -460,35 +461,34 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   // Trong _ProfileContentState
-Future<void> _pickImage(ImageSource source) async {
-  try {
-    final XFile? image = await _picker.pickImage(
-      source: source,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 85,
-    );
-    
-    if (image != null && mounted) {
-      // Thêm file vào state mà không hiển thị dialog loading
-      context.read<ProfileBloc>().add(
-        ChangeAvatarEvent(
-          imageFile: File(image.path),
-        ),
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
       );
-    }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Không thể chọn ảnh: ${e.toString()}'),
-          backgroundColor: context.colorTheme.error,
-        ),
-      );
+
+      if (image != null && mounted) {
+        // Thêm file vào state mà không hiển thị dialog loading
+        context.read<ProfileBloc>().add(
+              ChangeAvatarEvent(
+                imageFile: File(image.path),
+              ),
+            );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Không thể chọn ảnh: ${e.toString()}'),
+            backgroundColor: context.colorTheme.error,
+          ),
+        );
+      }
     }
   }
-}
-
 
   // Giả lập việc upload ảnh
   Future<String> _uploadImage(File imageFile) async {
@@ -499,17 +499,16 @@ Future<void> _pickImage(ImageSource source) async {
   }
 
   void _showEditProfileDialog(BuildContext context, User profile) {
-  showDialog(
-    context: context, // Truyền context đúng
-    builder: (dialogContext) => BlocProvider.value(
-      value: context.read<ProfileBloc>(), // Sử dụng BlocProvider.value để chia sẻ bloc
-      child: EditProfileDialog(
-        initialFullName: profile.fullName,
-        initialEmail: profile.email,
+    showDialog(
+      context: context, // Truyền context đúng
+      builder: (dialogContext) => BlocProvider.value(
+        value: context
+            .read<ProfileBloc>(), // Sử dụng BlocProvider.value để chia sẻ bloc
+        child: EditProfileDialog(
+          initialFullName: profile.fullName,
+          initialEmail: profile.email,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
-
-}
-

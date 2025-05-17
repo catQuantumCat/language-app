@@ -1,10 +1,7 @@
 // configs/router/app_router.dart (chỉ sửa phần import)
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/enums/auth_state_enum.dart';
-import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/auth/bloc/auth_bloc.dart';
@@ -13,7 +10,7 @@ import 'package:language_app/modules/auth/register/register_view.dart';
 import 'package:language_app/modules/error/error_page.dart';
 import 'package:language_app/modules/home/home_view.dart';
 import 'package:language_app/modules/knowledge/knowledge_view.dart';
-import 'package:language_app/modules/knowledge/lessons_view.dart';
+import 'package:language_app/modules/knowledge/all_lesson_listview.dart';
 import 'package:language_app/modules/knowledge/units_view.dart';
 import 'package:language_app/modules/language_selection/language_selection_view.dart';
 import 'package:language_app/modules/leaderboard/leaderboard_view.dart';
@@ -33,7 +30,7 @@ enum AppRoute {
   leaderboard("/leaderboard"),
   mistakes("/mistakes"),
   mistakeDetail("/mistakes/:id"),
-  units("/units"), // Thêm route mới
+  units("/units"),
   profile("/profile");
 
   final String path;
@@ -100,85 +97,27 @@ final class AppRouter {
     return null;
   }
 
-  // Future<String?> _handleRedirect(
-  //     BuildContext context, GoRouterState state) async {
-  //   final bool isAuthenticated =
-  //       authBloc.state.status == AppStateEnum.authenticated;
-
-  //   final bool isAuthPath = (state.matchedLocation == AppRoute.login.path ||
-  //       state.matchedLocation == AppRoute.register.path);
-
-  //   // If on the language selection path, don't redirect
-  //   if (state.matchedLocation == AppRoute.languageSelection.path) {
-  //     return null;
-  //   }
-
-  //   // List of protected routes that require authentication
-  //   final List<String> protectedRoutes = [
-  //     AppRoute.home.path,
-  //     AppRoute.profile.path
-  //   ];
-
-  //   if (isAuthenticated && isAuthPath) {
-  //     final languageRepo = getIt<LanguageRepo>();
-  //     try {
-  //       bool hasLanguages = await languageRepo.hasUserLanguages();
-  //       if (!hasLanguages) {
-  //         return AppRoute.languageSelection.path;
-  //       }
-
-  //       return AppRoute.home.path;
-  //     } catch (e) {
-  //       log('Error checking user languages: $e' as num);
-
-  //       return AppRoute.home.path;
-  //     }
-  //   }
-
-  //   if (!isAuthenticated && protectedRoutes.contains(state.matchedLocation)) {
-  //     return AppRoute.login.path;
-  //   }
-  //   return null;
-  // }
-
   List<RouteBase> _buildRoutes() {
     return [
-      GoRoute(
-        path: "/units",
-        builder: (context, state) => UnitsPage(),
-      ),
-      GoRoute(
-        path: "/units/:unitId/lessons",
-        builder: (context, state) {
-          final unitId = state.pathParameters["unitId"];
-          final unitTitle = state.uri.queryParameters["unitTitle"];
-          final unitOrder =
-              int.tryParse(state.uri.queryParameters["unitOrder"] ?? "");
+      // GoRoute(
+      //   path: "/units/:unitId/lessons",
+      //   builder: (context, state) {
+      //     final unitId = state.pathParameters["unitId"];
+      //     final unitTitle = state.uri.queryParameters["unitTitle"];
+      //     final unitOrder =
+      //         int.tryParse(state.uri.queryParameters["unitOrder"] ?? "");
 
-          if (unitId == null) {
-            return ErrorPage(error: Exception("Unit ID not found"));
-          }
+      //     if (unitId == null) {
+      //       return ErrorPage(error: Exception("Unit ID not found"));
+      //     }
 
-          return LessonsPage(
-              unitId: unitId,
-              unitTitle: unitTitle ?? "Unit",
-              unitOrder: unitOrder ?? 0);
-        },
-      ),
-      GoRoute(
-        path: "/lessons/:lessonId/knowledge",
-        builder: (context, state) {
-          final lessonId = state.pathParameters["lessonId"];
-          final lessonTitle = state.uri.queryParameters["lessonTitle"];
+      //     return AllLessonListPage(
+      //         unitId: unitId,
+      //         unitTitle: unitTitle ?? "Unit",
+      //         unitOrder: unitOrder ?? 0);
+      //   },
+      // ),
 
-          if (lessonId == null) {
-            return ErrorPage(error: Exception("Lesson ID not found"));
-          }
-
-          return KnowledgePage(
-              lessonId: lessonId, lessonTitle: lessonTitle ?? "Lesson");
-        },
-      ),
       // Auth routes
       ShellRoute(
           builder: (context, state, child) => Scaffold(body: child),
@@ -202,8 +141,7 @@ final class AppRouter {
               },
             )
           ]),
-      // Main navigation routes with StatefulShellRoute
-      // Cập nhật phần StatefulShellRoute trong _buildRoutes()
+      // Navigation routes
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return NavigationPage(
@@ -245,7 +183,6 @@ final class AppRouter {
               ),
             ],
           ),
-          // Thêm branch mới cho Knowledge
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -254,34 +191,59 @@ final class AppRouter {
               ),
               GoRoute(
                 path: "/units/:unitId/lessons",
-                builder: (context, state) {
+                // Use buildPageWithState to preserve state
+                pageBuilder: (context, state) {
                   final unitId = state.pathParameters["unitId"];
                   final unitTitle = state.uri.queryParameters["unitTitle"];
                   final unitOrder = int.tryParse(
                       state.uri.queryParameters["unitOrder"] ?? "");
 
-                  if (unitId == null) {
-                    return ErrorPage(error: Exception("Unit ID not found"));
+                  if (unitId == null ||
+                      unitTitle == null ||
+                      unitOrder == null) {
+                    return MaterialPage(
+                      key: state.pageKey,
+                      child: ErrorPage(error: Exception("Unit ID not found")),
+                    );
                   }
 
-                  return LessonsPage(
+                  // Use ValueKey to ensure state preservation across navigations
+                  return MaterialPage(
+                    key: ValueKey('lesson_list_$unitId'),
+                    child: AllLessonListPage(
                       unitId: unitId,
-                      unitTitle: unitTitle ?? "Unit",
-                      unitOrder: unitOrder ?? 0);
+                      unitTitle: unitTitle,
+                      unitOrder: unitOrder,
+                    ),
+                    // Enable state preservation
+                    restorationId: 'lesson_list_$unitId',
+                  );
                 },
               ),
               GoRoute(
                 path: "/lessons/:lessonId/knowledge",
-                builder: (context, state) {
+                // Use pageBuilder for knowledge page too
+                pageBuilder: (context, state) {
                   final lessonId = state.pathParameters["lessonId"];
                   final lessonTitle = state.uri.queryParameters["lessonTitle"];
 
                   if (lessonId == null) {
-                    return ErrorPage(error: Exception("Lesson ID not found"));
+                    return MaterialPage(
+                      key: state.pageKey,
+                      child: ErrorPage(error: Exception("Lesson ID not found")),
+                    );
                   }
 
-                  return KnowledgePage(
-                      lessonId: lessonId, lessonTitle: lessonTitle ?? "Lesson");
+                  // Use ValueKey to ensure state preservation
+                  return MaterialPage(
+                    key: ValueKey('knowledge_$lessonId'),
+                    child: KnowledgePage(
+                      lessonId: lessonId,
+                      lessonTitle: lessonTitle ?? "Lesson",
+                    ),
+                    // Enable state preservation
+                    restorationId: 'knowledge_$lessonId',
+                  );
                 },
               ),
             ],

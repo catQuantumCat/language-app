@@ -90,7 +90,6 @@ class UnitsView extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemCount: state.units.length,
       itemBuilder: (context, index) {
-        // modules/knowledge/units_view.dart (tiếp tục)
         final unit = state.units[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
@@ -128,15 +127,17 @@ class UnitsView extends StatelessWidget {
                       children: [
                         Text(
                           'Unit ${unit.order}',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                         ),
                         Text(
                           unit.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                       ],
                     ),
@@ -156,11 +157,8 @@ class UnitsView extends StatelessWidget {
   }
 
   void _navigateToLessons(BuildContext context, UnitResponse unit) {
-  // Thay thế dòng có lỗi
-  context.go(
-    '/units/${unit.id}/lessons?unitTitle=${Uri.encodeComponent(unit.title)}&unitOrder=${unit.order}',
-  );
+    context.push(
+      '/units/${unit.id}/lessons?unitTitle=${Uri.encodeComponent(unit.title)}&unitOrder=${unit.order}',
+    );
+  }
 }
-
-}
-

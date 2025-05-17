@@ -9,7 +9,7 @@ import 'package:language_app/main.dart';
 import 'package:language_app/modules/challenge/widgets/audio_widget.dart';
 import 'package:language_app/modules/knowledge/bloc/knowledge_bloc.dart';
 
-class KnowledgePage extends StatelessWidget {
+class KnowledgePage extends StatefulWidget {
   final String lessonId;
   final String lessonTitle;
 
@@ -20,17 +20,47 @@ class KnowledgePage extends StatelessWidget {
   });
 
   @override
+  State<KnowledgePage> createState() => _KnowledgePageState();
+}
+
+class _KnowledgePageState extends State<KnowledgePage>
+    with AutomaticKeepAliveClientMixin {
+  late final KnowledgeBloc _knowledgeBloc;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _knowledgeBloc = KnowledgeBloc(knowledgeRepo: getIt<KnowledgeRepo>());
+
+    if (!_initialized) {
+      _knowledgeBloc.add(LoadKnowledgeEvent(
+        lessonId: widget.lessonId,
+        lessonTitle: widget.lessonTitle,
+      ));
+      _initialized = true;
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _knowledgeBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocProvider(
-      create: (context) => KnowledgeBloc(
-        knowledgeRepo: getIt<KnowledgeRepo>(),
-      )..add(LoadKnowledgeEvent(
-          lessonId: lessonId,
-          lessonTitle: lessonTitle,
-        )),
+      create: (context) => _knowledgeBloc,
       child: const KnowledgeView(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class KnowledgeView extends StatelessWidget {
@@ -154,7 +184,8 @@ class KnowledgeView extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: context.colorTheme.primary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(16),
@@ -214,7 +245,8 @@ class KnowledgeView extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 8),
-              ...vocabulary.examples.map((example) => _buildExampleItem(context, example)),
+              ...vocabulary.examples
+                  .map((example) => _buildExampleItem(context, example)),
             ],
           ],
         ),
@@ -236,7 +268,8 @@ class KnowledgeView extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: context.colorTheme.selection.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(16),
@@ -272,7 +305,8 @@ class KnowledgeView extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 8),
-              ...grammar.examples.map((example) => _buildExampleItem(context, example)),
+              ...grammar.examples
+                  .map((example) => _buildExampleItem(context, example)),
             ],
           ],
         ),

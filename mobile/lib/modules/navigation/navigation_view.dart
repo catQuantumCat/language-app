@@ -9,7 +9,7 @@ class NavigationPage extends StatelessWidget {
     required this.child,
   });
 
-  final Widget child;
+  final StatefulNavigationShell child;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class NavigationPage extends StatelessWidget {
 class NavigationView extends StatelessWidget {
   const NavigationView({super.key, required this.child});
 
-  final Widget child;
+  final StatefulNavigationShell child;
 
   @override
   Widget build(BuildContext context) {
@@ -36,25 +36,9 @@ class NavigationView extends StatelessWidget {
         ),
         child: NavigationBar(
           backgroundColor: context.colorTheme.background,
-          selectedIndex: _getSelectedIndex(context),
+          selectedIndex: child.currentIndex,
           onDestinationSelected: (index) {
-            switch (index) {
-              case 0:
-                context.go('/home');
-                break;
-              case 1:
-                context.go('/leaderboard');
-                break;
-              case 2:
-                context.go('/mistakes');
-                break;
-              case 3:
-                context.go('/units');
-                break;
-              case 4:
-                context.go('/profile');
-                break;
-            }
+            child.goBranch(index);
           },
           height: 60,
           indicatorColor: context.colorTheme.onSelection,
@@ -88,15 +72,5 @@ class NavigationView extends StatelessWidget {
       ),
       body: child,
     );
-  }
-  
-  int _getSelectedIndex(BuildContext context) {
-    final location = GoRouterState.of(context).matchedLocation;
-    if (location.startsWith('/home')) return 0;
-    if (location.startsWith('/leaderboard')) return 1;
-    if (location.startsWith('/mistakes')) return 2;
-    if (location.startsWith('/units') || location.startsWith('/lessons')) return 3; // Cập nhật điều kiện
-    if (location.startsWith('/profile')) return 4;
-    return 0;
   }
 }
