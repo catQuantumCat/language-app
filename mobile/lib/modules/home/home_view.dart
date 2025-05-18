@@ -5,7 +5,6 @@ import 'package:language_app/common/constants/view_state_enum.dart';
 import 'package:language_app/domain/models/lesson.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
 import 'package:language_app/domain/use_cases/home_screen_fetch_use_case.dart';
-import 'package:language_app/gen/assets.gen.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/home/bloc/home_bloc.dart';
 import 'package:language_app/modules/home/widgets/header_widget.dart';
@@ -51,6 +50,14 @@ class _HomeViewState extends State<HomeView> {
         context.read<HomeBloc>().add(LoadUnits());
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reload units when this page becomes visible again
+    // context.read<HomeBloc>().add(LoadMetadataEvent());
+    context.read<HomeBloc>().add(LoadUnits());
   }
 
   void _onPositionChange() {
@@ -109,12 +116,17 @@ class _HomeViewState extends State<HomeView> {
             heartCount: state.heartCount,
             streakCount: state.streakCount),
         SizedBox(height: 8),
-        HeaderWidget(unitIndex: _currentIndexNotifier),
+        HeaderWidget(
+            unitIndex: _currentIndexNotifier,
+            rawUnitIndex: state.language?.unitOrder ?? 0),
         Expanded(
-            child: UnitList(
-                languageId: state.language?.languageId ?? "",
-                units: state.units,
-                itemPositionsListener: itemPositionsListener))
+          child: UnitList(
+              languageId: state.language?.languageId ?? "",
+              units: state.units,
+              itemPositionsListener: itemPositionsListener,
+              currentUnitIndex: state.language?.unitOrder ?? 0,
+              currentLessonIndex: state.language?.lessonOrder ?? 0),
+        )
       ],
     );
   }

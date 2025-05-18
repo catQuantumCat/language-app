@@ -394,11 +394,14 @@ class _ProfileContentState extends State<ProfileContent> {
                   )
                 : Icon(Icons.language, color: context.colorTheme.primary),
           ),
-          title: Text('Ngôn ngữ ${index + 1}'),
-          subtitle: language.lessonOrder != null
-              ? Text('Bài học hiện tại: ${language.lessonOrder}')
-              : null,
-          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+          title: Text(language.languageName),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Bài học hiện tại: ${language.lessonOrder}'),
+              Text('Chương hiện tại: ${language.unitOrder}'),
+            ],
+          ),
           onTap: () {},
         );
       },

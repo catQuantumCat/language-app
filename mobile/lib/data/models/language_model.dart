@@ -11,12 +11,16 @@ class LanguageModel {
   final String languageFlag;
   final int order;
   final int lessonOrder;
+  final int unitOrder;
+  final String languageName;
 
   LanguageModel(
       {required this.languageId,
       required this.languageFlag,
       required this.order,
-      required this.lessonOrder});
+      required this.lessonOrder,
+      required this.unitOrder,
+      required this.languageName});
 
   Map<String, dynamic> toJson() => _$LanguageModelToJson(this);
 
@@ -29,11 +33,13 @@ class LanguageModel {
       languageFlag: languageFlag,
       order: order,
       lessonOrder: lessonOrder,
+      unitOrder: unitOrder,
+      languageName: languageName,
     );
   }
 
   @override
   String toString() {
-    return 'LanguageModel(languageId: $languageId, languageFlag: $languageFlag, order: $order, lessonOrder: $lessonOrder)';
+    return 'LanguageModel(languageId: $languageId, languageFlag: $languageFlag, order: $order, lessonOrder: $lessonOrder, unitOrder: $unitOrder, languageName: $languageName)';
   }
 }

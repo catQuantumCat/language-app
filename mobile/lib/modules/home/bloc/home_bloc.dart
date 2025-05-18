@@ -48,9 +48,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                   ? data.languages.firstWhere((lang) => lang.order == 1)
                   : null);
         }
+        add(LoadUnits());
         return state;
       },
       onError: (error, stackTrace) {
+        log(error.toString());
+        log(stackTrace.toString());
         return HomeState.failed();
       },
     );

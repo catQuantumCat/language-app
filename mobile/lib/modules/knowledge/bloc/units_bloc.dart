@@ -37,7 +37,7 @@ class UnitsBloc extends Bloc<UnitsEvent, UnitsState> {
         return;
       }
 
-      final languageId = event.languageId ?? currentUser.languages.first.languageId;
+      final languageId = event.languageId ?? currentUser.languages.where((lang) => lang.order == 1).first.languageId;
       final units = await _knowledgeRepo.getUnits(languageId);
       
       emit(state.copyWith(

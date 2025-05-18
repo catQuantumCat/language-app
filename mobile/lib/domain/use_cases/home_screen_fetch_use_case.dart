@@ -16,21 +16,21 @@ class HomeScreenFetchUseCase {
 
   Future<List<Unit>> call({required String languageId}) async {
    
-    if (_isCacheValid('units_$languageId')) {
-      final cachedData = _prefs.getString('units_$languageId');
+    // if (_isCacheValid('units_$languageId')) {
+    //   final cachedData = _prefs.getString('units_$languageId');
 
-      if (cachedData != null) {
-        final returnList = <Unit>[];
-        final Map<String, dynamic> decoded = jsonDecode(cachedData);
+    //   if (cachedData != null) {
+    //     final returnList = <Unit>[];
+    //     final Map<String, dynamic> decoded = jsonDecode(cachedData);
 
-        final decodedList = decoded['data'];
-        for (final item in decodedList) {
-          returnList.add(Unit.fromJson(item));
-        }
-        await Future.delayed(Duration.zero);
-        return Future.value(returnList);
-      }
-    }
+    //     final decodedList = decoded['data'];
+    //     for (final item in decodedList) {
+    //       returnList.add(Unit.fromJson(item));
+    //     }
+    //     await Future.delayed(Duration.zero);
+    //     return Future.value(returnList);
+    //   }
+    // }
 
     // Fetch fresh data
     return await _fetchAndCacheData(languageId);

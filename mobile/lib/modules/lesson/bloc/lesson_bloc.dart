@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,17 +74,22 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       }
     } else if (isCorrect == false) {
       numOfHeart--;
-
       streak = 0;
     }
     if (isFirstAttempt) {
       totalAttempts++;
     }
 
+    List<String> updatedIncorrectExerciseIds = state.incorrectExerciseIds;
+    if (!isCorrect) {
+      updatedIncorrectExerciseIds = [
+        ...state.incorrectExerciseIds,
+        challengeQueue.first.id
+      ];
+    }
+
     emit(state.copyWith(
-        incorrectExerciseIds: isCorrect
-            ? state.incorrectExerciseIds
-            : [...state.incorrectExerciseIds, challengeQueue.first.id],
+        incorrectExerciseIds: updatedIncorrectExerciseIds,
         answerStatus:
             isCorrect == true ? AnswerStatus.correct : AnswerStatus.wrong,
         numOfHeart: numOfHeart != state.numOfHeart ? numOfHeart : null,
@@ -126,16 +132,20 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
         lessonDuration = DateTime.now().difference(startTime);
       }
 
-      _sendResult(state, emit);
-
-      emit(LessonState.finished(
+      final updatedState = LessonState.finished(
         startTime: startTime,
         lessonDuration: lessonDuration,
         streak: streak,
         totalAttempts: totalAttempts,
         correctFirstAttempts: correctFirstAttempts,
         earnedXP: earnedXP,
-      ));
+        numOfHeart: numOfHeart,
+        incorrectExerciseIds: state.incorrectExerciseIds,
+      );
+      emit(LessonState.loading());
+
+      await _sendResult(updatedState, emit);
+      emit(updatedState);
     } else {
       emit(state.copyWith(answerStatus: AnswerStatus.none));
     }
@@ -148,27 +158,30 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       lessonDuration = DateTime.now().difference(startTime);
     }
 
-    if (event.isOutOfHeart == true) {
-      _sendResult(state, emit);
-    }
-    emit(LessonState.finished(
+    final updatedState = LessonState.finished(
       startTime: startTime,
       lessonDuration: lessonDuration,
       streak: state.streak,
       totalAttempts: state.totalAttempts,
       correctFirstAttempts: state.correctFirstAttempts,
       earnedXP: state.earnedXP,
-    ));
+      numOfHeart: state.numOfHeart,
+    );
+
+    emit(updatedState);
+    _sendResult(updatedState, emit);
   }
 
   Future<void> _sendResult(LessonState state, Emitter<LessonState> emit) async {
+    log("state.incorrectExerciseIds: ${state.incorrectExerciseIds}",
+        name: "Log exercise ids");
     final Result result = Result(
       lessonId: lessonId,
       exercises: state.incorrectExerciseIds
           .map((e) => ResultIncorrectExerciseModel(exerciseId: e))
           .toList(),
       hearts: state.numOfHeart,
-      experienceGained: state.earnedXP,
+      experienceGained: state.earnedXP > 0 ? state.earnedXP : 25,
       timeSpent: state.lessonDuration?.inSeconds ?? 0,
       streak: 1,
     );

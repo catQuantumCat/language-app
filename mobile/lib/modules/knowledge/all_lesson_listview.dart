@@ -26,8 +26,7 @@ class AllLessonListPage extends StatefulWidget {
   State<AllLessonListPage> createState() => _AllLessonListPageState();
 }
 
-class _AllLessonListPageState extends State<AllLessonListPage>
-    with AutomaticKeepAliveClientMixin {
+class _AllLessonListPageState extends State<AllLessonListPage> {
   late final LessonsBloc _lessonsBloc;
   bool _initialized = false;
 
@@ -57,11 +56,7 @@ class _AllLessonListPageState extends State<AllLessonListPage>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocProvider(
       create: (context) => _lessonsBloc,
       child: const AllLessonListView(),

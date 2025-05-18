@@ -23,8 +23,7 @@ class KnowledgePage extends StatefulWidget {
   State<KnowledgePage> createState() => _KnowledgePageState();
 }
 
-class _KnowledgePageState extends State<KnowledgePage>
-    with AutomaticKeepAliveClientMixin {
+class _KnowledgePageState extends State<KnowledgePage> {
   late final KnowledgeBloc _knowledgeBloc;
   bool _initialized = false;
 
@@ -52,15 +51,11 @@ class _KnowledgePageState extends State<KnowledgePage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocProvider(
       create: (context) => _knowledgeBloc,
       child: const KnowledgeView(),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class KnowledgeView extends StatelessWidget {

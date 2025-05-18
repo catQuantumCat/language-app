@@ -12,6 +12,8 @@ LanguageModel _$LanguageModelFromJson(Map<String, dynamic> json) =>
       languageFlag: json['languageFlag'] as String,
       order: (json['order'] as num).toInt(),
       lessonOrder: (json['lessonOrder'] as num).toInt(),
+      unitOrder: (json['unitOrder'] as num).toInt(),
+      languageName: json['languageName'] as String,
     );
 
 Map<String, dynamic> _$LanguageModelToJson(LanguageModel instance) =>
@@ -20,4 +22,6 @@ Map<String, dynamic> _$LanguageModelToJson(LanguageModel instance) =>
       'languageFlag': instance.languageFlag,
       'order': instance.order,
       'lessonOrder': instance.lessonOrder,
+      'unitOrder': instance.unitOrder,
+      'languageName': instance.languageName,
     };

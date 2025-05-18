@@ -40,7 +40,8 @@ class _LessonPageState extends State<LessonPage> {
     Navigator.pop(context);
   }
 
-  final AudioPlayer _player = GetIt.I<AudioPlayer>();
+  // final AudioPlayer _player = GetIt.I<AudioPlayer>();
+  final AudioPlayer _player = AudioPlayer();
 
   void showExitDialog(BuildContext context, String dialogTitle) {
     showDialog(

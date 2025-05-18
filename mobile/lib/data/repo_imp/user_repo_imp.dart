@@ -28,7 +28,7 @@ class UserRepoImpl implements UserRepo {
   UserRepoImpl({
     required UserLocalDatasource localDatasource,
     required UserRemoteDatasource remoteDatasource,
-    required Dio dio, // Thêm Dio vào constructor
+    required Dio dio,
   })  : _localDatasource = localDatasource,
         _remoteDatasource = remoteDatasource,
         _dio = dio {
@@ -36,14 +36,21 @@ class UserRepoImpl implements UserRepo {
     _initUserInfoStream();
   }
 
-  void _initUserInfoStream() {
-    _userInfoController.onListen = () {
+  Future<void> _initUserInfoStream() async {
+    _userInfoController.onListen = () async {
       _userInfoController.add(_localDatasource.getUserInfo());
     };
 
     _localDatasource.getUserInfoStream().listen((user) {
       _userInfoController.add(user);
     });
+
+    try {
+      final remoteUser = await _remoteDatasource.getUserProfile();
+      _localDatasource.setUserInfo(data: remoteUser);
+    } catch (e) {
+      log(e.toString(), name: "Error getting user info");
+    }
   }
 
   Future<void> _initAppStateStream() async {
@@ -113,7 +120,7 @@ class UserRepoImpl implements UserRepo {
       await _localDatasource.setUserInfo(data: remoteUser);
       return remoteUser;
     } catch (e) {
-      // Handle potential network errors
+      log(e.toString(), name: "Error getting user info");
       return null;
     }
   }
@@ -217,7 +224,7 @@ class UserRepoImpl implements UserRepo {
       rethrow;
     }
   }
-  
+
   @override
   Future<void> forceUpdateUserProfile() async {
     final user = await _remoteDatasource.getUserProfile();

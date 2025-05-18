@@ -40,6 +40,7 @@ class LessonRepoImp implements LessonRepo {
       _remoteDatasource.updateLanguage(userId, {
         'languageId': languageId,
         'lessonId': result.lessonId,
+        'unitId': unitId,
       })
     ];
     await Future.wait(futures);

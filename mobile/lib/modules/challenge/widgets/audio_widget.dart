@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:language_app/main.dart';
 
 class AudioWidget extends StatefulWidget {
   const AudioWidget({super.key, required String using}) : _path = using;
@@ -12,14 +11,8 @@ class AudioWidget extends StatefulWidget {
 }
 
 class _AudioWidgetState extends State<AudioWidget> {
-  final _player = getIt<AudioPlayer>();
+  final _player = AudioPlayer();
   bool _audioEnabled = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _setupAudio();
-  }
 
   Future<void> _setupAudio() async {
     try {
@@ -48,6 +41,7 @@ class _AudioWidgetState extends State<AudioWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _setupAudio();
     return IconButton.filled(
         onPressed: () => _onAudioButtonPressed(),
         icon: Icon(Icons.speaker),

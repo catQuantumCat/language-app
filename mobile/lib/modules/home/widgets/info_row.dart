@@ -16,6 +16,7 @@ class InfoRow extends StatelessWidget {
   final int streakCount;
   final int heartCount;
   final bool hasTodayStreak;
+  
 
   @override
   Widget build(BuildContext context) {

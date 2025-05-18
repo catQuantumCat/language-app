@@ -69,6 +69,8 @@ class LessonState extends Equatable {
     int totalAttempts = 0,
     int correctFirstAttempts = 0,
     int earnedXP = 0,
+    int numOfHeart = 0,
+    List<String> incorrectExerciseIds = const [],
   }) : this._(
           status: LessonStatus.finished,
           message: "You've completed this lesson",
@@ -78,6 +80,8 @@ class LessonState extends Equatable {
           totalAttempts: totalAttempts,
           correctFirstAttempts: correctFirstAttempts,
           earnedXP: earnedXP,
+          numOfHeart: numOfHeart,
+          incorrectExerciseIds: incorrectExerciseIds,
         );
 
   LessonState.error({required String message})

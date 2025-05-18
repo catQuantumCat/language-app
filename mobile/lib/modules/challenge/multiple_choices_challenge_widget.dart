@@ -124,7 +124,7 @@ class _ChoiceListState extends State<ChoiceList> {
               //   ),
               // ),
               onPressed: () => _onSelectionTapped(option, index),
-              child: Text('${index + 1}. ${option.text}'),
+              child: Text(option.text),
             );
           },
         ).toList());
