@@ -1,34 +1,28 @@
-## Language app
-DUT's Mobile Development final project.
+# Unolingo
 
-### Git commit convention
-Use [this](./docs/git_convention.pdf) convention, (by [HighTenHunter](https://github.com/High10Hunter)) 
+![Unolingo Logo](docs/uno1.png)
 
+A language learning app inspired by Duolingo, developed as DUT's Mobile Development final project. The project consists of a Flutter mobile app and a Node.js backend.
 
-### Self-note
-These notes are my findings while coding this project:
+![Unolingo Demo](docs/screens.png)
 
+## Project Structure
 
+- **mobile/**: Flutter app for iOS and Android
+- **backend/**: Node.js/Express backend API
+- **docs/**: Documentation and assets
 
-#### List layout and performance
+## Features
 
-In home screen list, I want to lay out the lessons in a widget list, like this:
-![Duolingo home layout](home_layout.PNG)
+- Interactive language lessons with a spiral/flow layout
+- Performance-optimized lesson list using `ScrollablePositionedList` and `ValueNotifier`
+- Modular state management with Bloc
+- Parallel data fetching for improved speed
 
-I think I've partially found the pattern behind the spriral layout:
+## Getting Started
 
-![alt text](unit_math.png)
+See `mobile/README.md` and `backend/readme.md` for setup instructions for each part.
 
-About performance:
-- Used `ScrollablePositionedList` to create a list view that also accept a index listener -> change the top unit menu index
+## Git Commit Convention
 
-- Problem: using `setState` inside `home_view.dart` to update the current index -> > 16ms reload when at different index
-- Solution: use a ValueNotifier and update that notifier only
-
-![Before](image.png)
-![After](image-1.png)
-
-
-- Potential further solution: Use a Flow widget and specify a Sine wave in it's delegate
-
-
+Use [this convention](./docs/git_convention.pdf) (by [HighTenHunter](https://github.com/High10Hunter)).
