@@ -1,4 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
+
 import 'package:language_app/domain/models/language.dart';
 
 part 'language_model.g.dart';
@@ -6,13 +8,19 @@ part 'language_model.g.dart';
 @JsonSerializable()
 class LanguageModel {
   final String languageId;
-  final int level;
-  final int experience;
+  final String languageFlag;
+  final int order;
+  final int lessonOrder;
+  final int unitOrder;
+  final String languageName;
 
   LanguageModel(
       {required this.languageId,
-      required this.level,
-      required this.experience});
+      required this.languageFlag,
+      required this.order,
+      required this.lessonOrder,
+      required this.unitOrder,
+      required this.languageName});
 
   Map<String, dynamic> toJson() => _$LanguageModelToJson(this);
 
@@ -21,6 +29,17 @@ class LanguageModel {
 
   Language toLanguage() {
     return Language(
-        languageId: languageId, level: level, experience: experience);
+      languageId: languageId,
+      languageFlag: languageFlag,
+      order: order,
+      lessonOrder: lessonOrder,
+      unitOrder: unitOrder,
+      languageName: languageName,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'LanguageModel(languageId: $languageId, languageFlag: $languageFlag, order: $order, lessonOrder: $lessonOrder, unitOrder: $unitOrder, languageName: $languageName)';
   }
 }

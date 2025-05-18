@@ -6,18 +6,36 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class UnitList extends StatefulWidget {
   const UnitList(
-      {super.key, required this.units, required this.itemPositionsListener});
+      {super.key,
+      required this.units,
+      required this.itemPositionsListener,
+      required this.languageId,
+      required this.currentUnitIndex,
+      required this.currentLessonIndex});
 
   final ItemPositionsListener itemPositionsListener;
   final List<Unit> units;
-
+  final String languageId;
+  final int currentUnitIndex;
+  final int currentLessonIndex;
   @override
   State<UnitList> createState() => _UnitListState();
 }
 
 class _UnitListState extends State<UnitList> {
+  //if currentLessonIndex is equals to length of lessons, the lesson index = 1, unit indext += 1
+
+  late final int _currentUnitIndex;
+  late final int _currentLessonIndex;
+
   @override
   void initState() {
+    _currentUnitIndex = widget.currentLessonIndex == widget.units.length
+        ? widget.currentUnitIndex + 1
+        : widget.currentUnitIndex;
+    _currentLessonIndex = widget.currentLessonIndex == widget.units.length
+        ? 1
+        : widget.currentLessonIndex;
     super.initState();
   }
 
@@ -32,8 +50,11 @@ class _UnitListState extends State<UnitList> {
       separatorBuilder: (context, index) => _separatorBuild(context, index),
       padding: EdgeInsets.zero,
       itemPositionsListener: widget.itemPositionsListener,
-      itemBuilder: (context, index) =>
-          LessonList(lessons: widget.units[index].lessons ?? []),
+      itemBuilder: (context, index) => LessonList(
+          isUnlocked: _currentUnitIndex > index,
+          currentLessonIndex: _currentLessonIndex + 1,
+          lessons: widget.units[index].lessons ?? [],
+          languageId: widget.languageId),
       itemCount: widget.units.length,
     );
   }

@@ -7,7 +7,7 @@ class DioProvider {
   static DioProvider? _instance;
   static Dio? _dio;
   final Box _userBox;
-
+  
   DioProvider._internal(this._userBox);
 
   factory DioProvider(Box userBox) {
@@ -25,9 +25,10 @@ class DioProvider {
 
     dio.interceptors.add(ApiInteceptor(userBox: _userBox));
     dio.interceptors.add(LogInterceptor(
+        requestBody: true,
         responseHeader: false,
         requestHeader: false,
-        request: true,
+        request: false,
         responseBody: true,
         error: true));
 

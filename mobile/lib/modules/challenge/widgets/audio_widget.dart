@@ -12,20 +12,22 @@ class AudioWidget extends StatefulWidget {
 
 class _AudioWidgetState extends State<AudioWidget> {
   final _player = AudioPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-    _setupAudio();
-  }
+  bool _audioEnabled = true;
 
   Future<void> _setupAudio() async {
-    await _player.setUrl(widget._path);
+    try {
+      await _player.setUrl(widget._path);
+    } catch (e) {
+      {
+        setState(() {
+          _audioEnabled = false;
+        });
+      }
+    }
   }
 
   void _onAudioButtonPressed() async {
     if (_player.playing == true) {
-      // _player.pause();
       _player.seek(Duration(seconds: 0));
     }
     await _player.play();
@@ -39,7 +41,10 @@ class _AudioWidgetState extends State<AudioWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _setupAudio();
     return IconButton.filled(
-        onPressed: () => _onAudioButtonPressed(), icon: Icon(Icons.speaker));
+        onPressed: () => _onAudioButtonPressed(),
+        icon: Icon(Icons.speaker),
+        color: _audioEnabled ? null : Colors.grey);
   }
 }

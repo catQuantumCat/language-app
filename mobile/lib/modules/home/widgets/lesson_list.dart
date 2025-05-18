@@ -1,21 +1,35 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/domain/models/lesson.dart';
 import 'package:language_app/theme/color_theme.dart';
 
 class LessonList extends StatelessWidget {
-  const LessonList({super.key, required this.lessons});
+  const LessonList(
+      {super.key,
+      required this.lessons,
+      required this.languageId,
+      required this.isUnlocked,
+      required this.currentLessonIndex});
 
+  final String languageId;
   final List<Lesson> lessons;
+  final bool isUnlocked;
+  final int currentLessonIndex;
 
   int get _lengthModifiedByEight => lessons.length - (lessons.length % 4);
 
   @override
   Widget build(BuildContext context) {
+    log("currentLessonIndex: $currentLessonIndex");
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
+        final bool isLessonUnlocked =
+            (lessons[index].order <= currentLessonIndex && isUnlocked);
+
         final int offset =
             index >= (_lengthModifiedByEight) ? 1 : _offsetCalculator(index);
 
@@ -38,14 +52,22 @@ class LessonList extends StatelessWidget {
               ),
               child: FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: context.colorTheme.primary,
-                  foregroundColor: context.colorTheme.onPrimary,
+                  backgroundColor: isLessonUnlocked
+                      ? context.colorTheme.primary
+                      : context.colorTheme.border,
+                  foregroundColor: isLessonUnlocked
+                      ? context.colorTheme.onPrimary
+                      : Colors.grey,
                   minimumSize: Size(64, 64),
                   shape: CircleBorder(),
                   padding: EdgeInsets.zero,
                   elevation: 0,
                 ),
-                onPressed: () => _onLessonPressed(context),
+                onPressed: () => isLessonUnlocked
+                    ? _onLessonPressed(context,
+                        unitId: lessons[index].unitId,
+                        lessonId: lessons[index].id)
+                    : null,
                 child: Text(
                   "${lessons[index].order}",
                   style: TextStyle(
@@ -63,15 +85,9 @@ class LessonList extends StatelessWidget {
     );
   }
 
-  void _onLessonPressed(BuildContext context) {
-    //TODO: remove dummy
-
-    GoRouter.of(context).go("/lesson/1");
-
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (routeContext) => LessonPage(lesson: dummyLessons.first)));
+  void _onLessonPressed(BuildContext context,
+      {required String unitId, required String lessonId}) {
+    GoRouter.of(context).go("/lesson/$languageId/$unitId/$lessonId");
   }
 
   ///Return either +-3, +-2, 1\

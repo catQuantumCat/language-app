@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:language_app/common/constants/homescree_widget_constant.dart';
 import 'package:language_app/common/constants/storage_keys.dart';
 import 'package:language_app/common/enums/auth_state_enum.dart';
 import 'package:language_app/configs/di/dependency_injection.dart';
@@ -28,7 +30,10 @@ void main() async {
 
 Future<void> init() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  HomeWidget.setAppGroupId(appGroup);
   await Hive.initFlutter();
+
   await DependencyInjection.setup(getIt);
 }
 

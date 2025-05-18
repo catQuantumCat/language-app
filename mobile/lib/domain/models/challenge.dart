@@ -1,3 +1,5 @@
+
+
 import 'package:language_app/domain/models/challenge_data.dart';
 
 enum ExerciseType {
@@ -39,41 +41,41 @@ class Challenge {
       required this.instruction});
 
   static ChallengeData challengeDataFromJson(Map<String, dynamic> rawDataValue,
-      {required ExerciseType? exerciseType}) {
-    switch (exerciseType) {
-      case ExerciseType.multipleChoice:
-        return MultipleChoiceChallengeData.fromJson(rawDataValue);
-      case ExerciseType.pairMatching:
-        return PairMatchingChallengeData.fromJson(rawDataValue);
-      case ExerciseType.sentenceOrder:
-        return SentenceOrderChallengeData.fromJson(rawDataValue);
-      case ExerciseType.translateWritten:
-        return TranslateChallengeData.fromJson(rawDataValue);
-      case null:
-        throw AssertionError("Cannot find type of exercise");
-    }
+    {required ExerciseType? exerciseType}) {
+  switch (exerciseType) {
+    case ExerciseType.multipleChoice:
+      return MultipleChoiceChallengeData.fromJson(rawDataValue);
+    case ExerciseType.pairMatching:
+      return PairMatchingChallengeData.fromJson(rawDataValue);
+    case ExerciseType.sentenceOrder:
+      return SentenceOrderChallengeData.fromJson(rawDataValue);
+    case ExerciseType.translateWritten:
+      return TranslateChallengeData.fromJson(rawDataValue);
+    case null:
+      throw AssertionError("Cannot find type of exercise");
+  }
+}
+
+factory Challenge.fromJson(Map<String, dynamic> map) {
+  final type = ExerciseType.valueMapping[map["exerciseType"]];
+
+  if (type == null) {
+    throw ArgumentError("Invalid exercise type: ${map["exerciseType"]}");
   }
 
-  factory Challenge.fromJson(Map<String, dynamic> map) {
-    final type = ExerciseType.valueMapping[map["exerciseType"]];
-
-    if (type == null) {
-      throw ArgumentError("Invalid exercise type: ${map["exerciseType"]}");
-    }
-
-    return Challenge(
-      id: map['id'] as String,
-      lessonId: map['lessonId'] as String,
-      exerciseType: type,
-      data: challengeDataFromJson(map['data'] as Map<String, dynamic>,
-          exerciseType: type),
-      order: map['order'] as int,
-      instruction: map['instruction'] as String,
-      imageUrl: map['imageUrl'] as String?,
-      audioUrl: map['audioUrl'] as String?,
-      question: map['question'] != null ? map['question'] as String : null,
-    );
-  }
+  return Challenge(
+    id: map['id'] as String? ?? "",
+    lessonId: map['lessonId'] as String? ?? "default",
+    exerciseType: type,
+    data: challengeDataFromJson(map['data'] as Map<String, dynamic>,
+        exerciseType: type),
+    order: map['order'] as int? ?? 0,
+    instruction: map['instruction'] as String? ?? map['question'] as String? ?? "",
+    imageUrl: map['imageUrl'] as String?,
+    audioUrl: map['audioUrl'] as String?,
+    question: map['question'] as String?,
+  );
+}
 
   @override
   String toString() {

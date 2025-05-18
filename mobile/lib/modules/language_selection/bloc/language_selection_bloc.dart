@@ -57,16 +57,22 @@ class LanguageSelectionBloc
     if (state is! LanguageSelectionLoadedState) return;
 
     final currentState = state as LanguageSelectionLoadedState;
-    final languageId = currentState.selectedLanguageId;
+    if (currentState.selectedLanguageId == null) return;
 
-    if (languageId == null) return;
-
-    emit(currentState.copyWith(status: LanguageSelectionStatus.submitting));
+    emit(currentState.copyWith(
+      status: LanguageSelectionStatus.submitting,
+    ));
 
     try {
-      await _languageRepo.addUserLanguage(languageId);
-      emit(currentState.copyWith(status: LanguageSelectionStatus.success));
+      // Update the user's language
+      await _languageRepo.addUserLanguage(currentState.selectedLanguageId!);
+
+      // Emit success state
+      emit(currentState.copyWith(
+        status: LanguageSelectionStatus.success,
+      ));
     } catch (e) {
+      // Handle error
       emit(currentState.copyWith(
         status: LanguageSelectionStatus.error,
         errorMessage: e.toString(),

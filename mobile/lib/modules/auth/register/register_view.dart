@@ -33,7 +33,7 @@ class RegisterView extends StatelessWidget {
               // Registration successful, router will handle redirection to home
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Registration successful!'),
+                  content: Text('Đăng ký thành công!'),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -76,7 +76,7 @@ class RegisterView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Create Account',
+          'Tạo tài khoản',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: context.colorTheme.textPrimary,
@@ -85,7 +85,7 @@ class RegisterView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Sign up to start your language learning journey',
+          'Đăng ký để bắt đầu hành trình học ngôn ngữ của bạn',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Colors.grey[600],
               ),
@@ -126,8 +126,8 @@ class RegisterView extends StatelessWidget {
               .read<RegisterBloc>()
               .add(RegisterFullNameChanged(fullName)),
           decoration: InputDecoration(
-            labelText: 'Full Name',
-            hintText: 'Enter your full name',
+            labelText: 'Họ và tên',
+            hintText: 'Nhập họ và tên của bạn',
             prefixIcon: Icon(
               Icons.person,
               color: context.colorTheme.primary,
@@ -159,8 +159,8 @@ class RegisterView extends StatelessWidget {
               .read<RegisterBloc>()
               .add(RegisterUsernameChanged(username)),
           decoration: InputDecoration(
-            labelText: 'Username',
-            hintText: 'Choose a username',
+            labelText: 'Tên đăng nhập',
+            hintText: 'Chọn tên đăng nhập',
             prefixIcon: Icon(
               Icons.account_circle,
               color: context.colorTheme.primary,
@@ -193,7 +193,7 @@ class RegisterView extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'Email',
-            hintText: 'Enter your email address',
+            hintText: 'Nhập địa chỉ email của bạn',
             prefixIcon: Icon(
               Icons.email,
               color: context.colorTheme.primary,
@@ -226,8 +226,8 @@ class RegisterView extends StatelessWidget {
               .add(RegisterPasswordChanged(password)),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'Password',
-            hintText: 'Create a password',
+            labelText: 'Mật khẩu',
+            hintText: 'Tạo mật khẩu',
             prefixIcon: Icon(
               Icons.lock,
               color: context.colorTheme.primary,
@@ -261,8 +261,8 @@ class RegisterView extends StatelessWidget {
               .add(RegisterConfirmPasswordChanged(confirmPassword)),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'Confirm Password',
-            hintText: 'Confirm your password',
+            labelText: 'Xác nhận mật khẩu',
+            hintText: 'Xác nhận mật khẩu của bạn',
             prefixIcon: Icon(
               Icons.lock_outline,
               color: context.colorTheme.primary,
@@ -317,7 +317,7 @@ class RegisterView extends StatelessWidget {
                   ),
                 )
               : Text(
-                  'Create Account',
+                  'Tạo tài khoản',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -333,7 +333,7 @@ class RegisterView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Already have an account? ",
+          "Bạn đã có tài khoản? ",
           style: TextStyle(
             color: Colors.grey[600],
           ),
@@ -343,7 +343,7 @@ class RegisterView extends StatelessWidget {
             context.go('/login');
           },
           child: Text(
-            'Sign In',
+            'Đăng nhập',
             style: TextStyle(
               color: context.colorTheme.primary,
               fontWeight: FontWeight.bold,

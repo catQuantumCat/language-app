@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'lesson_bloc.dart';
 
-enum LessonStatus { loading, inProgress, finished }
+enum LessonStatus { loading, inProgress, finished, error }
 
 enum AnswerStatus { correct, wrong, none }
 
@@ -12,8 +12,22 @@ class LessonState extends Equatable {
   final int? lessonLength;
   final int? userProgressIndex;
   final AnswerStatus answerStatus;
-  final bool isOutOfHeart;
+
   final String? message;
+  final DateTime? startTime;
+  final Duration? lessonDuration;
+  final int streak;
+  final int totalAttempts;
+  final int correctFirstAttempts;
+  final int earnedXP;
+  final List<String> incorrectExerciseIds;
+
+  double get accuracy =>
+      totalAttempts == 0 ? 0 : correctFirstAttempts / totalAttempts;
+
+  bool get isOutOfHeart => numOfHeart == 0;
+
+  bool get isInProgress => totalAttempts != 0;
 
   LessonState._({
     required this.status,
@@ -21,9 +35,15 @@ class LessonState extends Equatable {
     Queue<Challenge>? challengeQueue,
     this.lessonLength,
     this.answerStatus = AnswerStatus.none,
-    this.isOutOfHeart = false,
     this.userProgressIndex,
     this.message,
+    this.startTime,
+    this.lessonDuration,
+    this.streak = 0,
+    this.totalAttempts = 0,
+    this.correctFirstAttempts = 0,
+    this.earnedXP = 0,
+    this.incorrectExerciseIds = const [],
   }) : challengeQueue = challengeQueue ?? Queue<Challenge>();
 
   LessonState.loading() : this._(status: LessonStatus.loading);
@@ -39,13 +59,35 @@ class LessonState extends Equatable {
           challengeQueue: Queue.from(challengeList),
           lessonLength: challengeList.length,
           answerStatus: answerStatus,
+          startTime: DateTime.now(),
         );
 
-  LessonState.finished({bool hasWon = false})
-      : this._(
+  LessonState.finished({
+    DateTime? startTime,
+    Duration? lessonDuration,
+    int streak = 0,
+    int totalAttempts = 0,
+    int correctFirstAttempts = 0,
+    int earnedXP = 0,
+    int numOfHeart = 0,
+    List<String> incorrectExerciseIds = const [],
+  }) : this._(
           status: LessonStatus.finished,
-          isOutOfHeart: !hasWon,
-          message: !hasWon ? "You've completed this lesson" : "Failed",
+          message: "You've completed this lesson",
+          startTime: startTime,
+          lessonDuration: lessonDuration,
+          streak: streak,
+          totalAttempts: totalAttempts,
+          correctFirstAttempts: correctFirstAttempts,
+          earnedXP: earnedXP,
+          numOfHeart: numOfHeart,
+          incorrectExerciseIds: incorrectExerciseIds,
+        );
+
+  LessonState.error({required String message})
+      : this._(
+          status: LessonStatus.error,
+          message: message,
         );
 
   @override
@@ -55,8 +97,14 @@ class LessonState extends Equatable {
         challengeQueue,
         lessonLength,
         answerStatus,
-        isOutOfHeart,
         message,
+        startTime,
+        lessonDuration,
+        streak,
+        totalAttempts,
+        correctFirstAttempts,
+        earnedXP,
+        incorrectExerciseIds,
       ];
 
   LessonState copyWith({
@@ -66,8 +114,14 @@ class LessonState extends Equatable {
     int? lessonLength,
     int? userProgressIndex,
     AnswerStatus? answerStatus,
-    bool? isOutOfHeart,
     String? message,
+    DateTime? startTime,
+    Duration? lessonDuration,
+    int? streak,
+    int? totalAttempts,
+    int? correctFirstAttempts,
+    int? earnedXP,
+    List<String>? incorrectExerciseIds,
   }) {
     return LessonState._(
       status: status ?? this.status,
@@ -76,8 +130,14 @@ class LessonState extends Equatable {
       lessonLength: lessonLength ?? this.lessonLength,
       userProgressIndex: userProgressIndex ?? this.userProgressIndex,
       answerStatus: answerStatus ?? this.answerStatus,
-      isOutOfHeart: isOutOfHeart ?? this.isOutOfHeart,
       message: message ?? this.message,
+      startTime: startTime ?? this.startTime,
+      lessonDuration: lessonDuration ?? this.lessonDuration,
+      streak: streak ?? this.streak,
+      totalAttempts: totalAttempts ?? this.totalAttempts,
+      correctFirstAttempts: correctFirstAttempts ?? this.correctFirstAttempts,
+      earnedXP: earnedXP ?? this.earnedXP,
+      incorrectExerciseIds: incorrectExerciseIds ?? this.incorrectExerciseIds,
     );
   }
 }

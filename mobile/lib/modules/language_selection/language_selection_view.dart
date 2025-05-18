@@ -6,9 +6,13 @@ import 'package:language_app/domain/models/available_language.dart';
 import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/language_selection/bloc/language_selection_bloc.dart';
-
 class LanguageSelectionPage extends StatelessWidget {
-  const LanguageSelectionPage({super.key});
+  final bool fromHome;
+
+  const LanguageSelectionPage({
+    super.key,
+    this.fromHome = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,23 +20,28 @@ class LanguageSelectionPage extends StatelessWidget {
       create: (context) => LanguageSelectionBloc(
         languageRepo: getIt<LanguageRepo>(),
       )..add(const LoadLanguagesEvent()),
-      child: const LanguageSelectionView(),
+      child: LanguageSelectionView(fromHome: fromHome),
     );
   }
 }
 
 class LanguageSelectionView extends StatelessWidget {
-  const LanguageSelectionView({super.key});
+  final bool fromHome;
+
+  const LanguageSelectionView({
+    super.key,
+    this.fromHome = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colorTheme.background,
       appBar: AppBar(
-        title: const Text('Select a Language'),
+        title: const Text('Chọn ngôn ngữ'),
         backgroundColor: context.colorTheme.primary,
         foregroundColor: context.colorTheme.onPrimary,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: fromHome,
       ),
       body: BlocConsumer<LanguageSelectionBloc, LanguageSelectionState>(
         listener: (context, state) {
@@ -101,7 +110,7 @@ class LanguageSelectionView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Choose a language to start learning',
+            'Chọn ngôn ngữ để bắt đầu học',
             style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
@@ -153,7 +162,7 @@ class LanguageSelectionView extends StatelessWidget {
                     ),
                   )
                 : const Text(
-                    'Continue',
+                    'Tiếp tục',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -189,25 +198,18 @@ class LanguageSelectionView extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: language.flagUrl != null &&
-                        language.flagUrl!.endsWith("jpg")
-                    ? Image.network(language.flagUrl!)
-                    : Center(
-                        child: Text(
-                          language.code.toUpperCase(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+              language.flagUrl != null
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(language.flagUrl!),
+                    )
+                  : Center(
+                      child: Text(
+                        language.code.toUpperCase(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-              ),
+                    ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(

@@ -19,4 +19,8 @@ abstract class LanguageRemoteDatasource {
 
   @POST(userLanguagesEndpoint)
   Future<void> addUserLanguage(@Body() Map<String, dynamic> languageData);
+
+  @PATCH("/users/{userId}/update-language")
+  Future<void> updateUserLanguage(
+      @Path("userId") String userId, @Body() Map<String, dynamic> map);
 }
