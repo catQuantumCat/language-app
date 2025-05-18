@@ -55,7 +55,8 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
         },
       ),
       // ignore: deprecated_member_use
-      shadowColor: WidgetStateProperty.all(colorTheme.border.withOpacity(0.5)),
+      shadowColor:
+          WidgetStateProperty.all(colorTheme.border.withValues(alpha: 0.5)),
     );
 
     final primaryButton = baseButtonStyle.copyWith(
@@ -91,9 +92,9 @@ class CustomButtonTheme extends ThemeExtension<CustomButtonTheme> {
     );
 
     final selectedOutlined = baseButtonStyle.copyWith(
-      backgroundColor: WidgetStatePropertyAll(colorTheme.onSelection),
-      foregroundColor: WidgetStatePropertyAll(colorTheme.selection),
-      side: WidgetStatePropertyAll(        BorderSide(color: colorTheme.selection))    );
+        backgroundColor: WidgetStatePropertyAll(colorTheme.onSelection),
+        foregroundColor: WidgetStatePropertyAll(colorTheme.selection),
+        side: WidgetStatePropertyAll(BorderSide(color: colorTheme.selection)));
 
     return CustomButtonTheme(
       filledButton: baseButtonStyle,

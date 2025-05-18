@@ -34,7 +34,7 @@ class UploadService {
       }
       return null;
     } catch (e) {
-      print('Error uploading image: $e');
+      
       return null;
     }
   }

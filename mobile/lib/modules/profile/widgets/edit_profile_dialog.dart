@@ -9,10 +9,10 @@ class EditProfileDialog extends StatefulWidget {
   final String initialEmail;
 
   const EditProfileDialog({
-    Key? key,
+    super.key,
     required this.initialFullName,
     required this.initialEmail,
-  }) : super(key: key);
+  });
 
   @override
   State<EditProfileDialog> createState() => _EditProfileDialogState();

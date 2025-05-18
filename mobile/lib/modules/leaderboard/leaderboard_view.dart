@@ -92,7 +92,7 @@ class LeaderboardView extends StatelessWidget {
               color: context.colorTheme.background,
               boxShadow: [
                 BoxShadow(
-                  color: context.colorTheme.primary.withOpacity(0.1),
+                  color: context.colorTheme.primary.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -149,7 +149,7 @@ class LeaderboardView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: context.colorTheme.onSelection.withOpacity(0.3),
+              color: context.colorTheme.onSelection.withValues(alpha: 0.3),
               border: Border(
                 top: BorderSide(color: context.colorTheme.border),
               ),
@@ -188,7 +188,7 @@ class LeaderboardView extends StatelessWidget {
                 color: context.colorTheme.background,
                 boxShadow: [
                   BoxShadow(
-                    color: context.colorTheme.primary.withOpacity(0.2),
+                    color: context.colorTheme.primary.withValues(alpha: 0.2),
                     blurRadius: 8,
                     spreadRadius: 2,
                   ),
@@ -205,7 +205,8 @@ class LeaderboardView extends StatelessWidget {
               child: Center(
                 child: CircleAvatar(
                   radius: 35,
-                  backgroundColor: context.colorTheme.primary.withOpacity(0.1),
+                  backgroundColor:
+                      context.colorTheme.primary.withValues(alpha: 0.1),
                   child: entry.avatar != null && entry.avatar!.isNotEmpty
                       ? ClipOval(
                           child: Image.network(
@@ -243,7 +244,7 @@ class LeaderboardView extends StatelessWidget {
                           : Colors.brown.shade300,
                   boxShadow: [
                     BoxShadow(
-                      color: context.colorTheme.primary.withOpacity(0.2),
+                      color: context.colorTheme.primary.withValues(alpha: 0.2),
                       blurRadius: 4,
                       spreadRadius: 1,
                     ),
@@ -267,10 +268,10 @@ class LeaderboardView extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isFirst
-                ? Colors.amber.withOpacity(0.2)
+                ? Colors.amber.withValues(alpha: 0.2)
                 : isSecond
-                    ? Colors.grey.shade300.withOpacity(0.2)
-                    : Colors.brown.shade300.withOpacity(0.2),
+                    ? Colors.grey.shade300.withValues(alpha: 0.2)
+                    : Colors.brown.shade300.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -317,7 +318,7 @@ class LeaderboardView extends StatelessWidget {
       {bool showDivider = true}) {
     return Container(
       color: isCurrentUser
-          ? context.colorTheme.onSelection.withOpacity(0.3)
+          ? context.colorTheme.onSelection.withValues(alpha: 0.3)
           : null,
       child: Column(
         children: [
@@ -344,7 +345,8 @@ class LeaderboardView extends StatelessWidget {
                     color: context.colorTheme.background,
                     boxShadow: [
                       BoxShadow(
-                        color: context.colorTheme.primary.withOpacity(0.1),
+                        color:
+                            context.colorTheme.primary.withValues(alpha: 0.1),
                         blurRadius: 4,
                         spreadRadius: 1,
                       ),
@@ -353,7 +355,7 @@ class LeaderboardView extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 20,
                     backgroundColor:
-                        context.colorTheme.primary.withOpacity(0.1),
+                        context.colorTheme.primary.withValues(alpha: 0.1),
                     child: entry.avatar != null && entry.avatar!.isNotEmpty
                         ? ClipOval(
                             child: Image.network(

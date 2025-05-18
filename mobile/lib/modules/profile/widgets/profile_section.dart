@@ -1,6 +1,4 @@
-// modules/profile/widgets/profile_section.dart
 import 'package:flutter/material.dart';
-import 'package:language_app/common/extensions/context_extension.dart';
 
 class ProfileSection extends StatelessWidget {
   final String title;

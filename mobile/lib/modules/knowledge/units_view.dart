@@ -121,7 +121,7 @@ class UnitsView extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: context.colorTheme.primary.withOpacity(0.2),
+                      color: context.colorTheme.primary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Center(

@@ -10,7 +10,6 @@ import 'package:language_app/common/extensions/context_extension.dart';
 import 'package:language_app/domain/models/language.dart';
 import 'package:language_app/domain/models/user.dart';
 import 'package:language_app/domain/repos/user_repo.dart';
-import 'package:language_app/gen/assets.gen.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:language_app/modules/profile/bloc/profile_bloc.dart';
@@ -309,7 +308,7 @@ class _ProfileContentState extends State<ProfileContent> {
         if (state.updateState == ViewStateEnum.loading)
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               child: const Center(
                 child: CircularProgressIndicator(color: Colors.white),
               ),
@@ -405,11 +404,10 @@ class _ProfileContentState extends State<ProfileContent> {
                     color: context.colorTheme.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: language.languageFlag != null &&
-                          language.languageFlag!.isNotEmpty
+                  child: language.languageFlag.isNotEmpty
                       ? ClipOval(
                           child: Image.network(
-                            language.languageFlag!,
+                            language.languageFlag,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Icon(
                                 Icons.language,
@@ -529,11 +527,6 @@ class _ProfileContentState extends State<ProfileContent> {
         );
       }
     }
-  }
-
-  Future<String> _uploadImage(File imageFile) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return "https://example.com/uploaded_avatar.jpg";
   }
 
   void _showEditProfileDialog(BuildContext context, User profile) {

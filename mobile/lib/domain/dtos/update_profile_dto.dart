@@ -28,8 +28,9 @@ class UpdateProfileDto {
     if (password != null) data['password'] = password;
     if (avatar != null) data['avatar'] = avatar;
     if (languages != null) data['languages'] = languages;
-    if (lastSelectedLanguage != null)
+    if (lastSelectedLanguage != null) {
       data['lastSelectedLanguage'] = lastSelectedLanguage;
+    }
 
     return data;
   }

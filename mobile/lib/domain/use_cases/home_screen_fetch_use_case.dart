@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:language_app/data/models/unit.dart';
@@ -15,7 +14,6 @@ class HomeScreenFetchUseCase {
         _prefs = prefs;
 
   Future<List<Unit>> call({required String languageId}) async {
-   
     // if (_isCacheValid('units_$languageId')) {
     //   final cachedData = _prefs.getString('units_$languageId');
 
@@ -54,19 +52,5 @@ class HomeScreenFetchUseCase {
       'data': data.map((unit) => unit.toJson()).toList(),
     };
     _prefs.setString(key, jsonEncode(cacheItem));
-  }
-
-  bool _isCacheValid(String key, {Duration maxAge = const Duration(hours: 1)}) {
-    final cachedJson = _prefs.getString(key);
-    if (cachedJson == null) return false;
-
-    try {
-      final cached = jsonDecode(cachedJson);
-      final timestamp = cached['timestamp'] as int;
-      final age = DateTime.now().millisecondsSinceEpoch - timestamp;
-      return age < maxAge.inMilliseconds;
-    } catch (e) {
-      return false;
-    }
   }
 }

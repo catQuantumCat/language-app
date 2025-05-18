@@ -1,23 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
-part 'challenge_option.g.dart';
-
-@JsonSerializable(createToJson: false)
 class ChallengeOption {
   final String id;
   final String exerciseId;
   final String text;
   final String? audioUrl;
   final String? imageUrl;
-  
-  ChallengeOption({
-    required this.id,
-    required this.exerciseId,
-    required this.text,
-    this.imageUrl,
-    this.audioUrl
-  });
+
+  ChallengeOption(
+      {required this.id,
+      required this.exerciseId,
+      required this.text,
+      this.imageUrl,
+      this.audioUrl});
 
   factory ChallengeOption.fromJson(Map<String, dynamic> json) {
     return ChallengeOption(
@@ -35,8 +31,6 @@ class ChallengeOption {
   }
 }
 
-
-@JsonSerializable(createToJson: false)
 class MultipleChoiceOption extends ChallengeOption {
   final bool correct;
 
@@ -67,7 +61,6 @@ class MultipleChoiceOption extends ChallengeOption {
   }
 }
 
-
 enum PairMachingEnum {
   @JsonValue("left")
   left,
@@ -75,21 +68,19 @@ enum PairMachingEnum {
   right,
 }
 
-@JsonSerializable(createToJson: false)
 class PairMatchingOption extends ChallengeOption {
   @JsonKey()
   final int pairId;
   final PairMachingEnum column;
-  
-  PairMatchingOption({
-    required super.id,
-    required super.exerciseId,
-    required super.text,
-    required this.pairId,
-    required this.column,
-    super.imageUrl,
-    super.audioUrl
-  });
+
+  PairMatchingOption(
+      {required super.id,
+      required super.exerciseId,
+      required super.text,
+      required this.pairId,
+      required this.column,
+      super.imageUrl,
+      super.audioUrl});
 
   @override
   factory PairMatchingOption.fromJson(Map<String, dynamic> json) {
@@ -103,7 +94,7 @@ class PairMatchingOption extends ChallengeOption {
       audioUrl: json['audioUrl'] as String?,
     );
   }
-  
+
   static PairMachingEnum _parseColumn(String? value) {
     if (value == 'left') return PairMachingEnum.left;
     if (value == 'right') return PairMachingEnum.right;
@@ -116,19 +107,16 @@ class PairMatchingOption extends ChallengeOption {
   }
 }
 
-
-@JsonSerializable(createToJson: false)
 class SentenceOrderOption extends ChallengeOption {
   int order;
-  
-  SentenceOrderOption({
-    required super.id,
-    required super.exerciseId,
-    required super.text,
-    required this.order,
-    super.imageUrl,
-    super.audioUrl
-  });
+
+  SentenceOrderOption(
+      {required super.id,
+      required super.exerciseId,
+      required super.text,
+      required this.order,
+      super.imageUrl,
+      super.audioUrl});
 
   @override
   String toString() => 'SentenceOrderOption(order: $order)';

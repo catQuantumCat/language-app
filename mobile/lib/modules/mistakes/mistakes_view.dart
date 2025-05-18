@@ -184,7 +184,7 @@ class MistakesView extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: context.colorTheme.primary.withOpacity(0.2),
+                      color: context.colorTheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -201,7 +201,8 @@ class MistakesView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: context.colorTheme.warning.withOpacity(0.2),
+                        color:
+                            context.colorTheme.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

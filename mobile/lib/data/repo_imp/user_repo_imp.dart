@@ -10,7 +10,6 @@ import 'package:language_app/data/models/auth_response_model.dart';
 import 'package:language_app/data/models/login_model.dart';
 import 'package:language_app/data/models/register_model.dart';
 import 'package:language_app/domain/dtos/update_profile_dto.dart';
-import 'package:language_app/domain/dtos/user_dto.dart';
 import 'package:language_app/domain/models/user.dart';
 
 import 'package:language_app/domain/models/user_rank_info.dart';
@@ -130,11 +129,7 @@ class UserRepoImpl implements UserRepo {
     await _localDatasource.setUserInfo(data: data);
   }
 
-  @override
-  Future<void> editUserInfo({required UserDTO data}) {
-    // TODO: implement editUserInfo
-    throw UnimplementedError();
-  }
+  
 
   @override
   Stream<User?> watchUserInfo() {
@@ -220,7 +215,7 @@ class UserRepoImpl implements UserRepo {
         return updatedProfile;
       }
     } catch (e) {
-      print('Error updating profile: $e');
+      log('Error updating profile: $e');
       rethrow;
     }
   }

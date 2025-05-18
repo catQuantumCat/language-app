@@ -1,13 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:language_app/domain/models/challenge_option.dart';
 
-part "challenge_data.g.dart";
+
 
 abstract class ChallengeData<T> {
   bool checkAnswer(T userAnswer);
 }
 
-@JsonSerializable(createToJson: false)
+
 class TranslateChallengeData extends ChallengeData<String> {
   TranslateChallengeData(
       {required this.acceptedAnswer, required this.translateWord});
@@ -63,7 +62,7 @@ class TranslateChallengeData extends ChallengeData<String> {
   }
 }
 
-@JsonSerializable(createToJson: false)
+
 class MultipleChoiceChallengeData extends ChallengeData<MultipleChoiceOption> {
   MultipleChoiceChallengeData({required this.options});
 
@@ -85,7 +84,7 @@ class MultipleChoiceChallengeData extends ChallengeData<MultipleChoiceOption> {
   }
 }
 
-@JsonSerializable(createToJson: false)
+
 class SentenceOrderChallengeData
     extends ChallengeData<List<SentenceOrderOption>> {
   List<SentenceOrderOption> options;
@@ -120,7 +119,7 @@ class SentenceOrderChallengeData
   }
 }
 
-@JsonSerializable(createToJson: false)
+
 class PairMatchingChallengeData extends ChallengeData<bool> {
   List<PairMatchingOption> options;
 

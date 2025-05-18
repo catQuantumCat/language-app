@@ -6,6 +6,7 @@ import 'package:language_app/domain/repos/user_repo.dart';
 
 class LeaderboardRepoImpl implements LeaderboardRepo {
   final LeaderboardRemoteDatasource _remoteDatasource;
+  // ignore: unused_field
   final UserRepo _userRepo;
 
   LeaderboardRepoImpl({
