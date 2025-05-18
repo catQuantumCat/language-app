@@ -1,6 +1,7 @@
 // modules/profile/profile_view.dart
 import 'dart:io';
 
+// import 'package:camera/camera.dart'; // Reverted: Removed import
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -173,7 +174,6 @@ class _ProfileContentState extends State<ProfileContent> {
       clipBehavior: Clip.none,
       fit: StackFit.expand,
       children: [
-        // Background profile image
         profile.avatar != null && profile.avatar!.isNotEmpty
             ? Image.network(
                 profile.avatar!,
@@ -187,7 +187,6 @@ class _ProfileContentState extends State<ProfileContent> {
                   color: context.colorTheme.primary,
                 ),
               ),
-        // Gradient overlay for readability
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -514,7 +513,6 @@ class _ProfileContentState extends State<ProfileContent> {
       );
 
       if (image != null && mounted) {
-        // Thêm file vào state mà không hiển thị dialog loading
         context.read<ProfileBloc>().add(
               ChangeAvatarEvent(
                 imageFile: File(image.path),
@@ -533,20 +531,16 @@ class _ProfileContentState extends State<ProfileContent> {
     }
   }
 
-  // Giả lập việc upload ảnh
   Future<String> _uploadImage(File imageFile) async {
-    // Trong thực tế, bạn sẽ upload ảnh lên server và nhận về URL
-    // Đây chỉ là giả lập
     await Future.delayed(const Duration(seconds: 1));
     return "https://example.com/uploaded_avatar.jpg";
   }
 
   void _showEditProfileDialog(BuildContext context, User profile) {
     showDialog(
-      context: context, // Truyền context đúng
+      context: context,
       builder: (dialogContext) => BlocProvider.value(
-        value: context
-            .read<ProfileBloc>(), // Sử dụng BlocProvider.value để chia sẻ bloc
+        value: context.read<ProfileBloc>(),
         child: EditProfileDialog(
           initialFullName: profile.fullName,
           initialEmail: profile.email,

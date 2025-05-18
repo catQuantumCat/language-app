@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:language_app/common/constants/homescree_widget_constant.dart';
 import 'package:language_app/common/constants/view_state_enum.dart';
 import 'package:language_app/data/models/unit.dart';
 import 'package:language_app/domain/models/language.dart';
@@ -41,6 +43,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       userInfoStream,
       onData: (data) {
         if (data != null) {
+          HomeWidget.saveWidgetData(dataKey, data.experience);
+          HomeWidget.updateWidget(iOSName: iOSWidgetName);
           return state.copyWith(
               streakCount: data.streak,
               heartCount: data.hearts,
