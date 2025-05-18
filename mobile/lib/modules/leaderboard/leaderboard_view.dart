@@ -31,9 +31,17 @@ class LeaderboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bảng Xếp Hạng'),
-        backgroundColor: context.colorTheme.primary,
-        foregroundColor: context.colorTheme.onPrimary,
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
+        title: Text(
+          'Bảng Xếp Hạng',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+        ),
+        backgroundColor: context.colorTheme.background,
+        foregroundColor: Colors.black,
       ),
       body: BlocBuilder<LeaderboardBloc, LeaderboardState>(
         builder: (context, state) {
@@ -317,6 +325,17 @@ class LeaderboardView extends StatelessWidget {
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Text(
+                    '${entry.rank}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   width: 40,
                   height: 40,
@@ -355,31 +374,6 @@ class LeaderboardView extends StatelessWidget {
                             size: 24,
                             color: context.colorTheme.primary,
                           ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: entry.rank <= 3
-                        ? entry.rank == 1
-                            ? Colors.amber
-                            : entry.rank == 2
-                                ? Colors.grey.shade300
-                                : Colors.brown.shade300
-                        : context.colorTheme.primary,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${entry.rank}',
-                      style: TextStyle(
-                        color: context.colorTheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
                   ),
                 ),
               ],

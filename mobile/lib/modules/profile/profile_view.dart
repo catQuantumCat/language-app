@@ -44,17 +44,7 @@ class _ProfileContentState extends State<ProfileContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hồ sơ cá nhân'),
-        backgroundColor: context.colorTheme.primary,
-        foregroundColor: context.colorTheme.onPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _showLogoutConfirmation(context),
-          ),
-        ],
-      ),
+      extendBodyBehindAppBar: true,
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state.updateState == ViewStateEnum.succeed) {
@@ -133,53 +123,43 @@ class _ProfileContentState extends State<ProfileContent> {
       onRefresh: () async {
         context.read<ProfileBloc>().add(LoadProfileEvent());
       },
-      child: SingleChildScrollView(
+      child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Avatar và thông tin cơ bản
-              _buildProfileHeader(context, profile, state),
-
-              const SizedBox(height: 24),
-
-              // Thống kê
-              _buildStatistics(context, profile, state),
-
-              const SizedBox(height: 24),
-
-              // Ngôn ngữ đang học
-              ProfileSection(
-                title: 'Ngôn ngữ đang học',
-                child: _buildLanguagesList(context, profile.languages),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Nút chỉnh sửa hồ sơ
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: state.updateState == ViewStateEnum.loading
-                      ? null
-                      : () => _showEditProfileDialog(context, profile),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colorTheme.primary,
-                    foregroundColor: context.colorTheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  icon: const Icon(Icons.edit),
-                  label: const Text(
-                    'Chỉnh sửa hồ sơ',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-            ],
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 200,
+            toolbarHeight: 20,
+            collapsedHeight: 20,
+            pinned: false,
+            floating: true,
+            snap: true,
+            stretch: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            flexibleSpace: FlexibleSpaceBar(
+              background: _buildProfileHeader(context, profile, state),
+              stretchModes: const [
+                StretchMode.zoomBackground,
+              ],
+              collapseMode: CollapseMode.pin,
+            ),
           ),
-        ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+              child: Column(
+                children: [
+                  _buildStatistics(context, profile, state),
+                  const SizedBox(height: 32),
+                  ProfileSection(
+                    title: 'Ngôn ngữ đang học',
+                    child: _buildLanguagesList(context, profile.languages),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -189,123 +169,154 @@ class _ProfileContentState extends State<ProfileContent> {
     User profile,
     ProfileState state,
   ) {
-    return Column(
+    return Stack(
+      clipBehavior: Clip.none,
+      fit: StackFit.expand,
       children: [
-        Stack(
-          children: [
-            // Avatar
-            GestureDetector(
-              onTap: () => _showImageSourceOptions(context),
-              child: Hero(
-                tag: 'profileAvatar',
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: context.colorTheme.primary.withOpacity(0.1),
-                  backgroundImage: _getProfileImage(state, profile),
-                  child: _getAvatarChild(state, profile),
-                ),
-              ),
-            ),
-
-            // Hiển thị indicator khi đang upload
-            if (state.updateState == ViewStateEnum.loading)
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: context.colorTheme.onPrimary,
-                    ),
-                  ),
-                ),
-              ),
-
-            // Edit avatar button
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
+        // Background profile image
+        profile.avatar != null && profile.avatar!.isNotEmpty
+            ? Image.network(
+                profile.avatar!,
+                fit: BoxFit.cover,
+              )
+            : Container(
+                color: context.colorTheme.primary.withValues(alpha: 0.1),
+                child: Icon(
+                  Icons.person,
+                  size: 120,
                   color: context.colorTheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.camera_alt, size: 20),
-                  color: context.colorTheme.onPrimary,
-                  onPressed: state.updateState == ViewStateEnum.loading
-                      ? null
-                      : () => _showImageSourceOptions(context),
                 ),
               ),
+        // Gradient overlay for readability
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withValues(alpha: 0.7),
+              ],
+              stops: const [0.5, 1.0],
             ),
-          ],
+          ),
         ),
-
-        const SizedBox(height: 16),
-
-        // Tên người dùng
-        Text(
-          profile.fullName,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-
-        const SizedBox(height: 4),
-
-        // Username
-        Text(
-          '@${profile.username}',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
-        ),
-
-        const SizedBox(height: 8),
-
-        // Email
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.email_outlined,
-              size: 16,
-              color: Colors.grey[600],
+        // Centered user info
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  profile.fullName,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '@${profile.username}',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.white70,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.email_outlined, size: 16, color: Colors.white70),
+                    const SizedBox(width: 4),
+                    Text(
+                      profile.email,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white70,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 4),
-            Text(
-              profile.email,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+          ),
+        ),
+        Positioned(
+          top: kToolbarHeight + 16,
+          right: 16,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.black45,
+              shape: BoxShape.circle,
+            ),
+            child: PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'change_avatar',
+                  child: Row(
+                    children: [
+                      Icon(Icons.camera_alt, color: context.colorTheme.primary),
+                      const SizedBox(width: 12),
+                      const Text('Đổi ảnh đại diện'),
+                    ],
                   ),
+                ),
+                PopupMenuItem(
+                  value: 'edit_profile',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, color: context.colorTheme.primary),
+                      const SizedBox(width: 12),
+                      const Text('Chỉnh sửa thông tin'),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout, color: context.colorTheme.error),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Đăng xuất',
+                        style: TextStyle(color: context.colorTheme.error),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                switch (value) {
+                  case 'change_avatar':
+                    _showImageSourceOptions(context);
+                    break;
+                  case 'edit_profile':
+                    _showEditProfileDialog(context, profile);
+                    break;
+                  case 'logout':
+                    _showLogoutConfirmation(context);
+                    break;
+                }
+              },
             ),
-          ],
+          ),
         ),
+        if (state.updateState == ViewStateEnum.loading)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            ),
+          ),
       ],
-    );
-  }
-
-  ImageProvider? _getProfileImage(ProfileState state, User profile) {
-    if (state.avatarFile != null) {
-      return FileImage(state.avatarFile!);
-    } else if (profile.avatar != null && profile.avatar!.isNotEmpty) {
-      return NetworkImage(profile.avatar!);
-    }
-    return null;
-  }
-
-  Widget? _getAvatarChild(ProfileState state, User profile) {
-    if (state.avatarFile != null ||
-        (profile.avatar != null && profile.avatar!.isNotEmpty)) {
-      return null;
-    }
-    return Icon(
-      Icons.person,
-      size: 60,
-      color: context.colorTheme.primary,
     );
   }
 
@@ -314,45 +325,43 @@ class _ProfileContentState extends State<ProfileContent> {
     User profile,
     ProfileState state,
   ) {
-    return Row(
-      children: [
-        Expanded(
-          child: StatsCard(
+    return ProfileSection(
+      title: 'Thống kê',
+      child: GridView.count(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        mainAxisSpacing: 0,
+        crossAxisSpacing: 0,
+        childAspectRatio: 20 / 9,
+        children: [
+          StatsCard(
             icon: Icons.star,
-            // modules/profile/profile_view.dart (tiếp tục)
-            iconColor: context.colorTheme.warning,
-            title: 'Kinh nghiệm',
+            iconColor: Colors.blue,
+            title: 'Tổng kinh nghiệm',
             value: '${profile.experience}',
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: StatsCard(
+          StatsCard(
             icon: Icons.favorite,
             iconColor: context.colorTheme.heartColor,
             title: 'Tim',
             value: '${profile.hearts}',
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: StatsCard(
+          StatsCard(
             icon: Icons.local_fire_department,
             iconColor: context.colorTheme.streakFireColor,
-            title: 'Streak',
+            title: 'Ngày streak',
             value: '${profile.streak}',
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: StatsCard(
+          StatsCard(
             icon: Icons.leaderboard,
             iconColor: Colors.purple,
-            title: 'Hạng',
+            title: 'Thứ hạng',
             value: state.userRank != null ? '${state.userRank!.rank}' : '-',
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -367,42 +376,76 @@ class _ProfileContentState extends State<ProfileContent> {
     }
 
     return ListView.separated(
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: languages.length,
-      separatorBuilder: (context, index) => const Divider(),
+      separatorBuilder: (context, index) => SizedBox(
+        height: 16,
+      ),
       itemBuilder: (context, index) {
         final language = languages[index];
-        return ListTile(
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: context.colorTheme.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+        return Card(
+          color: context.colorTheme.background,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 2,
             ),
-            child: language.languageFlag != null &&
-                    language.languageFlag!.isNotEmpty
-                ? ClipOval(
-                    child: Image.network(
-                      language.languageFlag!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.language,
-                          color: context.colorTheme.primary),
-                    ),
-                  )
-                : Icon(Icons.language, color: context.colorTheme.primary),
           ),
-          title: Text(language.languageName),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Bài học hiện tại: ${language.lessonOrder}'),
-              Text('Chương hiện tại: ${language.unitOrder}'),
-            ],
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: context.colorTheme.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: language.languageFlag != null &&
+                          language.languageFlag!.isNotEmpty
+                      ? ClipOval(
+                          child: Image.network(
+                            language.languageFlag!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                                Icons.language,
+                                color: context.colorTheme.primary),
+                          ),
+                        )
+                      : Icon(Icons.language, color: context.colorTheme.primary),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        language.languageName,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Bài học hiện tại: ${language.lessonOrder}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      Text(
+                        'Chương hiện tại: ${language.unitOrder}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          onTap: () {},
         );
       },
     );
@@ -437,33 +480,30 @@ class _ProfileContentState extends State<ProfileContent> {
   void _showImageSourceOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_camera),
-              title: const Text('Chụp ảnh mới'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Chọn từ thư viện'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-          ],
-        ),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.photo_camera),
+            title: const Text('Chụp ảnh mới'),
+            onTap: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.camera);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Chọn từ thư viện'),
+            onTap: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.gallery);
+            },
+          ),
+        ],
       ),
     );
   }
 
-  // Trong _ProfileContentState
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(

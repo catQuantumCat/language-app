@@ -51,14 +51,14 @@ class CompletionWidget extends StatelessWidget {
 
           // Congratulation text
           Text(
-            "Lesson completed",
+            "Hoàn thành bài học",
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            message ?? 'You\'ve completed the lesson',
+            message ?? 'Bạn đã hoàn thành bài học',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
           ),
@@ -84,21 +84,21 @@ class CompletionWidget extends StatelessWidget {
                 _buildMetricRow(
                   context,
                   icon: Icons.timer,
-                  title: 'Time',
+                  title: 'Thời gian',
                   value: formattedTime,
                 ),
                 const Divider(height: 24),
                 _buildMetricRow(
                   context,
                   icon: Icons.star,
-                  title: 'XP Earned',
+                  title: 'Điểm kinh nghiệm',
                   value: '+$xp XP',
                 ),
                 const Divider(height: 24),
                 _buildMetricRow(
                   context,
                   icon: Icons.check_circle,
-                  title: 'Accuracy',
+                  title: 'Độ chính xác',
                   value: formattedAccuracy,
                 ),
               ],
@@ -118,7 +118,7 @@ class CompletionWidget extends StatelessWidget {
               foregroundColor: context.colorTheme.onPrimary,
             ),
             child: Text(
-              'Continue',
+              'Tiếp tục',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: context.colorTheme.onPrimary,
                     fontWeight: FontWeight.bold,

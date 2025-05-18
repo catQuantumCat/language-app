@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:language_app/common/extensions/context_extension.dart';
+import 'package:language_app/gen/assets.gen.dart';
 
 class NavigationPage extends StatelessWidget {
   const NavigationPage({
@@ -30,7 +31,7 @@ class NavigationView extends StatelessWidget {
           border: Border(
             top: BorderSide(
               color: context.colorTheme.border,
-              width: 4,
+              width: 2,
             ),
           ),
         ),
@@ -42,29 +43,46 @@ class NavigationView extends StatelessWidget {
           },
           height: 60,
           indicatorColor: context.colorTheme.onSelection,
-          indicatorShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home),
+              icon: Image.asset(
+                Assets.navigationIcons.navHome.path,
+                width: 24,
+                height: 24,
+              ),
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.leaderboard),
+              icon: Image.asset(
+                Assets.navigationIcons.navGraph.path,
+                width: 24,
+                height: 24,
+              ),
               label: 'Leaderboard',
             ),
             NavigationDestination(
-              icon: Icon(Icons.error_outline),
+              icon: Image.asset(
+                Assets.navigationIcons.navRemove.path,
+                width: 24,
+                height: 24,
+              ),
               label: 'Mistakes',
             ),
             NavigationDestination(
-              icon: Icon(Icons.book), // Icon mới cho Knowledge
+              icon: Image.asset(
+                Assets.navigationIcons.navInfo.path,
+                width: 24,
+                height: 24,
+              ),
               label: 'Knowledge',
             ),
             NavigationDestination(
-              icon: Icon(Icons.person),
+              icon: Image.asset(
+                Assets.navigationIcons.navUser.path,
+                width: 24,
+                height: 24,
+              ),
               label: 'Profile',
             ),
           ],

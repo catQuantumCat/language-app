@@ -71,17 +71,23 @@ class AllLessonListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: context.colorTheme.background,
+        foregroundColor: Colors.black,
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
         title: BlocBuilder<LessonsBloc, LessonsState>(
           builder: (context, state) {
             return Text(
               state.unitTitle != null
                   ? 'Unit ${state.unitOrder}: ${state.unitTitle}'
                   : 'Danh sách bài học',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
             );
           },
         ),
-        backgroundColor: context.colorTheme.primary,
-        foregroundColor: context.colorTheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -156,9 +162,15 @@ class AllLessonListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final lesson = sortedLessons[index];
         return Card(
+          color: context.colorTheme.background,
+          elevation: 0,
           margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 2,
+            ),
           ),
           child: InkWell(
             onTap: () => _navigateToKnowledge(context, lesson),

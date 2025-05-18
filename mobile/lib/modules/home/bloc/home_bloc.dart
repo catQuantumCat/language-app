@@ -44,6 +44,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           return state.copyWith(
               streakCount: data.streak,
               heartCount: data.hearts,
+              xpCount: data.experience,
               language: data.languages.isNotEmpty
                   ? data.languages.firstWhere((lang) => lang.order == 1)
                   : null);

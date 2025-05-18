@@ -34,9 +34,17 @@ class MistakesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh Sách Lỗi Sai'),
-        backgroundColor: context.colorTheme.primary,
-        foregroundColor: context.colorTheme.onPrimary,
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
+        title: Text(
+          'Danh sách lỗi sai',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+        ),
+        backgroundColor: context.colorTheme.background,
+        foregroundColor: Colors.black,
       ),
       body: BlocBuilder<MistakesBloc, MistakesState>(
         builder: (context, state) {
@@ -108,7 +116,6 @@ class MistakesView extends StatelessWidget {
   }
 
   Widget _buildMistakesList(BuildContext context, MistakesState state) {
-    // Nhóm các lỗi sai theo ngày
     final Map<String, List<MistakeEntry>> groupedMistakes = {};
 
     for (var mistake in state.mistakes) {
@@ -120,7 +127,7 @@ class MistakesView extends StatelessWidget {
     }
 
     final sortedDates = groupedMistakes.keys.toList()
-      ..sort((a, b) => b.compareTo(a)); // Sắp xếp ngày mới nhất lên đầu
+      ..sort((a, b) => b.compareTo(a));
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -130,6 +137,7 @@ class MistakesView extends StatelessWidget {
         final mistakes = groupedMistakes[date]!;
 
         return Column(
+          spacing: 8,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -141,9 +149,7 @@ class MistakesView extends StatelessWidget {
                     ),
               ),
             ),
-            ...mistakes
-                .map((mistake) => _buildMistakeItem(context, mistake))
-                .toList(),
+            ...mistakes.map((mistake) => _buildMistakeItem(context, mistake)),
             if (index < sortedDates.length - 1)
               const Divider(height: 32, thickness: 1),
           ],
@@ -154,6 +160,15 @@ class MistakesView extends StatelessWidget {
 
   Widget _buildMistakeItem(BuildContext context, MistakeEntry mistake) {
     return Card(
+      color: context.colorTheme.background,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: Theme.of(context).dividerColor,
+          width: 2,
+        ),
+      ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: InkWell(
         onTap: () => _navigateToMistakeDetail(context, mistake),

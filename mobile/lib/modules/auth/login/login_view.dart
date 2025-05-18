@@ -70,7 +70,7 @@ class LoginView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Welcome Back',
+          'Chào mừng trở lại',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: context.colorTheme.textPrimary,
@@ -79,7 +79,7 @@ class LoginView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Sign in to continue your language learning journey',
+          'Đăng nhập để tiếp tục hành trình học ngôn ngữ của bạn',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Colors.grey[600],
               ),
@@ -113,8 +113,8 @@ class LoginView extends StatelessWidget {
           onChanged: (username) =>
               context.read<LoginBloc>().add(LoginUsernameChanged(username)),
           decoration: InputDecoration(
-            labelText: 'Username',
-            hintText: 'Enter your username',
+            labelText: 'Tên đăng nhập',
+            hintText: 'Nhập tên đăng nhập của bạn',
             prefixIcon: Icon(
               Icons.person,
               color: context.colorTheme.primary,
@@ -146,8 +146,8 @@ class LoginView extends StatelessWidget {
               context.read<LoginBloc>().add(LoginPasswordChanged(password)),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'Password',
-            hintText: 'Enter your password',
+            labelText: 'Mật khẩu',
+            hintText: 'Nhập mật khẩu của bạn',
             prefixIcon: Icon(
               Icons.lock,
               color: context.colorTheme.primary,
@@ -202,7 +202,7 @@ class LoginView extends StatelessWidget {
                   ),
                 )
               : Text(
-                  'Sign In',
+                  'Đăng nhập',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -218,7 +218,7 @@ class LoginView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Don't have an account? ",
+          "Bạn chưa có tài khoản? ",
           style: TextStyle(
             color: Colors.grey[600],
           ),
@@ -228,7 +228,7 @@ class LoginView extends StatelessWidget {
             context.go('/register');
           },
           child: Text(
-            'Register',
+            'Đăng ký',
             style: TextStyle(
               color: context.colorTheme.primary,
               fontWeight: FontWeight.bold,

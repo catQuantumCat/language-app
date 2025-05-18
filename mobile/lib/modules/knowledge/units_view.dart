@@ -31,9 +31,17 @@ class UnitsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh sách Unit'),
-        backgroundColor: context.colorTheme.primary,
-        foregroundColor: context.colorTheme.onPrimary,
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
+        title: Text(
+          'Danh sách bài học',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+        ),
+        backgroundColor: context.colorTheme.background,
+        foregroundColor: Colors.black,
       ),
       body: BlocBuilder<UnitsBloc, UnitsState>(
         builder: (context, state) {
@@ -92,9 +100,15 @@ class UnitsView extends StatelessWidget {
       itemBuilder: (context, index) {
         final unit = state.units[index];
         return Card(
+          color: context.colorTheme.background,
+          elevation: 0,
           margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 2,
+            ),
           ),
           child: InkWell(
             onTap: () => _navigateToLessons(context, unit),

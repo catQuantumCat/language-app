@@ -114,7 +114,8 @@ class _HomeViewState extends State<HomeView> {
             language: state.language,
             hasTodayStreak: true,
             heartCount: state.heartCount,
-            streakCount: state.streakCount),
+            streakCount: state.streakCount,
+            xpCount: state.xpCount),
         SizedBox(height: 8),
         HeaderWidget(
             unitIndex: _currentIndexNotifier,

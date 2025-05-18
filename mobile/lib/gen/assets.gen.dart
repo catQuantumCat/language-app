@@ -25,11 +25,46 @@ class $AssetsAudioGen {
   List<String> get values => [correctAudio, wrongAudio];
 }
 
+class $AssetsNavigationIconsGen {
+  const $AssetsNavigationIconsGen();
+
+  /// File path: assets/navigation_icons/nav_graph.png
+  AssetGenImage get navGraph =>
+      const AssetGenImage('assets/navigation_icons/nav_graph.png');
+
+  /// File path: assets/navigation_icons/nav_home.png
+  AssetGenImage get navHome =>
+      const AssetGenImage('assets/navigation_icons/nav_home.png');
+
+  /// File path: assets/navigation_icons/nav_info.png
+  AssetGenImage get navInfo =>
+      const AssetGenImage('assets/navigation_icons/nav_info.png');
+
+  /// File path: assets/navigation_icons/nav_remove.png
+  AssetGenImage get navRemove =>
+      const AssetGenImage('assets/navigation_icons/nav_remove.png');
+
+  /// File path: assets/navigation_icons/nav_user.png
+  AssetGenImage get navUser =>
+      const AssetGenImage('assets/navigation_icons/nav_user.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+    navGraph,
+    navHome,
+    navInfo,
+    navRemove,
+    navUser,
+  ];
+}
+
 class Assets {
   const Assets._();
 
   static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const SvgGenImage heart = SvgGenImage('assets/heart.svg');
+  static const $AssetsNavigationIconsGen navigationIcons =
+      $AssetsNavigationIconsGen();
   static const AssetGenImage streakFire = AssetGenImage(
     'assets/streak_fire.png',
   );

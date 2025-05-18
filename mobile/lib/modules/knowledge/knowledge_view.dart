@@ -65,13 +65,21 @@ class KnowledgeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
         title: BlocBuilder<KnowledgeBloc, KnowledgeState>(
           builder: (context, state) {
-            return Text(state.lessonTitle ?? 'Kiến thức');
+            return Text(
+              state.lessonTitle ?? 'Kiến thức',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+            );
           },
         ),
-        backgroundColor: context.colorTheme.primary,
-        foregroundColor: context.colorTheme.onPrimary,
+        backgroundColor: context.colorTheme.background,
+        foregroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -167,9 +175,15 @@ class KnowledgeView extends StatelessWidget {
 
   Widget _buildVocabularyCard(BuildContext context, Vocabulary vocabulary) {
     return Card(
+      color: context.colorTheme.background,
+      elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: Theme.of(context).dividerColor,
+          width: 2,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

@@ -6,7 +6,6 @@ import 'package:language_app/domain/models/available_language.dart';
 import 'package:language_app/domain/repos/language_repo.dart';
 import 'package:language_app/main.dart';
 import 'package:language_app/modules/language_selection/bloc/language_selection_bloc.dart';
-
 class LanguageSelectionPage extends StatelessWidget {
   final bool fromHome;
 
@@ -39,7 +38,7 @@ class LanguageSelectionView extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.colorTheme.background,
       appBar: AppBar(
-        title: const Text('Select a Language'),
+        title: const Text('Chọn ngôn ngữ'),
         backgroundColor: context.colorTheme.primary,
         foregroundColor: context.colorTheme.onPrimary,
         automaticallyImplyLeading: fromHome,
@@ -111,7 +110,7 @@ class LanguageSelectionView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Choose a language to start learning',
+            'Chọn ngôn ngữ để bắt đầu học',
             style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
@@ -163,7 +162,7 @@ class LanguageSelectionView extends StatelessWidget {
                     ),
                   )
                 : const Text(
-                    'Continue',
+                    'Tiếp tục',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

@@ -8,6 +8,7 @@ class InfoRow extends StatelessWidget {
     super.key,
     required this.streakCount,
     required this.heartCount,
+    required this.xpCount,
     required this.hasTodayStreak,
     required this.language,
   });
@@ -15,15 +16,14 @@ class InfoRow extends StatelessWidget {
   final Language? language;
   final int streakCount;
   final int heartCount;
+  final int xpCount;
   final bool hasTodayStreak;
-  
 
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       GestureDetector(
         onTap: () {
-          // Navigate to language selection page
           context.go('/language-selection', extra: {'fromHome': true});
         },
         child: Container(
@@ -61,7 +61,13 @@ class InfoRow extends StatelessWidget {
       ),
       Row(
         children: [
-          Text("$streakCount"),
+          Text(
+            "$streakCount",
+            style: TextStyle(
+              color: Colors.orange,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           SizedBox(width: 6),
           SizedBox(
               width: 24,
@@ -72,7 +78,28 @@ class InfoRow extends StatelessWidget {
         ],
       ),
       Row(
-        children: [Text("$heartCount"), SizedBox(width: 6), Assets.heart.svg()],
+        children: [
+          Text(
+            "$heartCount",
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(width: 6),
+          Assets.heart.svg()
+        ],
+      ),
+      Row(
+        children: [
+          Text(
+            "$xpCount XP",
+            style: TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     ]);
   }

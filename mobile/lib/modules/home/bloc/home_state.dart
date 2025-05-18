@@ -8,6 +8,7 @@ final class HomeState extends Equatable {
   final Language? language;
   final int heartCount;
   final int streakCount;
+  final int xpCount;
 
   const HomeState({
     required this.viewState,
@@ -16,6 +17,7 @@ final class HomeState extends Equatable {
     this.language,
     this.heartCount = 0,
     this.streakCount = 0,
+    this.xpCount = 0,
   });
 
   HomeState copyWith({
@@ -25,6 +27,7 @@ final class HomeState extends Equatable {
     Language? language,
     int? heartCount,
     int? streakCount,
+    int? xpCount,
   }) {
     return HomeState(
       viewState: viewState ?? this.viewState,
@@ -33,6 +36,7 @@ final class HomeState extends Equatable {
       language: language ?? this.language,
       heartCount: heartCount ?? this.heartCount,
       streakCount: streakCount ?? this.streakCount,
+      xpCount: xpCount ?? this.xpCount,
     );
   }
 
@@ -42,9 +46,17 @@ final class HomeState extends Equatable {
         currentLesson = 0,
         language = null,
         heartCount = 0,
-        streakCount = 0;
+        streakCount = 0,
+        xpCount = 0;
 
   @override
-  List<Object?> get props =>
-      [viewState, units, currentLesson, language, heartCount, streakCount];
+  List<Object?> get props => [
+        viewState,
+        units,
+        currentLesson,
+        language,
+        heartCount,
+        streakCount,
+        xpCount
+      ];
 }

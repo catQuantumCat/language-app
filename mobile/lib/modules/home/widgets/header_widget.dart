@@ -49,16 +49,16 @@ class HeaderWidget extends StatelessWidget {
                     Text(
                       "Unit ${homeState.units[currentIndex].order}",
                       style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 16,
+                        color: Colors.white70,
                       ),
                     ),
                     Text(
                       homeState.units[currentIndex].title,
                       style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ],

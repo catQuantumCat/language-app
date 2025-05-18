@@ -54,7 +54,7 @@ class _LessonPageState extends State<LessonPage> {
             onPressed: () {
               returnToMenuTapped(dialogContext);
             },
-            child: Text("Return to home"),
+            child: Text("Quay về trang chủ"),
           )
         ],
       ),
@@ -120,19 +120,19 @@ class LessonView extends StatelessWidget {
       barrierDismissible: false,
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text("Do you want to exit lesson?"),
+        title: Text("Bạn có muốn thoát bài học không?"),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
             },
-            child: Text("No"),
+            child: Text("Không"),
           ),
           TextButton(
             onPressed: () {
               _returnToHome(dialogContext);
             },
-            child: Text("Yes"),
+            child: Text("Có"),
           )
         ],
       ),
@@ -167,7 +167,7 @@ class LessonView extends StatelessWidget {
                 );
               case LessonStatus.error:
                 return Center(
-                  child: Text(state.message ?? "Error"),
+                  child: Text(state.message ?? "Lỗi"),
                 );
             }
           },
